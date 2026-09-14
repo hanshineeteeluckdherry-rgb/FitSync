@@ -1,0 +1,13 @@
+{% load static %}
+<div class="sidebar-brand"><a class="fitsync-brand" href="{% url 'core:home' %}"><img src="{% static 'img/fitsync-logo.png' %}" width="28" height="28" alt=""></a></div>
+<!-- Bootstrap sidebar navigation -->
+<nav class="nav flex-column sidebar-nav" aria-label="Staff menu">
+    <p class="sidebar-label">Staff Menu</p>
+    <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="#"><i class="bi bi-grid"></i><span>Dashboard</span></a>
+    <a class="nav-link {% if active_sidebar == 'attendance' %}active{% endif %}" href="#"><i class="bi bi-qr-code-scan"></i><span>Attendance</span></a>
+    <a class="nav-link {% if active_sidebar == 'members' %}active{% endif %}" href="#"><i class="bi bi-people"></i><span>Members</span></a>
+    <a class="nav-link {% if active_sidebar == 'sessions' %}active{% endif %}" href="#"><i class="bi bi-calendar3"></i><span>Sessions</span></a>
+    <a class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}" href="#"><i class="bi bi-calendar-check"></i><span>Bookings</span></a>
+    <a class="nav-link {% if active_sidebar == 'assignments' %}active{% endif %}" href="#"><i class="bi bi-person-check"></i><span>Coach Assignments</span></a>
+    <a class="nav-link {% if active_sidebar == 'reports' %}active{% endif %}" href="#"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
+</nav>

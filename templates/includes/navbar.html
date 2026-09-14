@@ -1,0 +1,39 @@
+{% load static %}
+<!-- Bootstrap navbar -->
+<nav class="navbar navbar-expand-xl fitsync-navbar sticky-top" aria-label="Main navigation">
+    <div class="container-fluid px-3 px-xxl-4">
+        <a class="navbar-brand fitsync-brand d-flex align-items-center gap-2" href="{% url 'core:home' %}">
+    <img class="fitsync-logo" src="{% static 'img/fitsync-logo.png' %}" alt="FitSync logo">
+
+    <span class="fitsync-brand-name">
+        Fit<span class="brand-accent">Sync</span>
+    </span>
+</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitsyncPublicNav"
+                aria-controls="fitsyncPublicNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="fitsyncPublicNav">
+            <ul class="navbar-nav mx-auto align-items-xl-center">
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Memberships</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Bookings</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Our Team</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+            </ul>
+
+            <div class="navbar-actions d-flex align-items-center gap-2 pt-3 pt-xl-0">
+                <!-- Bootstrap theme toggle -->
+                <button class="btn theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Switch theme">
+                    <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
+                </button>
+                <!-- Bootstrap buttons -->
+                <a class="btn btn-secondary-fitsync" href="#">Login</a>
+                <a class="btn btn-primary-fitsync" href="#">Get Started</a>
+            </div>
+        </div>
+    </div>
+</nav>
