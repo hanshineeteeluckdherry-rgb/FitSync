@@ -1,0 +1,81 @@
+{% load static %}
+
+<footer class="site-footer mt-auto">
+    <div class="container py-5">
+
+        <div class="row g-4 align-items-start">
+
+            <!-- Brand section -->
+            <div class="col-lg-5">
+                <a class="fitsync-brand footer-brand text-decoration-none"
+                   href="{% url 'core:home' %}">
+
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <img
+                            src="{% static 'img/fitsync-logo.png' %}"
+                            alt="FitSync"
+                            style="width: 32px; height: 32px;"
+                        >
+
+                        <span style="font-size: 24px; font-weight: 700;">
+                            <span style="color: var(--bs-body-color);">Fit</span><span style="color: #00d4b8;">Sync</span>
+                        </span>
+                    </div>
+
+                </a>
+
+                <p class="footer-copy mt-0 mb-0"
+                   style="font-size: 15px; font-weight: 400; color: #a9b8cc; max-width: 420px;">
+                    Gym management and personal fitness, connected in one place.
+                </p>
+            </div>
+
+            <!-- Explore links -->
+            <div class="col-6 col-lg-3">
+                <h2 class="footer-heading">Explore</h2>
+
+                <ul class="list-unstyled footer-links mb-0">
+                    <li>
+                        <a href="#">Memberships</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Features</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Bookings</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- FitSync links -->
+            <div class="col-6 col-lg-4">
+                <h2 class="footer-heading">FitSync</h2>
+
+                <ul class="list-unstyled footer-links mb-0">
+                    <li>
+                        <a href="#">About Us</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Our Team</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Bottom footer -->
+        <div class="border-top pt-3 mt-4">
+            <p class="mb-0">
+                &copy; 2026 FitSync. University project.
+            </p>
+        </div>
+
+    </div>
+</footer>
