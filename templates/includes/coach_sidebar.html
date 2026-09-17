@@ -1,9 +1,14 @@
 {% load static %}
-<div class="sidebar-brand"><a class="fitsync-brand" href="{% url 'core:home' %}"><img src="{% static 'img/fitsync-logo.png' %}" width="28" height="28" alt=""></a></div>
+<div class="sidebar-brand">
+    <a class="fitsync-brand" href="{% url 'core:home' %}">
+        <img src="{% static 'img/fitsync-logo.png' %}" class="fitsync-logo" alt="FitSync Logo">
+        <span class="fitsync-brand-name">Fit<span class="brand-accent">Sync</span></span>
+    </a>
+</div>
 <!-- Bootstrap sidebar navigation -->
 <nav class="nav flex-column sidebar-nav" aria-label="Coach menu">
     <p class="sidebar-label">Coach Menu</p>
-    <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="#"><i class="bi bi-grid"></i><span>Dashboard</span></a>
+    <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="{% url 'accounts:coach_dashboard' %}"><i class="bi bi-grid"></i><span>Dashboard</span></a>
     <a class="nav-link {% if active_sidebar == 'members' %}active{% endif %}" href="#"><i class="bi bi-people"></i><span>Assigned Members</span></a>
     <a class="nav-link {% if active_sidebar == 'plans' %}active{% endif %}" href="#"><i class="bi bi-clipboard2-pulse"></i><span>Workout Plans</span></a>
     <a class="nav-link {% if active_sidebar == 'progress' %}active{% endif %}" href="#"><i class="bi bi-graph-up-arrow"></i><span>Progress</span></a>

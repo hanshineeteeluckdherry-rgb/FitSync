@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Account | FitSync{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main_class %}auth-main{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<section class="register-screen" style="--register-image: url('{% static 'img/register-hero.jpeg' %}');" data-register-screen data-start-step="{{ start_step|default:1 }}">
+    <button class="auth-theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+        <i class="bi bi-moon-stars" data-theme-icon></i>
+    </button>
+
+    <div class="register-content">
+        <a class="auth-brand auth-brand-center" href="{% url 'core:home' %}" aria-label="FitSync home">
+            <img src="{% static 'img/fitsync-logo.png' %}" alt="FitSync" class="fitsync-logo auth-brand-logo" width="64" height="64">
+        </a>
+
+        <header class="register-heading">
+            <h1>Create Your Account</h1>
+            <p>Join FitSync and start your fitness journey today</p>
+        </header>
+
+        <div class="register-progress" aria-label="Registration progress">
+            <div class="register-progress-item" data-step-indicator="1">
+                <span>1</span>
+                <small>Account Info</small>
+            </div>
+            <div class="register-progress-line"></div>
+            <div class="register-progress-item" data-step-indicator="2">
+                <span>2</span>
+                <small>Fitness Profile</small>
+            </div>
+        </div>
+
+        <form method="post" novalidate class="register-card" data-register-form>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="auth-error" role="alert">
+                {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="register-step" data-register-step="1">
+                <div class="register-card-heading">
+                    <h2>Your Account Info</h2>
+                    <p>Tell us who you are and create your login.</p>
+                </div>
+
+                <div class="register-grid register-grid-two">
+                    <div class="auth-field">
+                        <label for="{{ form.first_name.id_for_label }}">First name</label>
+                        {{ form.first_name }}
+                        {% for error in form.first_name.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="auth-field">
+                        <label for="{{ form.last_name.id_for_label }}">Last name</label>
+                        {{ form.last_name }}
+                        {% for error in form.last_name.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label for="{{ form.email.id_for_label }}">Email address</label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="register-grid register-grid-two">
+                    <div class="auth-field">
+                        <label for="{{ form.password1.id_for_label }}">Password</label>
+                        <div class="password-field">
+                            {{ form.password1 }}
+                            <button class="password-toggle" type="button" data-password-toggle aria-label="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                        {% for error in form.password1.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="auth-field">
+                        <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+                        <div class="password-field">
+                            {{ form.password2 }}
+                            <button class="password-toggle" type="button" data-password-toggle aria-label="Show password"><i class="bi bi-eye"></i></button>
+                        </div>
+                        {% for error in form.password2.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+
+                <button class="auth-primary-button mt-2" type="button" data-next-step>
+                    <span>Continue</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="register-step" data-register-step="2" hidden>
+                <div class="register-card-heading">
+                    <h2>Your Fitness Profile</h2>
+                    <p>Help us personalise your experience.</p>
+                </div>
+
+                <div class="register-grid register-grid-three">
+                    <div class="auth-field">
+                        <label for="{{ form.age.id_for_label }}">Age</label>
+                        {{ form.age }}
+                        {% for error in form.age.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="auth-field">
+                        <label for="{{ form.height_cm.id_for_label }}">Height (cm)</label>
+                        {{ form.height_cm }}
+                        {% for error in form.height_cm.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="auth-field">
+                        <label for="{{ form.current_weight_kg.id_for_label }}">Weight (kg)</label>
+                        {{ form.current_weight_kg }}
+                        {% for error in form.current_weight_kg.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+
+                <fieldset class="fitness-goal-fieldset">
+                    <legend><i class="bi bi-bullseye"></i> Primary Fitness Goal</legend>
+                    <div class="fitness-goal-grid">
+                        {% for radio in form.fitness_goal %}
+                        <label class="fitness-goal-option" for="{{ radio.id_for_label }}">
+                            {{ radio.tag }}
+                            <span class="fitness-goal-icon" data-goal-icon="{{ radio.choice_label }}"></span>
+                            <span>{{ radio.choice_label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% for error in form.fitness_goal.errors %}<small class="auth-field-error d-block mt-2">{{ error }}</small>{% endfor %}
+                </fieldset>
+
+                <div class="register-actions">
+                    <button class="auth-secondary-button" type="button" data-previous-step>Back</button>
+                    <button class="auth-primary-button" type="submit">
+                        <span>Create Account</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <p class="auth-switch register-switch">Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a></p>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}?v=5"></script>
+{% endblock %}

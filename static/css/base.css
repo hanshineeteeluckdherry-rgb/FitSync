@@ -10,7 +10,7 @@
     --primary-strong: #00ad8a;
     --danger-color: #dc3545;
     --navbar-color: #ffffff;
-    --sidebar-color: #ffffff;
+    --sidebar-color: #07152d;
     --footer-color: #ffffff;
     --shadow-color: rgba(8, 13, 23, 0.08);
     --radius-sm: 10px;
@@ -24,6 +24,7 @@
 html[data-theme="light"] {
     color-scheme: light;
     --page-gradient: linear-gradient(to bottom, #ffffff, #04cfa6);
+    --sidebar-color: #ffffff;
 }
 
 /* 3. Dark theme */
@@ -226,26 +227,33 @@ html[data-theme="dark"] .navbar-toggler-icon {
 .dashboard-layout {
     display: flex;
     min-height: 100vh;
+    background: var(--page-gradient);
+}
+.dashboard-layout > main,
+.dashboard-layout > div:not(.dashboard-sidebar) {
+    background: transparent !important;
 }
 
-.dashboard-sidebar {
+.dashboard-sidebar{
     width: var(--sidebar-width) !important;
     flex: 0 0 var(--sidebar-width);
     color: var(--text-color);
-    background: var(--sidebar-color);
-    border-right: 1px solid var(--border-color);
+    background: var(--sidebar-color) !important;
+    border-right: 1px solid var(--border-color) !important;
 }
+
+.dashboard-sidebar * {
+    background: transparent;
+}
+
 
 .sidebar-brand {
-    display: flex;
-    height: var(--topbar-height);
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    height: var(--topbar-height, 70px);
+    align-items: center !important;
+    justify-content: flex-start;
+    padding: 0 20px;
     border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-brand .fitsync-brand {
-    font-size: 1.25rem;
 }
 
 .sidebar-nav {
@@ -274,6 +282,24 @@ html[data-theme="dark"] .navbar-toggler-icon {
     border-radius: var(--radius-sm);
 }
 
+.sidebar-nav .nav-link{
+    display:flex;
+    min-height:40px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: var(--muted-color);
+    font-size:0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+}
+
+.sidebar-nav .nav-link i,
+.sidebar-nav .nav-link span{
+    background: transparent !important;
+    background-color: transparent !important;
+} 
+
 .sidebar-nav .nav-link i {
     width: 18px;
     font-size: 1rem;
@@ -281,14 +307,19 @@ html[data-theme="dark"] .navbar-toggler-icon {
 }
 
 .sidebar-nav .nav-link:hover,
-.sidebar-nav .nav-link:focus,
-.sidebar-nav .nav-link.active {
-    color: var(--primary-strong);
-    background: rgba(0, 212, 170, 0.09);
+.sidebar-nav .nav-link:focus {
+    color:#00dfb3 !important;
+    background: rgba(0, 223, 179, 0.09)!important;
 }
 
 .sidebar-nav .nav-link.active {
-    color: var(--primary-color);
+    color: #00dfb3 !important;
+    background:rgba(0,223,179,0.15)!important;
+}
+
+.sidebar-nav .nav-link.active i,
+.sidebar-nav .nav-link.active span {
+    color: #00dfb3 !important;
 }
 
 /* 8. Buttons */

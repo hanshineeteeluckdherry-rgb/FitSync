@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Access Denied | FitSync{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="error-state mx-auto" style="max-width: 620px;">
+        <span class="state-icon"><i class="bi bi-shield-lock"></i></span>
+        <h1 class="h3">Access denied</h1>
+        <p class="text-body-secondary">Your account role does not have permission to open this page.</p>
+        <a class="btn btn-primary-fitsync" href="{% url 'accounts:dashboard' %}">Return to dashboard</a>
+    </div>
+</div>
+{% endblock %}

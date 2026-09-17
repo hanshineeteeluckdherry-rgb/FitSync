@@ -1,0 +1,3 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}Remove Assignment{% endblock %}{% block dashboard_heading %}Remove Assignment{% endblock %}
+{% block dashboard_content %}<div class="confirmation-state" style="max-width:680px;"><span class="state-icon"><i class="bi bi-person-dash"></i></span><h1 class="h4">Remove this coach assignment?</h1><p class="text-body-secondary">{{ assignment.coach }} will no longer be linked to {{ assignment.member }}.</p><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Remove</button> <a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Cancel</a></form></div>{% endblock %}
