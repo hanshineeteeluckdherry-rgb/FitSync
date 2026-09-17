@@ -134,3 +134,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+# FitSync authentication settings
+AUTH_USER_MODEL = "accounts.User"
+LOGIN_URL = "accounts:login"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@fitsync.local"

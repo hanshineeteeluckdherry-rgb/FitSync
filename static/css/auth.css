@@ -1,0 +1,855 @@
+/* Authentication pages follow the approved FitSync Figma screens. */
+:root {
+    --auth-navy: #07152d;
+    --auth-navy-soft: #0c1c35;
+    --auth-panel: #0b172b;
+    --auth-field: #101f37;
+    --auth-border: #21334e;
+    --auth-text: #f7fbff;
+    --auth-muted: #a9bad3;
+    --auth-green: #00dfb3;
+    --auth-green-strong: #00cda4;
+}
+
+.auth-body {
+    min-height: 100vh;
+    background: #061227;
+}
+
+.auth-main {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 100% 100%, rgba(12,111,87,0.46), transparent 42%),
+        linear-gradient(135deg, #07142b 0%, #06142a 56%, #0b2a31 100%);
+}
+
+.auth-main .fitsync-messages {
+    display: none;
+}
+
+.auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.auth-brand span span {
+    color: var(--auth-green);
+}
+
+.auth-brand-mark {
+    width: 32px;
+    height: 32px;
+}
+
+/* Login */
+.login-screen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    overflow: hidden;
+    color: var(--auth-text);
+    background: var(--auth-navy);
+}
+
+.login-visual {
+    position: relative;
+    min-height: 100vh;
+    padding: 48px 54px 38px;
+    background-image:
+        linear-gradient(180deg, rgba(7, 21, 45, 0.58) 0%, rgba(7, 21, 45, 0.66) 54%, rgba(7, 32, 40, 0.9) 100%),
+        var(--login-image);
+    background-position: center;
+    background-size: cover;
+}
+
+.login-visual::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(6, 20, 39, 0.18), rgba(6, 20, 39, 0.02));
+}
+
+.auth-brand-left,
+.login-story,
+.login-visual-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.login-story {
+    max-width: 470px;
+    margin-top: 21vh;
+}
+
+.login-story blockquote {
+    margin: 0 0 42px;
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.member-avatar {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-radius: 50%;
+}
+
+.member-row strong,
+.member-row small {
+    display: block;
+}
+
+.member-row strong {
+    font-size: 0.9rem;
+}
+
+.member-row small {
+    margin-top: 2px;
+    color: rgba(219, 231, 244, 0.62);
+    font-size: 0.7rem;
+}
+
+.login-stats {
+    display: flex;
+    gap: 34px;
+    margin-top: 34px;
+}
+
+.login-stats div {
+    display: grid;
+    gap: 2px;
+}
+
+.login-stats strong {
+    color: var(--auth-green);
+    font-size: 1rem;
+}
+
+.login-stats span {
+    color: rgba(219, 231, 244, 0.62);
+    font-size: 0.68rem;
+}
+
+.login-visual-footer {
+    position: absolute;
+    right: 54px;
+    bottom: 34px;
+    left: 54px;
+}
+
+.login-visual-footer p {
+    max-width: 440px;
+    margin: 0 0 20px;
+    color: rgba(223, 233, 245, 0.62);
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+
+.feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.feature-pills span {
+    padding: 6px 10px;
+    color: var(--auth-green);
+    background: rgba(0, 223, 179, 0.1);
+    border: 1px solid rgba(0, 223, 179, 0.12);
+    border-radius: 999px;
+    font-size: 0.65rem;
+}
+
+.auth-tagline {
+    font-size: 0.86rem;
+    letter-spacing: 0.28em;
+}
+
+.login-panel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 52px;
+    background: var(--auth-navy);  
+}
+
+.login-form-wrap {
+    width: min(100%, 440px);
+}
+
+.auth-heading {
+    margin-bottom: 54px;
+}
+
+.auth-heading h1,
+.register-heading h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+}
+
+.auth-heading p,
+.register-heading p {
+    margin: 8px 0 0;
+    color: var(--auth-muted);
+    font-size: 1.25rem;
+}
+
+.auth-form,
+.register-card {
+    color: var(--auth-text);
+}
+
+.auth-field {
+    margin-bottom: 22px;
+}
+
+.auth-field label,
+.fitness-goal-fieldset legend {
+    display: block;
+    margin-bottom: 10px;
+    color: #b7c7de;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.auth-field .form-control,
+.auth-field .form-select {
+    min-height: 50px;
+    padding: 0.75rem 1rem;
+    color: #eef5ff;
+    background: rgba(16, 31, 55, 0.84);
+    border: 1px solid var(--auth-border);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.auth-field .form-control::placeholder {
+    color: #9aacbf;
+}
+
+.auth-field .form-control:focus,
+.auth-field .form-select:focus {
+    color: #ffffff;
+    background: #11223d;
+    border-color: var(--auth-green);
+    box-shadow: 0 0 0 0.18rem rgba(0, 223, 179, 0.12);
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field .form-control {
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    padding: 0;
+    color: #8da1bc;
+    background: transparent;
+    border: 0;
+    transform: translateY(-50%);
+}
+
+.password-toggle:hover,
+.password-toggle:focus {
+    color: var(--auth-green);
+}
+
+.auth-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin: -2px 0 24px;
+    font-size: 0.82rem;
+}
+
+.remember-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #9db0c9;
+}
+
+.remember-check input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--auth-green);
+}
+
+.auth-options a,
+.auth-switch a {
+    color: var(--auth-green);
+    text-decoration: none;
+}
+
+.auth-options a:hover,
+.auth-switch a:hover {
+    color: #46f0cf;
+}
+
+.auth-primary-button,
+.auth-secondary-button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0.75rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.auth-primary-button {
+    width: 100%;
+    color: #041313;
+    background: linear-gradient(90deg, #00cfa5, #00e5bb);
+    border: 0;
+    box-shadow: 0 10px 28px rgba(0, 223, 179, 0.22);
+}
+
+.auth-primary-button:hover,
+.auth-primary-button:focus {
+    background: linear-gradient(90deg, #00dfb3, #26edc8);
+}
+
+.auth-secondary-button {
+    color: #d8e4f2;
+    background: #10203a;
+    border: 1px solid #253955;
+}
+
+.auth-secondary-button:hover,
+.auth-secondary-button:focus {
+    color: #ffffff;
+    border-color: #3a5374;
+}
+
+.auth-switch {
+    margin: 18px 0 30px;
+    color: #8498b3;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.demo-accounts {
+    padding: 18px 20px;
+    color: #9eb0c8;
+    background: rgba(9, 22, 43, 0.82);
+    border: 1px solid rgba(31, 54, 83, 0.7);
+    border-radius: 18px;
+    font-size: 0.76rem;
+}
+
+.demo-accounts strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.demo-accounts p {
+    margin: 3px 0;
+}
+
+.demo-accounts p:nth-of-type(1) {
+    color: #05e5b7;
+}
+
+.demo-accounts p:nth-of-type(2) {
+    color: #39c9ff;
+}
+
+.demo-accounts p:nth-of-type(3) {
+    color: #f3cf48;
+}
+
+.demo-accounts p span {
+    color: #9eb0c8;
+}
+
+.auth-error {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    color: #ffd7dc;
+    background: rgba(202, 53, 74, 0.14);
+    border: 1px solid rgba(235, 79, 101, 0.32);
+    border-radius: 10px;
+    font-size: 0.82rem;
+}
+
+.auth-field-error {
+    display: block;
+    margin-top: 6px;
+    color: #ff91a1;
+    font-size: 0.76rem;
+}
+
+/* Registration */
+.register-screen {
+    position: relative;
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    overflow: hidden;
+    color: var(--auth-text);
+    background-image:
+        linear-gradient(180deg, rgba(4, 18, 39, 0.77) 0%, rgba(4, 21, 43, 0.62) 48%, rgba(4, 40, 44, 0.84) 100%),
+        var(--register-image);
+    background-position: center;
+    background-size: cover;
+}
+
+.register-screen::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background: radial-gradient(circle at 84% 80%, rgba(0, 194, 156, 0.22), transparent 32%);
+}
+
+.register-content {
+    position: relative;
+    z-index: 1;
+    width: min(100% - 32px, 660px);
+    padding: 42px 0 34px;
+}
+
+.auth-brand-center {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.register-heading {
+    text-align: center;
+}
+
+.register-heading h1 {
+    font-size: clamp(2rem, 3.3vw, 2.8rem);
+}
+
+.register-heading p {
+    margin-top: 12px;
+    font-size: 1rem;
+}
+
+.register-progress {
+    display: grid;
+    grid-template-columns: auto 58px auto;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto 24px;
+}
+
+.register-progress-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #7387a2;
+}
+
+.register-progress-item span {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    color: #05211d;
+    background: #5a6e85;
+    border-radius: 50%;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.register-progress-item small {
+    font-size: 0.8rem;
+}
+
+.register-progress-item.is-active,
+.register-progress-item.is-complete {
+    color: #b9c9dc;
+}
+
+.register-progress-item.is-active span,
+.register-progress-item.is-complete span {
+    background: var(--auth-green);
+}
+
+.register-progress-line {
+    height: 2px;
+    background: rgba(0, 223, 179, 0.68);
+}
+
+.register-card {
+    width: min(100%, 540px);
+    margin: 0 auto;
+    padding: 28px 30px 26px;
+    background: rgba(8, 20, 39, 0.95);
+    border: 1px solid rgba(42, 62, 91, 0.68);
+    border-radius: 16px;
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+}
+
+.register-card-heading {
+    margin-bottom: 22px;
+}
+
+.register-card-heading h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.22rem;
+    font-weight: 700;
+}
+
+.register-card-heading p {
+    margin: 7px 0 0;
+    color: #8195af;
+    font-size: 0.88rem;
+}
+
+.register-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.register-grid-two {
+    grid-template-columns: 1fr 1fr;
+}
+
+.register-grid-three {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.register-card .auth-field {
+    margin-bottom: 18px;
+}
+
+.register-card .auth-field label {
+    margin-bottom: 7px;
+    font-size: 0.8rem;
+}
+
+.register-card .auth-field .form-control {
+    min-height: 46px;
+    font-size: 0.86rem;
+}
+
+.fitness-goal-fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.fitness-goal-fieldset legend {
+    margin-bottom: 12px;
+    font-size: 0.86rem;
+}
+
+.fitness-goal-fieldset legend i {
+    margin-right: 6px;
+}
+
+.fitness-goal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.fitness-goal-option {
+    position: relative;
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 14px;
+    color: #b9c8db;
+    background: #14243e;
+    border: 1px solid #263a58;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.fitness-goal-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.fitness-goal-option:has(input:checked) {
+    color: #effffc;
+    background: rgba(0, 223, 179, 0.12);
+    border-color: var(--auth-green);
+}
+
+.fitness-goal-option:hover {
+    border-color: #3a5477;
+}
+
+.fitness-goal-icon {
+    width: 17px;
+    text-align: center;
+}
+
+.register-actions {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.register-actions .auth-primary-button {
+    min-width: 0;
+}
+
+.register-switch {
+    margin: 16px 0 0;
+    color: #a3b4c9;
+}
+
+@media (max-width: 991.98px) {
+    .login-screen {
+        grid-template-columns: 1fr;
+    }
+
+    .login-visual {
+        display: none;
+    }
+
+    .login-panel {
+        min-height: 100vh;
+        padding: 42px 24px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .auth-heading {
+        margin-bottom: 36px;
+    }
+
+    .auth-heading h1 {
+        font-size: 2.2rem;
+    }
+
+    .auth-heading p {
+        font-size: 1rem;
+    }
+
+    .register-content {
+        width: min(100% - 22px, 660px);
+        padding-top: 26px;
+    }
+
+    .register-card {
+        padding: 22px 18px;
+    }
+
+    .register-grid-two,
+    .register-grid-three,
+    .fitness-goal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .register-progress {
+        grid-template-columns: auto 34px auto;
+    }
+
+    .register-progress-item {
+        gap: 6px;
+    }
+
+    .register-progress-item small {
+        font-size: 0.68rem;
+    }
+}
+
+
+/* Keep the two login columns stable even when the theme button is present. */
+.login-visual {
+    grid-column: 1;
+}
+
+.login-panel {
+    grid-column: 2;
+}
+
+@media (max-width: 991.98px) {
+    .login-panel {
+        grid-column: 1;
+    }
+}
+
+/* Shared FitSync branding and the same theme switch used across the site. */
+.auth-brand {
+    text-decoration: none;
+}
+
+.auth-brand-logo {
+    display: block;
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.auth-brand-center .auth-brand-logo {
+    width: 64px;
+    height: 64px;
+}
+
+.auth-theme-toggle {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    z-index: 30;
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    padding: 0;
+    color: #ffffff;
+    background: rgba(7, 21, 45, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(8px);
+}
+
+.auth-theme-toggle:hover,
+.auth-theme-toggle:focus {
+    color: var(--auth-green);
+    border-color: rgba(0, 223, 179, 0.55);
+}
+
+/*
+   The approved Figma screen is the dark version.
+   Light mode keeps the same layout and imagery; the page gradient becomes light.
+*/
+html[data-theme="light"] .auth-body {
+    background: linear-gradient(135deg, #ffffff 0%, #edf8fb 52%, #bdf3e5 100%);
+}
+
+html[data-theme="light"] .login-screen {
+    background: #f7fbff;
+}
+
+html[data-theme="light"] .login-panel {
+    background:
+        radial-gradient(circle at 100% 100%, rgba(4, 207, 166, 0.34), transparent 44%),
+        linear-gradient(135deg, #ffffff 0%, #f4f9fd 54%, #d9f8ef 100%);
+}
+
+html[data-theme="light"] .login-panel .auth-heading h1 {
+    color: #07152d;
+}
+
+html[data-theme="light"] .login-panel .auth-heading p,
+html[data-theme="light"] .login-panel .auth-field label,
+html[data-theme="light"] .login-panel .remember-check,
+html[data-theme="light"] .login-panel .auth-switch {
+    color: #526a86;
+}
+
+html[data-theme="light"] .login-panel .auth-field .form-control,
+html[data-theme="light"] .login-panel .auth-field .form-select {
+    color: #10233e;
+    background: rgba(255, 255, 255, 0.86);
+    border-color: #cad9e6;
+}
+
+html[data-theme="light"] .login-panel .auth-field .form-control::placeholder {
+    color: #8295aa;
+}
+
+html[data-theme="light"] .login-panel .auth-field .form-control:focus,
+html[data-theme="light"] .login-panel .auth-field .form-select:focus {
+    color: #10233e;
+    background: #ffffff;
+    border-color: var(--auth-green-strong);
+}
+
+html[data-theme="light"] .login-panel .password-toggle {
+    color: #617994;
+}
+
+html[data-theme="light"] .demo-accounts {
+    box-shadow: 0 14px 30px rgba(31, 54, 83, 0.12);
+}
+
+html[data-theme="light"] .register-screen {
+    background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(238, 248, 252, 0.48) 48%, rgba(4, 207, 166, 0.34) 100%),
+        var(--register-image);
+}
+
+html[data-theme="light"] .register-screen::before {
+    background: radial-gradient(circle at 84% 80%, rgba(4, 207, 166, 0.26), transparent 34%);
+}
+
+html[data-theme="light"] .register-heading h1 {
+    color: #07152d;
+}
+
+html[data-theme="light"] .register-heading p,
+html[data-theme="light"] .register-progress-item,
+html[data-theme="light"] .register-switch {
+    color: #435d78;
+}
+
+html[data-theme="light"] .register-progress-item.is-active,
+html[data-theme="light"] .register-progress-item.is-complete {
+    color: #18334e;
+}
+
+html[data-theme="light"] .auth-theme-toggle {
+    color: #10233e;
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(16, 35, 62, 0.12);
+}
+
+@media (max-width: 575.98px) {
+    .auth-theme-toggle {
+        top: 14px;
+        right: 14px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .auth-brand-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .auth-brand-center .auth-brand-logo {
+        width: 58px;
+        height: 58px;
+    }
+}

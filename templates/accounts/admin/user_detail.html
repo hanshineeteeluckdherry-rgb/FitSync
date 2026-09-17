@@ -1,0 +1,6 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}User Details{% endblock %}{% block dashboard_heading %}User Details{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between gap-3 align-items-center mb-4"><div class="page-heading mb-0"><h1>{{ selected_user.get_full_name|default:selected_user.email }}</h1><p>{{ selected_user.email }}</p></div><a class="btn btn-secondary-fitsync" href="{% url 'accounts:admin_user_list' %}">Back to users</a></div>
+<div class="row g-4"><div class="col-lg-7"><div class="card p-4"><dl class="row mb-0"><dt class="col-sm-4">Role</dt><dd class="col-sm-8">{{ selected_user.get_role_display }}</dd><dt class="col-sm-4">Status</dt><dd class="col-sm-8">{% if selected_user.is_active %}Active{% else %}Inactive{% endif %}</dd><dt class="col-sm-4">Joined</dt><dd class="col-sm-8">{{ selected_user.date_joined|date:"d M Y" }}</dd></dl></div></div><div class="col-lg-5"><div class="card p-4"><h2 class="h5">Admin actions</h2><div class="d-grid gap-2"><a class="btn btn-primary-fitsync" href="{% url 'accounts:admin_user_role' selected_user.id %}">Change role</a><a class="btn btn-secondary-fitsync" href="{% url 'accounts:admin_user_status' selected_user.id %}">{% if selected_user.is_active %}Deactivate{% else %}Activate{% endif %} account</a></div></div></div></div>
+{% endblock %}

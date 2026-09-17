@@ -1,16 +1,21 @@
 {% load static %}
-<div class="sidebar-brand"><a class="fitsync-brand" href="{% url 'core:home' %}"><img src="{% static 'img/fitsync-logo.png' %}" width="28" height="28" alt=""></a></div>
+<div class="sidebar-brand">
+    <a class="fitsync-brand" href="{% url 'core:home' %}">
+        <img src="{% static 'img/fitsync-logo.png' %}" class="fitsync-logo" alt="FitSync Logo">
+        <span class="fitsync-brand-name">Fit<span class="brand-accent">Sync</span></span>
+    </a>
+</div>
 <!-- Bootstrap sidebar navigation -->
 <nav class="nav flex-column sidebar-nav" aria-label="Administrator menu">
     <p class="sidebar-label">Admin Menu</p>
-    <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="#"><i class="bi bi-grid"></i><span>Dashboard</span></a>
-    <a class="nav-link {% if active_sidebar == 'users' %}active{% endif %}" href="#"><i class="bi bi-people"></i><span>Users</span></a>
+    <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="{% url 'accounts:admin_dashboard' %}"><i class="bi bi-grid"></i><span>Dashboard</span></a>
+    <a class="nav-link {% if active_sidebar == 'users' %}active{% endif %}" href="{% url 'accounts:admin_user_list' %}"><i class="bi bi-people"></i><span>Users</span></a>
     <a class="nav-link {% if active_sidebar == 'memberships' %}active{% endif %}" href="#"><i class="bi bi-card-checklist"></i><span>Memberships</span></a>
     <a class="nav-link {% if active_sidebar == 'payments' %}active{% endif %}" href="#"><i class="bi bi-wallet2"></i><span>Payments</span></a>
     <a class="nav-link {% if active_sidebar == 'sessions' %}active{% endif %}" href="#"><i class="bi bi-calendar3"></i><span>Sessions</span></a>
     <a class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}" href="#"><i class="bi bi-calendar-check"></i><span>Bookings</span></a>
     <a class="nav-link {% if active_sidebar == 'attendance' %}active{% endif %}" href="#"><i class="bi bi-qr-code-scan"></i><span>Attendance</span></a>
-    <a class="nav-link {% if active_sidebar == 'coaches' %}active{% endif %}" href="#"><i class="bi bi-person-badge"></i><span>Coaches</span></a>
+    <a class="nav-link {% if active_sidebar == 'coaches' %}active{% endif %}" href="{% url 'accounts:coach_assignment_list' %}"><i class="bi bi-person-badge"></i><span>Coaches</span></a>
     <a class="nav-link {% if active_sidebar == 'settings' %}active{% endif %}" href="#"><i class="bi bi-gear"></i><span>Settings</span></a>
     <a class="nav-link {% if active_sidebar == 'reports' %}active{% endif %}" href="#"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
 </nav>

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}My Profile | FitSync{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h2 fw-bold mb-1">My Profile</h1>
+            <p class="text-body-secondary mb-0">Keep your account and fitness information up to date.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-secondary-fitsync" href="{% url 'accounts:password_change' %}">Change password</a>
+            <a class="btn btn-primary-fitsync" href="{% url 'accounts:profile_edit' %}">Edit profile</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card p-4 h-100">
+                <h2 class="h5">Account details</h2>
+                <dl class="row mb-0 mt-3">
+                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">{{ request.user.get_full_name|default:"Not provided" }}</dd>
+                    <dt class="col-sm-4">Email</dt><dd class="col-sm-8">{{ request.user.email }}</dd>
+                    <dt class="col-sm-4">Role</dt><dd class="col-sm-8"><span class="badge badge-fitsync">{{ request.user.get_role_display }}</span></dd>
+                </dl>
+            </div>
+        </div>
+        {% if member_profile %}
+        <div class="col-lg-6">
+            <div class="card p-4 h-100">
+                <h2 class="h5">Fitness details</h2>
+                <dl class="row mb-0 mt-3">
+                    <dt class="col-sm-5">Phone</dt><dd class="col-sm-7">{{ member_profile.phone|default:"Not provided" }}</dd>
+                    <dt class="col-sm-5">Height</dt><dd class="col-sm-7">{% if member_profile.height_cm %}{{ member_profile.height_cm }} cm{% else %}Not provided{% endif %}</dd>
+                    <dt class="col-sm-5">Current weight</dt><dd class="col-sm-7">{% if member_profile.current_weight_kg %}{{ member_profile.current_weight_kg }} kg{% else %}Not provided{% endif %}</dd>
+                    <dt class="col-sm-5">Target weight</dt><dd class="col-sm-7">{% if member_profile.target_weight_kg %}{{ member_profile.target_weight_kg }} kg{% else %}Not provided{% endif %}</dd>
+                    <dt class="col-sm-5">Fitness goal</dt><dd class="col-sm-7">{{ member_profile.fitness_goal|default:"Not provided" }}</dd>
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

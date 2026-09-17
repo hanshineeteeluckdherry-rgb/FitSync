@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login | FitSync{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main_class %}auth-main{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<section class="login-screen">
+    <div class="login-visual" style="--login-image: url('{% static 'img/login-hero.jpeg' %}');">
+        <a class="auth-brand auth-brand-left" href="{% url 'core:home' %}" aria-label="FitSync home" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="{% static 'img/fitsync-logo.png' %}" alt="FitSync" class="fitsync-logo auth-brand-logo" width="52" height="52">
+            <span style="font-weight: 700; font-size: 1.5rem; letter-spacing: -0.025em;">
+            <span style="color: #ffffff; ">Fit</span><span style="color: #04cfa6;">Sync</span>
+            </span>
+        </a>
+
+        <div class="login-story">
+            <blockquote>"FitSync transformed how I track my training. My coach and I are perfectly in sync."</blockquote>
+
+            <div class="member-row style="display: flex; align-items: center; gap: 12px;">
+                <img src="{% static 'img/lionel-messi.png' %}" alt="Lionel Messi profile" class="member-avatar" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; object-position: center 0%; flex-shrink: 0; display: block;">
+                <div>
+                    <strong style="display: block; color: #ffffff;">Lionel Messi</strong>
+                    <small style="color: #9ca3af;">Premium Member · 18 months</small>
+                </div>
+            </div>
+
+            <div class="login-stats">
+                <div><strong>1,400+</strong><span>Members</span></div>
+                <div><strong>6</strong><span>Coaches</span></div>
+                <div><strong>4.9★</strong><span>Rating</span></div>
+            </div>
+        </div>
+
+        <div class="login-visual-footer">
+            <p>Sign in to your FitSync account to access your membership, track workouts, and manage bookings.</p>
+            <div class="feature-pills">
+                <span>Memberships</span>
+                <span>Class Bookings</span>
+                <span>Workout Plans</span>
+                <span>Progress Tracking</span>
+            </div>
+            <strong class="auth-tagline">TRAIN. TRACK. TRANSFORM.</strong>
+        </div>
+    </div>
+
+    <div class="login-panel">
+        <button class="auth-theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+            <i class="bi bi-moon-stars" data-theme-icon></i>
+        </button>
+
+        <div class="login-form-wrap">
+            <header class="auth-heading">
+                <h1>Welcome back</h1>
+                <p>Sign in to your FitSync account</p>
+            </header>
+
+            <form method="post" novalidate class="auth-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="auth-error" role="alert">
+                    {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="auth-field">
+                    <label for="{{ form.email.id_for_label }}">Email address</label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="auth-field">
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    <div class="password-field">
+                        {{ form.password }}
+                        <button class="password-toggle" type="button" data-password-toggle aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    {% for error in form.password.errors %}<small class="auth-field-error">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-check" for="{{ form.remember_me.id_for_label }}">
+                        {{ form.remember_me }}
+                        <span>Remember me</span>
+                    </label>
+                    <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
+                </div>
+
+                <button class="auth-primary-button" type="submit">
+                    <span>Sign In</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+
+            <p class="auth-switch">Don't have an account? <a href="{% url 'accounts:register' %}">Create one free</a></p>
+
+            <div class="demo-accounts">
+                <strong>Demo Accounts</strong>
+                <p><span>Member:</span> member@fitsync.com</p>
+                <p><span>Coach:</span> coach@fitsync.com</p>
+                <p><span>Staff:</span> staff@fitsync.com</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}?v=5"></script>
+{% endblock %}

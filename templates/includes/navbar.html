@@ -30,9 +30,18 @@
                 <button class="btn theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Switch theme">
                     <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
                 </button>
-                <!-- Bootstrap buttons -->
-                <a class="btn btn-secondary-fitsync" href="#">Login</a>
-                <a class="btn btn-primary-fitsync" href="#">Get Started</a>
+                <!-- Account actions use the same shared Bootstrap button styles. -->
+                {% if request.user.is_authenticated %}
+                    <a class="btn btn-secondary-fitsync" href="{% url 'accounts:profile' %}">Profile</a>
+                    <a class="btn btn-primary-fitsync" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                    <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary-fitsync" type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-secondary-fitsync" href="{% url 'accounts:login' %}">Login</a>
+                    <a class="btn btn-primary-fitsync" href="{% url 'accounts:register' %}">Get Started</a>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -1,0 +1,8 @@
+{% extends "layouts/staff_base.html" %}
+{% block page_title %}Staff Dashboard{% endblock %}
+{% block dashboard_heading %}Staff Dashboard{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading"><h1>Staff Dashboard</h1><p>Manage members using the tools available to staff.</p></div>
+<div class="row g-4"><div class="col-md-6 col-xl-4"><div class="summary-card"><span class="summary-label">Active members</span><p class="summary-value">{{ member_count }}</p></div></div></div>
+<div class="card p-4 mt-4"><h2 class="h5">Member tools</h2><p class="text-body-secondary">Search members and view appropriate profile information.</p><a class="btn btn-primary-fitsync" href="{% url 'accounts:staff_member_list' %}">View members</a></div>
+{% endblock %}
