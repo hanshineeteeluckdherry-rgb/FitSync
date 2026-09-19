@@ -23,6 +23,17 @@ def add_activity(request):
             messages.error(request, "Please fill in all fields.")
             return redirect("activities:add_activity")
 
+        try:
+            distance_km = float(distance_km)
+            duration_minutes = int(duration_minutes)
+        except ValueError:
+            messages.error(request, "Distance and duration must be valid numbers.")
+            return redirect("activities:add_activity")
+
+        if distance_km <= 0 or duration_minutes <= 0:
+            messages.error(request, "Distance and duration must be greater than zero.")
+            return redirect("activities:add_activity")
+
         OutdoorActivity.objects.create(
             member=request.user,
             activity_type=activity_type,
