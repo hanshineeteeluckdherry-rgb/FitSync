@@ -16,6 +16,6 @@
     <a class="nav-link {% if active_sidebar == 'plans' %}active{% endif %}" href="#"><i class="bi bi-clipboard2-pulse"></i><span>Workout Plans</span></a>
     <a class="nav-link {% if active_sidebar == 'history' %}active{% endif %}" href="#"><i class="bi bi-clock-history"></i><span>Workout History</span></a>
     <a class="nav-link {% if active_sidebar == 'progress' %}active{% endif %}" href="#"><i class="bi bi-graph-up-arrow"></i><span>Progress</span></a>
-    <a class="nav-link {% if active_sidebar == 'activities' %}active{% endif %}" href="#"><i class="bi bi-geo-alt"></i><span>Outdoor Activities</span></a>
+    <a class="nav-link {% if active_sidebar == 'activities' %}active{% endif %}" href="{% url 'activities:activity_list' %}"><i class="bi bi-geo-alt"></i><span>Outdoor Activities</span></a>
     <a class="nav-link {% if active_sidebar == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i><span>Profile</span></a>
 </nav>
