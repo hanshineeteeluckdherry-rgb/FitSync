@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import MemberQRCode
 from django.utils import timezone
 from .models import AttendanceRecord
 from django.contrib import messages
-from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+
 import qrcode
 import io
 import base64
@@ -107,3 +107,35 @@ def staff_attendance(request):
         "max_capacity": GYM_MAX_CAPACITY,
     }
     return render(request, "attendance/staff_attendance.html", context)
+
+@login_required
+def attendance_history(request):
+    records = AttendanceRecord.objects.all().select_related("member").order_by("check_in_time")
+    return render(request, "attendance/attendance_history.html", {"records": records})
+
+@login_required
+def correct_attendance(request, pk):
+    record = get_object_or_404(AttendanceRecord, pk=pk)
+
+    if request.method == "POST":
+        note = request.POST.get("correction_note", "").strip()
+        check_in = request.POST.get("check_in_time")
+        check_out = request.POST.get("check_out_time")
+
+        if not note:
+            messages.error(request, "A correction note is required.")
+            return redirect("attendance:correct_attendance", pk=pk)
+
+        if check_in:
+            record.check_in_time = check_in
+        if check_out:
+            record.check_out_time = check_out
+
+        record.correction_note = note
+        record.corrected_by = request.user
+        record.save()
+
+        messages.success(request, "Attendance record corrected successfully.")
+        return redirect("attendance:attendance_history")
+
+    return render(request, "attendance/correct_attendance.html", {"record": record})

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Attendance History</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Corrected By</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.member }}</td>
+                <td>{{ record.check_in_time|date:"d M Y H:i" }}</td>
+                <td>{{ record.check_out_time|date:"d M Y H:i"|default:"—" }}</td>
+                <td>{{ record.corrected_by|default:"—" }}</td>
+                <td>{{ record.correction_note|default:"—" }}</td>
+                <td><a href="{% url 'attendance:correct_attendance' record.pk %}">Correct</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-muted">No attendance records yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
