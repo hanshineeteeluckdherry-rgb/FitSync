@@ -9,6 +9,14 @@
         <li class="list-group-item">Average Pace: {{ pace }} min/km</li>
         {% endif %}
     </ul>
+
+    <div class="card p-3 mb-3">
+        <h5>Route</h5>
+        <div class="bg-light border d-flex align-items-center justify-content-center" style="height: 250px;">
+            <p class="text-muted mb-0">Route map placeholder — GPS route data not yet available</p>
+        </div>
+    </div>
+
     <a href="{% url 'activities:delete_activity' activity.pk %}" class="btn btn-danger">Delete</a>
     <a href="{% url 'activities:activity_list' %}" class="btn btn-secondary">Back</a>
 </div>
