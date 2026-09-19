@@ -6,6 +6,9 @@ from .models import AttendanceRecord
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+import qrcode
+import io
+import base64
 
 GYM_MAX_CAPACITY = 50
 
@@ -16,8 +19,16 @@ User = get_user_model()
 def my_qr_code(request):
     qr_code, created = MemberQRCode.objects.get_or_create(member=request.user)
 
+    qr_image_base64 = None
+    if qr_code.is_active:
+        img = qrcode.make(str(qr_code.qr_token))
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        qr_image_base64 = base64.b64encode(buffer.getvalue()).decode()
+
     context = {
         "qr_code": qr_code,
+        "qr_image": qr_image_base64,
     }
     return render(request, "attendance/my_qr_code.html", context)
 
