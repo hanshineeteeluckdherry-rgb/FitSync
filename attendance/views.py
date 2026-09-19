@@ -52,6 +52,10 @@ def staff_attendance(request):
                 check_out_time__isnull=True
             ).exists()
 
+            current_occupancy = AttendanceRecord.objects.filter(
+                check_out_time__isnull = True
+            ).count()
+
             #TODO: once person 3 updates add:
             #if not hasattr(member, "membership") or not member.membership.is_active:
             #       messages.error(request, f"{member} does not have an active membership.")
@@ -59,6 +63,9 @@ def staff_attendance(request):
 
             if already_checked_in:
                 messages.error(request, f"{member} is already checked in.")
+
+            elif current_occupancy >= GYM_MAX_CAPACITY:
+                messages.error(request, "Gym is at maximum capacity. Check-in denied.")
             else:
                 AttendanceRecord.objects.create(member=member)
                 messages.success(request, f"{member} checked in successfully.")
