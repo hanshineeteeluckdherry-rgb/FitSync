@@ -14,8 +14,8 @@
         <form method="post" class="row g-2 align-items-end">
             {% csrf_token %}
             <div class="col-auto">
-                <label class="form-label">Member ID or Email</label>
-                <input type="text" class="form-control" name="member_identifier" placeholder="Enter member ID">
+                <label class="form-label">Member QR Code or Email</label>
+                <input type="text" class="form-control" name="member_identifier" placeholder="Scan QR or enter email">
             </div>
             <div class="col-auto">
                 <button type="submit" name="action" value="check_in" class="btn btn-success">Check In</button>

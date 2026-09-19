@@ -40,12 +40,20 @@ def staff_attendance(request):
         identifier = request.POST.get("member_identifier", "").strip()
         action = request.POST.get("action")
 
-        member = User.objects.filter(email=identifier).first()
+        member = None
+
+        # Try QR token lookup first
+        qr_code = MemberQRCode.objects.filter(qr_token=identifier, is_active=True).first()
+        if qr_code:
+            member = qr_code.member
+        else:
+            # Fall back to email lookup
+            member = User.objects.filter(email=identifier).first()
 
         if not member:
-            messages.error(request, "No member found with that email.")
+            messages.error(request, "No member found with that QR code or email.")
             return redirect("attendance:staff_attendance")
-
+        
         if action == "check_in":
             already_checked_in = AttendanceRecord.objects.filter(
                 member=member,
