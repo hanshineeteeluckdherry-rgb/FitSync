@@ -5,6 +5,8 @@ from django.utils import timezone
 from .models import AttendanceRecord
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 
 import qrcode
 import io
@@ -139,3 +141,18 @@ def correct_attendance(request, pk):
         return redirect("attendance:attendance_history")
 
     return render(request, "attendance/correct_attendance.html", {"record": record})
+
+@login_required
+def attendance_report(request):
+    daily_counts = (
+        AttendanceRecord.objects
+        .annotate(day=TruncDate("check_in_time"))
+        .values("day")
+        .annotate(total_check_ins=Count("id"))
+        .order_by("-day")
+    )
+
+    context = {
+        "daily_counts": daily_counts,
+    }
+    return render(request, "attendance/attendance_report.html", context)
