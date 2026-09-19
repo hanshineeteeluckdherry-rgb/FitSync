@@ -1,11 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import MemberQRCode
 from django.utils import timezone
 from .models import AttendanceRecord
 from django.contrib import messages
-from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+from django.db.models import Count
+from django.db.models.functions import TruncDate
+
 import qrcode
 import io
 import base64
@@ -40,17 +42,29 @@ def staff_attendance(request):
         identifier = request.POST.get("member_identifier", "").strip()
         action = request.POST.get("action")
 
-        member = User.objects.filter(email=identifier).first()
+        member = None
+
+        # Try QR token lookup first
+        qr_code = MemberQRCode.objects.filter(qr_token=identifier, is_active=True).first()
+        if qr_code:
+            member = qr_code.member
+        else:
+            # Fall back to email lookup
+            member = User.objects.filter(email=identifier).first()
 
         if not member:
-            messages.error(request, "No member found with that email.")
+            messages.error(request, "No member found with that QR code or email.")
             return redirect("attendance:staff_attendance")
-
+        
         if action == "check_in":
             already_checked_in = AttendanceRecord.objects.filter(
                 member=member,
                 check_out_time__isnull=True
             ).exists()
+
+            current_occupancy = AttendanceRecord.objects.filter(
+                check_out_time__isnull = True
+            ).count()
 
             #TODO: once person 3 updates add:
             #if not hasattr(member, "membership") or not member.membership.is_active:
@@ -59,6 +73,9 @@ def staff_attendance(request):
 
             if already_checked_in:
                 messages.error(request, f"{member} is already checked in.")
+
+            elif current_occupancy >= GYM_MAX_CAPACITY:
+                messages.error(request, "Gym is at maximum capacity. Check-in denied.")
             else:
                 AttendanceRecord.objects.create(member=member)
                 messages.success(request, f"{member} checked in successfully.")
@@ -92,3 +109,50 @@ def staff_attendance(request):
         "max_capacity": GYM_MAX_CAPACITY,
     }
     return render(request, "attendance/staff_attendance.html", context)
+
+@login_required
+def attendance_history(request):
+    records = AttendanceRecord.objects.all().select_related("member").order_by("check_in_time")
+    return render(request, "attendance/attendance_history.html", {"records": records})
+
+@login_required
+def correct_attendance(request, pk):
+    record = get_object_or_404(AttendanceRecord, pk=pk)
+
+    if request.method == "POST":
+        note = request.POST.get("correction_note", "").strip()
+        check_in = request.POST.get("check_in_time")
+        check_out = request.POST.get("check_out_time")
+
+        if not note:
+            messages.error(request, "A correction note is required.")
+            return redirect("attendance:correct_attendance", pk=pk)
+
+        if check_in:
+            record.check_in_time = check_in
+        if check_out:
+            record.check_out_time = check_out
+
+        record.correction_note = note
+        record.corrected_by = request.user
+        record.save()
+
+        messages.success(request, "Attendance record corrected successfully.")
+        return redirect("attendance:attendance_history")
+
+    return render(request, "attendance/correct_attendance.html", {"record": record})
+
+@login_required
+def attendance_report(request):
+    daily_counts = (
+        AttendanceRecord.objects
+        .annotate(day=TruncDate("check_in_time"))
+        .values("day")
+        .annotate(total_check_ins=Count("id"))
+        .order_by("-day")
+    )
+
+    context = {
+        "daily_counts": daily_counts,
+    }
+    return render(request, "attendance/attendance_report.html", context)
