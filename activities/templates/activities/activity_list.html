@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Outdoor Activities</h2>
+        <a href="{% url 'activities:add_activity' %}" class="btn btn-success">Add Activity</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Distance (km)</th>
+                <th>Duration (min)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in activities %}
+            <tr>
+                <td>{{ activity.get_activity_type_display }}</td>
+                <td>{{ activity.date }}</td>
+                <td>{{ activity.distance_km }}</td>
+                <td>{{ activity.duration_minutes }}</td>
+                <td><a href="{% url 'activities:activity_detail' activity.pk %}">View</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-muted">No activities logged yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ activity.get_activity_type_display }} — {{ activity.date }}</h2>
+    <ul class="list-group mb-3">
+        <li class="list-group-item">Distance: {{ activity.distance_km }} km</li>
+        <li class="list-group-item">Duration: {{ activity.duration_minutes }} minutes</li>
+        {% if pace %}
+        <li class="list-group-item">Average Pace: {{ pace }} min/km</li>
+        {% endif %}
+    </ul>
+    <a href="{% url 'activities:delete_activity' activity.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'activities:activity_list' %}" class="btn btn-secondary">Back</a>
+</div>
+{% endblock %}
