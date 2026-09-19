@@ -9,7 +9,7 @@
 <nav class="nav flex-column sidebar-nav" aria-label="Staff menu">
     <p class="sidebar-label">Staff Menu</p>
     <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="{% url 'accounts:staff_dashboard' %}"><i class="bi bi-grid"></i><span>Dashboard</span></a>
-    <a class="nav-link {% if active_sidebar == 'attendance' %}active{% endif %}" href="#"><i class="bi bi-qr-code-scan"></i><span>Attendance</span></a>
+    <a class="nav-link {% if active_sidebar == 'attendance' %}active{% endif %}" href="{% url 'attendance:staff_attendance' %}"><i class="bi bi-qr-code-scan"></i><span>Attendance</span></a>
     <a class="nav-link {% if active_sidebar == 'members' %}active{% endif %}" href="{% url 'accounts:staff_member_list' %}"><i class="bi bi-people"></i><span>Members</span></a>
     <a class="nav-link {% if active_sidebar == 'sessions' %}active{% endif %}" href="#"><i class="bi bi-calendar3"></i><span>Sessions</span></a>
     <a class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}" href="#"><i class="bi bi-calendar-check"></i><span>Bookings</span></a>

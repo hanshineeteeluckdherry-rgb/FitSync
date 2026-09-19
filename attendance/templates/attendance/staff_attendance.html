@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Staff Attendance</h2>
+
+    <div class="card p-3 mb-4">
+        <h5>Check-in / Check-out</h5>
+        <form method="post" class="row g-2 align-items-end">
+            {% csrf_token %}
+            <div class="col-auto">
+                <label class="form-label">Member ID or Email</label>
+                <input type="text" class="form-control" name="member_identifier" placeholder="Enter member ID">
+            </div>
+            <div class="col-auto">
+                <button type="submit" name="action" value="check_in" class="btn btn-success">Check In</button>
+            </div>
+            <div class="col-auto">
+                <button type="submit" name="action" value="check_out" class="btn btn-secondary">Check Out</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card p-3">
+        <h5>Today's Attendance</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in today_records %}
+                <tr>
+                    <td>{{ record.member }}</td>
+                    <td>{{ record.check_in_time|time:"H:i" }}</td>
+                    <td>{{ record.check_out_time|time:"H:i"|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-muted">No attendance records yet today.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
