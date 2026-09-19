@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "layouts/staff_base.html" %}
 
-{% block content %}
+{% block dashboard_content %}
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
