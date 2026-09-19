@@ -26,6 +26,14 @@
         </form>
     </div>
 
+    <div class="card p-3 mb-4">
+    <h5>Current Occupancy</h5>
+    <p class="fs-4">{{ current_occupancy }} / {{ max_capacity }}</p>
+    {% if current_occupancy >= max_capacity %}
+        <div class="alert alert-danger">Gym is at capacity</div>
+    {% endif %}
+</div>
+
     <div class="card p-3">
         <h5>Today's Attendance</h5>
         <table class="table table-striped">

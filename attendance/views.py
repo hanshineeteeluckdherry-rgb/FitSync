@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
 
+GYM_MAX_CAPACITY = 50
+
 User = get_user_model()
 
 # Create your views here.
@@ -69,7 +71,13 @@ def staff_attendance(request):
         check_in_time__date=today
     ).select_related("member")
 
+    current_occupancy = AttendanceRecord.objects.filter(
+        check_out_time__isnull = True
+    ).count()
+
     context = {
         "today_records": today_records,
+        "current_occupancy": current_occupancy,
+        "max_capacity": GYM_MAX_CAPACITY,
     }
     return render(request, "attendance/staff_attendance.html", context)
