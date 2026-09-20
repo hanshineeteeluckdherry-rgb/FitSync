@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ package.name }} Membership | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/memberships.css' %}">{% endblock %}
+{% block content %}
+<section class="public-membership-hero">
+    <div class="container py-5">
+        <div class="row align-items-center g-5 public-plan-detail">
+            <div class="col-lg-7">
+                <a class="membership-back-link" href="{% url 'memberships:public_packages' %}"><i class="bi bi-arrow-left"></i> All memberships</a>
+                <span class="membership-eyebrow d-block mt-4">{{ package.audience|default:"FITSYNC MEMBERSHIP" }}</span>
+                <h1>{{ package.name }}</h1>
+                <p class="lead">{{ package.description }}</p>
+                <ul class="plan-feature-list detail-features">
+                    {% for feature in package.feature_list %}<li><i class="bi bi-check-circle-fill"></i>{{ feature }}</li>{% endfor %}
+                </ul>
+            </div>
+            <div class="col-lg-5">
+                <div class="membership-plan-card featured detail-card">
+                    <h2>{{ package.name }}</h2>
+                    <div class="membership-price">Rs {{ package.price|floatformat:0 }} <small>/month</small></div>
+                    <p>{{ package.duration_months }} month membership</p>
+                    {% if request.user.is_authenticated %}
+                        <a class="btn btn-primary-fitsync w-100" href="{% url 'memberships:checkout' package.id %}">Choose Plan</a>
+                    {% else %}
+                        <a class="btn btn-primary-fitsync w-100" href="{% url 'memberships:auth_required' package.id %}">Sign in to Continue</a>
+                        <p class="small text-muted text-center mt-3 mb-0">New to FitSync? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

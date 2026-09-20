@@ -1,0 +1,53 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Membership{% endblock %}
+{% block dashboard_heading %}Membership{% endblock %}
+{% block extra_css %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/memberships.css' %}">{% endblock %}
+{% block dashboard_content %}
+<section class="membership-plan-screen">
+    <div class="membership-page-head">
+        <h1>Membership</h1>
+        <p>Manage your gym membership</p>
+    </div>
+
+    {% include "memberships/_member_tabs.html" %}
+
+    <div class="membership-plan-intro text-center">
+        <h2>Choose Your Plan</h2>
+        <p>Flexible memberships designed to support every stage of your fitness journey.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center membership-member-grid">
+        {% for package in packages %}
+        <div class="col-sm-6 col-xl-3 d-flex">
+            <article class="membership-plan-card plan-{{ package.slug }} {% if package.is_featured %}featured{% endif %}">
+                {% if package.is_featured %}<span class="popular-pill">Most Popular</span>{% endif %}
+
+                <h3>{{ package.name }}</h3>
+                <div class="membership-price">
+                    <span>Rs {{ package.price|floatformat:0 }}</span><small>/month</small>
+                </div>
+
+                <ul class="plan-feature-list">
+                    {% for feature in package.feature_list %}
+                    <li><i class="bi bi-check-circle"></i><span>{{ feature }}</span></li>
+                    {% endfor %}
+                </ul>
+
+                <a class="btn {% if package.is_featured %}btn-primary-fitsync{% else %}btn-secondary-fitsync{% endif %} w-100" href="{% url 'memberships:checkout' package.id %}">
+                    {% if current_membership and current_membership.package_id == package.id %}
+                        Renew Plan
+                    {% elif package.is_featured %}
+                        Get Started
+                    {% else %}
+                        Choose Plan
+                    {% endif %}
+                </a>
+            </article>
+        </div>
+        {% empty %}
+        <div class="empty-state">No membership plans are available.</div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -18,7 +18,7 @@
             <ul class="navbar-nav mx-auto align-items-xl-center">
                 <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Memberships</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'memberships' and not request.user.is_authenticated %}active{% endif %}" href="{% url 'memberships:public_packages' %}">Memberships</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Bookings</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Our Team</a></li>

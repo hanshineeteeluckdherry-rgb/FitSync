@@ -1,0 +1,5 @@
+<div class="membership-tabs">
+    <a class="membership-tab {% if membership_tab == 'plans' %}active{% endif %}" href="{% url 'memberships:member_packages' %}">Available Plans</a>
+    <a class="membership-tab {% if membership_tab == 'current' %}active{% endif %}" href="{% url 'memberships:current_membership' %}">Current Membership</a>
+    <a class="membership-tab {% if membership_tab == 'history' %}active{% endif %}" href="{% url 'memberships:membership_history' %}">History</a>
+</div>
