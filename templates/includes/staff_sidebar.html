@@ -14,5 +14,5 @@
     <a class="nav-link {% if active_sidebar == 'sessions' %}active{% endif %}" href="#"><i class="bi bi-calendar3"></i><span>Sessions</span></a>
     <a class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}" href="#"><i class="bi bi-calendar-check"></i><span>Bookings</span></a>
     <a class="nav-link {% if active_sidebar == 'assignments' %}active{% endif %}" href="#"><i class="bi bi-person-check"></i><span>Coach Assignments</span></a>
-    <a class="nav-link {% if active_sidebar == 'reports' %}active{% endif %}" href="#"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
+    <a class="nav-link {% if active_sidebar == 'reports' %}active{% endif %}" href="{% url 'attendance:attendance_report' %}"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
 </nav>

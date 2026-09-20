@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "layouts/staff_base.html" %}
 
-{% block content %}
+{% block dashboard_content %}
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
@@ -32,6 +32,11 @@
     {% if current_occupancy >= max_capacity %}
         <div class="alert alert-danger">Gym is at capacity</div>
     {% endif %}
+</div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+    <h5 class="mb-0">Today's Attendance</h5>
+    <a href="{% url 'attendance:attendance_history' %}" class="btn btn-sm btn-outline-light">View Full History</a>
 </div>
 
     <div class="card p-3">
