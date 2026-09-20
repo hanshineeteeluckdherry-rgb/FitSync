@@ -5,6 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
+    <script>
+        (function () {
+            const saved = localStorage.getItem("fitsync-theme");
+            const theme = saved === "dark" ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+            document.documentElement.setAttribute("data-bs-theme", theme);
+        })();
+    </script>
     <title>{% block title %}FitSync{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

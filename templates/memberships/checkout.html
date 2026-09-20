@@ -1,0 +1,27 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Complete Payment{% endblock %}
+{% block dashboard_heading %}Membership{% endblock %}
+{% block extra_css %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/memberships.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="payment-shell">
+    <section class="payment-visual" style="background-image: linear-gradient(180deg, rgba(5,17,39,.38), rgba(5,38,45,.74)), url('{% static 'img/membership-payment-hero.jpeg' %}');">
+        <a class="membership-back-link text-white" href="{% url 'memberships:member_packages' %}"><i class="bi bi-arrow-left"></i> Back</a>
+        <div class="payment-copy"><h1>RUN THE GYM.<br>OWN THE<br><span>MOMENT.</span></h1><p>FitSync connects gym members with their gym, coaches, and classes while keeping membership simple and accessible.</p></div>
+    </section>
+    <section class="payment-form-panel">
+        <div class="payment-form-inner">
+            <h2>Complete Payment</h2><p class="text-muted">{{ package.name }} Membership</p>
+            <div class="checkout-price-row"><span>Membership price</span><strong>Rs {{ package.price|floatformat:0 }}</strong></div>
+            <div class="demo-payment-note"><i class="bi bi-info-circle"></i> Demo payment only. Do not enter real card details.</div>
+            <form method="post" novalidate>{% csrf_token %}
+                {% for field in form %}
+                    {% if field.name == 'simulate_failure' %}<div class="form-check mb-3">{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+                    {% else %}<div class="mb-3"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>{% endif %}
+                {% endfor %}
+                <button class="btn btn-primary-fitsync w-100 py-3" type="submit"><i class="bi bi-lock-fill me-2"></i>Pay Rs {{ package.price|floatformat:0 }}</button>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}

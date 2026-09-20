@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign in to continue | FitSync{% endblock %}
+{% block body_class %}membership-auth-page-body{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main_class %}membership-auth-page-main{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+<style>
+    html,
+    body {
+        min-height: 100%;
+        margin: 0;
+    }
+
+    .membership-auth-page-body {
+        margin: 0 !important;
+        overflow-x: hidden;
+        background: #0a1834 !important;
+        color: #e8eef6;
+    }
+
+    .membership-auth-page-main {
+        min-height: 100vh;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .membership-auth-screen {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: minmax(520px, 49.8%) minmax(0, 50.2%);
+        background: linear-gradient(
+            to bottom,
+            #0a1834 0%,
+            #0a1834 38.942%,
+            #1f4b42 100%
+        );
+        font-family: "Inter", sans-serif;
+    }
+
+    .membership-auth-left {
+        position: relative;
+        min-height: 100vh;
+        overflow: hidden;
+        isolation: isolate;
+    }
+
+    .membership-auth-left::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -3;
+        background-image: url("{% static 'img/login-hero.jpeg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transform: scale(1.01);
+    }
+
+    .membership-auth-left::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background:
+            linear-gradient(126deg, rgba(0, 212, 170, 0.08), rgba(68, 136, 255, 0.04)),
+            linear-gradient(rgba(5, 17, 38, 0.72), rgba(5, 17, 38, 0.82));
+    }
+
+    .membership-auth-back {
+        position: absolute;
+        top: 14px;
+        left: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        color: #ffffff;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 3;
+    }
+
+    .membership-auth-back:hover {
+        color: #00e5a0;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .membership-auth-story {
+        position: absolute;
+        left: 48px;
+        top: 26.1%;
+        width: min(536px, calc(100% - 96px));
+    }
+
+    .membership-auth-quote {
+        margin: 0;
+        color: #ffffff;
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(26px, 2.1vw, 30px);
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    .membership-auth-reviewer {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .membership-auth-reviewer img {
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        object-fit: cover;
+        object-position: center top;
+        border-radius: 50%;
+    }
+
+    .membership-auth-reviewer strong,
+    .membership-auth-reviewer span {
+        display: block;
+    }
+
+    .membership-auth-reviewer strong {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+    }
+
+    .membership-auth-reviewer span {
+        color: #5b748f;
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .membership-auth-stats {
+        display: flex;
+        gap: 24px;
+        margin-top: 32px;
+    }
+
+    .membership-auth-stat {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .membership-auth-stat strong {
+        color: #00d4aa;
+        font-family: "Outfit", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 28px;
+    }
+
+    .membership-auth-stat span {
+        color: #5b748f;
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .membership-auth-left-footer {
+        position: absolute;
+        left: 31px;
+        right: 31px;
+        bottom: 28px;
+    }
+
+    .membership-auth-left-footer > p {
+        width: min(384px, 100%);
+        margin: 0;
+        color: rgba(232, 238, 246, 0.60);
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .membership-auth-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .membership-auth-pill {
+        padding: 6px 12px;
+        color: #00e5a0;
+        background: rgba(0, 229, 160, 0.12);
+        border: 1px solid rgba(0, 229, 160, 0.20);
+        border-radius: 999px;
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .membership-auth-tagline {
+        display: block;
+        margin-top: 26px;
+        color: #ffffff;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 20px;
+        letter-spacing: 0.18em;
+    }
+
+    .membership-auth-right {
+        min-width: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 216px 48px 72px;
+    }
+
+    .membership-auth-content {
+        width: min(560px, 100%);
+        text-align: center;
+    }
+
+    .membership-auth-lock {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto;
+        display: grid;
+        place-items: center;
+        color: #00e5a0;
+        background: rgba(0, 229, 160, 0.10);
+        border: 1px solid rgba(0, 229, 160, 0.25);
+        border-radius: 50%;
+        font-size: 28px;
+    }
+
+    .membership-auth-eyebrow {
+        margin-top: 32px;
+        color: #00e5a0;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 19px;
+        letter-spacing: 0.15em;
+    }
+
+    .membership-auth-title {
+        margin: 14px 0 0;
+        color: #e8eef6;
+        font-size: clamp(42px, 4vw, 52px);
+        font-weight: 900;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+    }
+
+    .membership-auth-description {
+        width: min(440px, 100%);
+        margin: 20px auto 0;
+        color: #64748b;
+        font-size: 17px;
+        line-height: 28px;
+    }
+
+    .membership-auth-actions {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 40px;
+    }
+
+    .membership-auth-actions a {
+        min-width: 148px;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 22px;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+
+    .membership-auth-signin {
+        color: #0a1628;
+        background: #00e5a0;
+        border: 1px solid #00e5a0;
+    }
+
+    .membership-auth-signin:hover {
+        color: #0a1628;
+        background: #13efad;
+    }
+
+    .membership-auth-register {
+        color: #e8eef6;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.20);
+    }
+
+    .membership-auth-register:hover {
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .membership-auth-note {
+        margin: 24px 0 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 21px;
+    }
+
+    .membership-auth-note a {
+        color: #00e5a0;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    @media (max-width: 1050px) {
+        .membership-auth-screen {
+            grid-template-columns: 1fr;
+        }
+
+        .membership-auth-left {
+            display: none;
+        }
+
+        .membership-auth-right {
+            align-items: center;
+            padding: 48px 24px;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .membership-auth-title {
+            font-size: 38px;
+        }
+
+        .membership-auth-actions {
+            flex-direction: column;
+        }
+
+        .membership-auth-actions a {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="membership-auth-screen">
+    <aside class="membership-auth-left">
+        <a class="membership-auth-back" href="{% url 'memberships:public_packages' %}">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back</span>
+        </a>
+
+        <div class="membership-auth-story">
+            <blockquote class="membership-auth-quote">
+                "FitSync transformed how I track my training. My coach and I are perfectly in sync."
+            </blockquote>
+
+            <div class="membership-auth-reviewer">
+                <img src="{% static 'img/lionel-messi.png' %}" alt="Lionel Messi">
+                <div>
+                    <strong>Lionel Messi</strong>
+                    <span>Premium Member · 18 months</span>
+                </div>
+            </div>
+
+            <div class="membership-auth-stats">
+                <div class="membership-auth-stat">
+                    <strong>1,400+</strong>
+                    <span>Members</span>
+                </div>
+                <div class="membership-auth-stat">
+                    <strong>6</strong>
+                    <span>Coaches</span>
+                </div>
+                <div class="membership-auth-stat">
+                    <strong>4.9★</strong>
+                    <span>Rating</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="membership-auth-left-footer">
+            <p>
+                Sign in to your FitSync account to access your membership,
+                track workouts, and manage bookings.
+            </p>
+
+            <div class="membership-auth-pills">
+                <span class="membership-auth-pill">Memberships</span>
+                <span class="membership-auth-pill">Class Bookings</span>
+                <span class="membership-auth-pill">Workout Plans</span>
+                <span class="membership-auth-pill">Progress Tracking</span>
+            </div>
+
+            <strong class="membership-auth-tagline">TRAIN. TRACK. TRANSFORM.</strong>
+        </div>
+    </aside>
+
+    <div class="membership-auth-right">
+        <div class="membership-auth-content">
+            <div class="membership-auth-lock">
+                <i class="bi bi-lock"></i>
+            </div>
+
+            <div class="membership-auth-eyebrow">AUTHENTICATION REQUIRED</div>
+
+            <h1 class="membership-auth-title">Sign in to continue</h1>
+
+            <p class="membership-auth-description">
+                You need to sign in or create an account to access Membership Management.
+            </p>
+
+            <div class="membership-auth-actions">
+                <a class="membership-auth-signin"
+                   href="{% url 'accounts:login' %}?next={{ next_url|urlencode }}">
+                    Sign In
+                </a>
+
+                <a class="membership-auth-register"
+                   href="{% url 'accounts:register' %}?next={{ next_url|urlencode }}">
+                    Create Account
+                </a>
+            </div>
+
+            <p class="membership-auth-note">
+                Already a member?
+                <a href="{% url 'accounts:login' %}?next={{ next_url|urlencode }}">
+                    Sign in to access your account
+                </a>.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

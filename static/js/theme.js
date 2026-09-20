@@ -1,50 +1,70 @@
-/* Simple FitSync light/dark mode toggle */
-document.addEventListener("DOMContentLoaded", function () {
+/* FitSync light/dark theme toggle */
+(function () {
+    const STORAGE_KEY = "fitsync-theme";
     const root = document.documentElement;
-    const themeButtons = document.querySelectorAll("[data-theme-toggle]");
 
-    let savedTheme = localStorage.getItem("fitsync-theme");
-
-    if (!savedTheme) {
-        savedTheme = "light";
+    function getSavedTheme() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved === "dark" ? "dark" : "light";
     }
 
-    setTheme(savedTheme);
+    function updateButtons(theme) {
+        document.querySelectorAll("[data-theme-toggle]").forEach(function (button) {
+            const icon = button.querySelector("[data-theme-icon]");
+            const isDark = theme === "dark";
 
-    themeButtons.forEach(function (button) {
-        button.addEventListener("click", function () {
-            const currentTheme = root.getAttribute("data-theme");
+            button.setAttribute("aria-pressed", isDark ? "true" : "false");
+            button.setAttribute(
+                "aria-label",
+                isDark ? "Switch to light mode" : "Switch to dark mode"
+            );
+            button.setAttribute(
+                "title",
+                isDark ? "Switch to light mode" : "Switch to dark mode"
+            );
 
-            if (currentTheme === "dark") {
-                setTheme("light");
-                localStorage.setItem("fitsync-theme", "light");
-            } else {
-                setTheme("dark");
-                localStorage.setItem("fitsync-theme", "dark");
+            if (icon) {
+                icon.className = isDark ? "bi bi-sun-fill" : "bi bi-moon-stars-fill";
             }
         });
-    });
+    }
 
-    function setTheme(theme) {
+    function applyTheme(theme, saveTheme) {
         root.setAttribute("data-theme", theme);
         root.setAttribute("data-bs-theme", theme);
 
-        themeButtons.forEach(function (button) {
-            const icon = button.querySelector("[data-theme-icon]");
+        if (document.body) {
+            document.body.setAttribute("data-theme", theme);
+        }
 
-            if (theme === "dark") {
-                button.setAttribute("aria-label", "Switch to light mode");
+        if (saveTheme) {
+            localStorage.setItem(STORAGE_KEY, theme);
+        }
 
-                if (icon) {
-                    icon.className = "bi bi-sun";
-                }
-            } else {
-                button.setAttribute("aria-label", "Switch to dark mode");
-
-                if (icon) {
-                    icon.className = "bi bi-moon-stars";
-                }
-            }
-        });
+        updateButtons(theme);
     }
-});
+
+    // Apply the saved theme as early as possible.
+    applyTheme(getSavedTheme(), false);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        applyTheme(getSavedTheme(), false);
+
+        document.addEventListener("click", function (event) {
+            const button = event.target.closest("[data-theme-toggle]");
+
+            if (!button) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const currentTheme = root.getAttribute("data-theme") === "dark"
+                ? "dark"
+                : "light";
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+            applyTheme(newTheme, true);
+        });
+    });
+})();

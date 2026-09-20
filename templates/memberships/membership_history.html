@@ -1,0 +1,15 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Membership History{% endblock %}
+{% block dashboard_heading %}Membership{% endblock %}
+{% block extra_css %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/memberships.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="membership-page-head"><h1>Membership</h1><p>Manage your gym membership</p></div>
+{% include "memberships/_member_tabs.html" %}
+<div class="membership-table-card mt-4">
+    <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Plan</th><th>Period</th><th>Price</th><th>Status</th><th>Receipt</th></tr></thead><tbody>
+    {% for membership in memberships %}<tr><td><strong>{{ membership.package.name }}</strong></td><td>{{ membership.start_date|date:"d M Y" }} – {{ membership.end_date|date:"d M Y" }}</td><td>Rs {{ membership.package.price|floatformat:0 }}</td><td><span class="status-pill {% if membership.display_status == 'ACTIVE' %}success{% elif membership.display_status == 'CANCELLED' %}danger{% endif %}">{{ membership.get_status_display }}</span></td><td>{% with payment=membership.payments.first %}{% if payment %}<a href="{% url 'memberships:receipt' payment.id %}">View</a>{% else %}—{% endif %}{% endwith %}</td></tr>
+    {% empty %}<tr><td colspan="5" class="text-center py-5 text-muted">No membership history yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+</div>
+{% endblock %}

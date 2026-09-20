@@ -9,8 +9,8 @@
 <nav class="nav flex-column sidebar-nav" aria-label="Member menu">
     <p class="sidebar-label">Member Menu</p>
     <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="{% url 'accounts:member_dashboard' %}"><i class="bi bi-grid"></i><span>Dashboard</span></a>
-    <a class="nav-link {% if active_sidebar == 'membership' %}active{% endif %}" href="#"><i class="bi bi-credit-card"></i><span>Membership</span></a>
-    <a class="nav-link {% if active_sidebar == 'payments' %}active{% endif %}" href="#"><i class="bi bi-wallet2"></i><span>Payments</span></a>
+    <a class="nav-link {% if active_sidebar == 'membership' %}active{% endif %}" href="{% url 'memberships:member_packages' %}"><i class="bi bi-credit-card"></i><span>Membership</span></a>
+    <a class="nav-link {% if active_sidebar == 'payments' %}active{% endif %}" href="{% url 'memberships:payment_history' %}"><i class="bi bi-wallet2"></i><span>Payments</span></a>
     <a class="nav-link {% if active_sidebar == 'qr' %}active{% endif %}" href="{% url 'attendance:my_qr_code' %}"><i class="bi bi-qr-code"></i><span>My QR Code</span></a>
     <a class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}" href="#"><i class="bi bi-calendar-check"></i><span>Bookings</span></a>
     <a class="nav-link {% if active_sidebar == 'plans' %}active{% endif %}" href="#"><i class="bi bi-clipboard2-pulse"></i><span>Workout Plans</span></a>
