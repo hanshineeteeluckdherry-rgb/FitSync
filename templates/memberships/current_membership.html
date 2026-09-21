@@ -1,0 +1,33 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Current Membership{% endblock %}
+{% block dashboard_heading %}Membership{% endblock %}
+{% block extra_css %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/memberships.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="membership-page-head"><h1>Membership</h1><p>Manage your gym membership</p></div>
+{% include "memberships/_member_tabs.html" %}
+{% if membership %}
+<div class="current-membership-card">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div><span class="membership-eyebrow">CURRENT PLAN</span><h2>{{ membership.package.name }}</h2><p>Active until {{ membership.end_date|date:"d M Y" }}</p></div>
+        <span class="status-pill success">Active</span>
+    </div>
+    <div class="row g-3 membership-stats">
+        <div class="col-6 col-lg-3"><div class="membership-stat"><span>Started</span><strong>{{ membership.start_date|date:"d M Y" }}</strong></div></div>
+        <div class="col-6 col-lg-3"><div class="membership-stat"><span>Expires</span><strong>{{ membership.end_date|date:"d M Y" }}</strong></div></div>
+        <div class="col-6 col-lg-3"><div class="membership-stat"><span>Plan Price</span><strong>Rs {{ membership.package.price|floatformat:0 }}</strong></div></div>
+        <div class="col-6 col-lg-3"><div class="membership-stat"><span>Status</span><strong>Active</strong></div></div>
+    </div>
+    <div class="d-flex flex-wrap gap-2 mt-4">
+        <form method="post" action="{% url 'memberships:renew_membership' membership.id %}">{% csrf_token %}<button class="btn btn-primary-fitsync" type="submit">Renew Plan</button></form>
+        <a class="btn btn-secondary-fitsync" href="{% url 'memberships:member_packages' %}">Explore Plans</a>
+    </div>
+</div>
+<div class="included-features-card mt-4">
+    <h3>Included Benefits</h3>
+    <div class="row g-2 mt-2">{% for feature in membership.package.feature_list %}<div class="col-md-6"><span class="benefit-item"><i class="bi bi-check-circle-fill"></i>{{ feature }}</span></div>{% endfor %}</div>
+</div>
+{% else %}
+<div class="empty-state mt-4"><div class="empty-state-icon"><i class="bi bi-card-checklist"></i></div><h2 class="h4">No active membership</h2><p class="text-muted">Choose a plan to activate your FitSync membership.</p><a class="btn btn-primary-fitsync" href="{% url 'memberships:member_packages' %}">Choose a Plan</a></div>
+{% endif %}
+{% endblock %}

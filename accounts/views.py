@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .decorators import admin_required, coach_required, member_required, role_required, staff_required
 from .forms import (
@@ -26,6 +27,9 @@ def register(request):
         user = form.save()
         login(request, user)
         messages.success(request, "Welcome to FitSync. Your account has been created.")
+        next_url = request.POST.get("next") or request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            return redirect(next_url)
         return redirect("accounts:member_dashboard")
 
     fitness_fields = {"age", "height_cm", "current_weight_kg", "fitness_goal"}
@@ -49,6 +53,9 @@ def login_view(request):
         if not form.cleaned_data.get("remember_me"):
             request.session.set_expiry(0)
         messages.success(request, f"Welcome back, {user.first_name or 'member'}.")
+        next_url = request.POST.get("next") or request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            return redirect(next_url)
         return redirect("accounts:dashboard")
 
     return render(request, "accounts/login.html", {"form": form})
