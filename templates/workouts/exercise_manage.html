@@ -1,0 +1,15 @@
+{% extends layout_template %}
+{% load static %}
+{% block page_title %}Exercise Management{% endblock %}
+{% block dashboard_heading %}Exercise Library{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-page">
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+        <div class="page-heading mb-0"><h1>Exercise Library</h1><p>Create, edit or deactivate exercises used in workout plans.</p></div>
+        <a class="btn btn-primary-fitsync align-self-md-start" href="{% url 'workouts:exercise_create' %}"><i class="bi bi-plus-lg me-1"></i>Add Exercise</a>
+    </div>
+    <form class="mb-3" method="get"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input class="form-control" type="search" name="search" value="{{ search }}" placeholder="Search exercises..."><button class="btn btn-secondary-fitsync" type="submit">Search</button></div></form>
+    <div class="workout-panel overflow-hidden"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Exercise</th><th>Muscle</th><th>Equipment</th><th>Difficulty</th><th>Status</th><th>Actions</th></tr></thead><tbody>{% for exercise in exercises %}<tr><td>{{ exercise.name }}</td><td>{{ exercise.get_category_display }}</td><td>{{ exercise.get_equipment_display }}</td><td>{{ exercise.get_difficulty_display }}</td><td>{% if exercise.is_active %}<span class="badge badge-fitsync">Active</span>{% else %}<span class="badge text-bg-secondary">Inactive</span>{% endif %}</td><td><div class="d-flex gap-2"><a class="btn btn-sm btn-secondary-fitsync" href="{% url 'workouts:exercise_edit' exercise.id %}">Edit</a><form method="post" action="{% url 'workouts:exercise_toggle' exercise.id %}">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary" type="submit">{% if exercise.is_active %}Deactivate{% else %}Activate{% endif %}</button></form></div></td></tr>{% empty %}<tr><td colspan="6" class="text-center py-4 text-muted">No exercises found.</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
+{% endblock %}
