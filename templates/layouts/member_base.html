@@ -36,10 +36,12 @@
                 <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
             </button>
         </header>
-        <div class="dashboard-content container-fluid">
-            {% block dashboard_content %}{% endblock %}
+        <div class="dashboard-scroll-content">
+             <div class="dashboard-content container-fluid">
+                  {% block dashboard_content %}{% endblock %}
+              </div>
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %} 
 {% block site_footer %}{% endblock %}

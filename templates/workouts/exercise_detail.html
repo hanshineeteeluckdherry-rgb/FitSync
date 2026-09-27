@@ -1,0 +1,26 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}{{ exercise.name }}{% endblock %}
+{% block dashboard_heading %}Workout{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-narrow">
+    <a class="back-link" href="{% url 'workouts:exercise_library' %}">← Exercise Library</a>
+    <div class="workout-panel p-4 mt-3">
+        <div class="row g-4 align-items-start">
+            <div class="col-md-5">{% if exercise.image %}<img class="exercise-detail-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">{% else %}<img class="exercise-detail-image" src="{% static exercise.fallback_image %}" alt="{{ exercise.get_category_display }} exercise">{% endif %}</div>
+            <div class="col-md-7">
+                <div class="d-flex flex-wrap gap-2 mb-2"><span class="badge badge-fitsync">{{ exercise.get_category_display }}</span><span class="badge text-bg-secondary">{{ exercise.get_difficulty_display }}</span></div>
+                <h1 class="h3">{{ exercise.name }}</h1>
+                <p class="text-muted">{{ exercise.description|default:"Exercise from the FitSync exercise library." }}</p>
+                <dl class="row small">
+                    <dt class="col-5">Equipment</dt><dd class="col-7">{{ exercise.get_equipment_display }}</dd>
+                    <dt class="col-5">Secondary muscles</dt><dd class="col-7">{{ exercise.secondary_muscles|default:"—" }}</dd>
+                    <dt class="col-5">Intensity</dt><dd class="col-7">{{ exercise.get_intensity_display }}</dd>
+                </dl>
+                <h2 class="h6 mt-4">Instructions</h2><p class="mb-0">{{ exercise.instructions|linebreaksbr|default:"Follow proper exercise form and use a suitable weight for your level." }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

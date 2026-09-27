@@ -1,0 +1,67 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Exercise Library{% endblock %}
+{% block dashboard_heading %}Workout Plans{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="exercise-library-page">
+    <div class="workout-builder-header">
+        <div class="page-heading">
+            <h1>Exercise Library</h1>
+            <p>Browse exercises by muscle group, equipment and difficulty.</p>
+        </div>
+        <a class="btn workout-back-button" href="{% url 'workouts:plans' %}"><i class="bi bi-arrow-left me-2"></i>Workout Plans</a>
+    </div>
+
+    <div class="workout-tabs mb-4">
+        <a href="{% url 'workouts:plans' %}">Workout Plans</a>
+        <a class="active" href="{% url 'workouts:exercise_library' %}">Exercise Library</a>
+        <a href="{% url 'workouts:history' %}">History</a>
+    </div>
+
+    <form method="get" class="exercise-filters row g-2 mb-4">
+        <div class="col-lg-7">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input class="form-control" type="search" name="search" value="{{ search }}" placeholder="Search exercises, muscles or equipment...">
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <select class="form-select" name="muscle">
+                <option value="">All Muscles</option>
+                {% for value, label in muscle_choices %}<option value="{{ value }}" {% if selected_muscle == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <select class="form-select" name="equipment">
+                <option value="">All Equipment</option>
+                {% for value, label in equipment_choices %}<option value="{{ value }}" {% if selected_equipment == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="col-lg-1 d-grid"><button class="btn btn-primary-fitsync" type="submit">Filter</button></div>
+    </form>
+
+    <div class="exercise-grid">
+        {% for exercise in exercises %}
+            <a class="exercise-card text-decoration-none" href="{% url 'workouts:exercise_detail' exercise.id %}">
+                <span class="exercise-muscle-badge">{{ exercise.get_category_display }}</span>
+                {% if exercise.image %}
+                    <img class="exercise-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">
+                {% else %}
+                    <img class="exercise-image" src="{% static exercise.library_image %}" alt="{{ exercise.name }}" onerror="this.onerror=null;this.src='{% static exercise.fallback_image %}';">
+                {% endif %}
+                <div class="exercise-card-body">
+                    <strong class="exercise-card-name">{{ exercise.name }}</strong>
+                    <p class="exercise-description">{{ exercise.description|default:"Exercise from the FitSync library." }}</p>
+                    <div class="exercise-card-footer">
+                        <span class="exercise-equipment"><i class="bi bi-tools"></i>{{ exercise.get_equipment_display }}</span>
+                        <span class="difficulty difficulty-{{ exercise.difficulty|lower }}">{{ exercise.get_difficulty_display }}</span>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <div class="workout-empty-state grid-empty"><h3>No exercises found</h3><p>Try another search or filter.</p></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

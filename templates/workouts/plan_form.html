@@ -1,0 +1,49 @@
+{% extends layout_template %}
+{% load static %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block dashboard_heading %}Workout{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-form-wrap">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <a class="back-link" href="{% if plan %}{% url 'workouts:plan_detail' plan.id %}{% elif coach_mode %}{% url 'workouts:coach_members' %}{% else %}{% url 'workouts:plans' %}{% endif %}">← Back</a>
+            <h1 class="h3 mt-2 mb-1">{{ title }}</h1>
+            <p class="text-muted mb-0">Build a personalised plan with exercises, sets and schedule.</p>
+        </div>
+    </div>
+
+    <form method="post" class="workout-panel p-4">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <h2 class="h6 mb-3">Plan Details</h2>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="{{ form.name.id_for_label }}">Plan Name <span class="text-danger">*</span></label>
+                {{ form.name }}
+                {% for error in form.name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="{{ form.goal.id_for_label }}">Fitness Goal</label>
+                {{ form.goal }}
+            </div>
+            <div class="col-12">
+                <label class="form-label" for="{{ form.description.id_for_label }}">Description (optional)</label>
+                {{ form.description }}
+            </div>
+            <div class="col-12">
+                <label class="form-label">Workout Days (optional)</label>
+                <div class="day-picker">
+                    {% for checkbox in form.workout_days %}
+                        <label class="day-choice">{{ checkbox.tag }}<span>{{ checkbox.choice_label }}</span></label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-4">
+            <a class="btn btn-secondary-fitsync" href="{% if plan %}{% url 'workouts:plan_detail' plan.id %}{% elif coach_mode %}{% url 'workouts:coach_members' %}{% else %}{% url 'workouts:plans' %}{% endif %}">Cancel</a>
+            <button class="btn btn-primary-fitsync px-4" type="submit"><i class="bi bi-check-lg me-1"></i>Save Plan</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
