@@ -7,22 +7,34 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from memberships.models import Membership
+from datetime import date
 
 import qrcode
 import io
 import base64
+import uuid
 
 GYM_MAX_CAPACITY = 50
 
 User = get_user_model()
 
 # Create your views here.
+def has_active_membership(member):
+    return Membership.objects.filter(
+        member=member,
+        status=Membership.Status.ACTIVE,
+        end_date__gte=date.today()
+    ).exists()
+
 @login_required
 def my_qr_code(request):
     qr_code, created = MemberQRCode.objects.get_or_create(member=request.user)
 
+    qr_active = qr_code.is_active and has_active_membership(request.user)
+
     qr_image_base64 = None
-    if qr_code.is_active:
+    if qr_active:
         img = qrcode.make(str(qr_code.qr_token))
         buffer = io.BytesIO()
         img.save(buffer, format="PNG")
@@ -31,6 +43,7 @@ def my_qr_code(request):
     context = {
         "qr_code": qr_code,
         "qr_image": qr_image_base64,
+        "qr_active" : qr_active
     }
     return render(request, "attendance/my_qr_code.html", context)
 
@@ -45,11 +58,15 @@ def staff_attendance(request):
         member = None
 
         # Try QR token lookup first
-        qr_code = MemberQRCode.objects.filter(qr_token=identifier, is_active=True).first()
-        if qr_code:
-            member = qr_code.member
-        else:
-            # Fall back to email lookup
+        try:
+            uuid.UUID(identifier)
+            qr_code = MemberQRCode.objects.filter(qr_token=identifier, is_active=True).first()
+            if qr_code:
+                member = qr_code.member
+        except (ValueError, AttributeError):
+            pass
+
+        if not member:
             member = User.objects.filter(email=identifier).first()
 
         if not member:
@@ -66,10 +83,10 @@ def staff_attendance(request):
                 check_out_time__isnull = True
             ).count()
 
-            #TODO: once person 3 updates add:
-            #if not hasattr(member, "membership") or not member.membership.is_active:
-            #       messages.error(request, f"{member} does not have an active membership.")
-            # return redirect("attendance:staff_attendance")
+           
+            if not has_active_membership(member):
+                messages.error(request, f"{member} does not have an active membership.")
+                return redirect("attendance:staff_attendance")
 
             if already_checked_in:
                 messages.error(request, f"{member} is already checked in.")

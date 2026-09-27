@@ -22,7 +22,6 @@
         Member Menu
     </p>
 
-    <!-- Dashboard -->
     <a
         class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}"
         href="{% url 'accounts:member_dashboard' %}"
@@ -31,7 +30,6 @@
         <span>Dashboard</span>
     </a>
 
-    <!-- Membership -->
     <a
         class="nav-link {% if active_sidebar == 'membership' %}active{% endif %}"
         href="{% url 'memberships:member_packages' %}"
@@ -40,7 +38,6 @@
         <span>Membership</span>
     </a>
 
-    <!-- Payments -->
     <a
         class="nav-link {% if active_sidebar == 'payments' %}active{% endif %}"
         href="{% url 'memberships:payment_history' %}"
@@ -49,7 +46,6 @@
         <span>Payments</span>
     </a>
 
-    <!-- QR Code -->
     <a
         class="nav-link {% if active_sidebar == 'qr' %}active{% endif %}"
         href="{% url 'attendance:my_qr_code' %}"
@@ -58,7 +54,6 @@
         <span>My QR Code</span>
     </a>
 
-    <!-- Bookings -->
     <a
         class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}"
         href="#"
@@ -67,7 +62,6 @@
         <span>Bookings</span>
     </a>
 
-    <!-- Workout Plans -->
     <a
         class="nav-link {% if active_sidebar == 'plans' or active_sidebar == 'history' %}active{% endif %}"
         href="{% url 'workouts:plans' %}"
@@ -76,7 +70,6 @@
         <span>Workout Plans</span>
     </a>
 
-    <!-- Progress -->
     <a
         class="nav-link {% if active_sidebar == 'progress' %}active{% endif %}"
         href="{% url 'workouts:progress' %}"
@@ -85,7 +78,6 @@
         <span>Progress</span>
     </a>
 
-    <!-- Outdoor Activities -->
     <a
         class="nav-link {% if active_sidebar == 'activities' %}active{% endif %}"
         href="{% url 'activities:activity_list' %}"
@@ -94,7 +86,6 @@
         <span>Outdoor Activities</span>
     </a>
 
-    <!-- Profile -->
     <a
         class="nav-link {% if active_sidebar == 'profile' %}active{% endif %}"
         href="{% url 'accounts:profile' %}"
