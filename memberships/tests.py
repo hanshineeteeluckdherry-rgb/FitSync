@@ -37,7 +37,7 @@ class MembershipFlowTests(TestCase):
 
     def test_guest_choose_plan_uses_auth_gate(self):
         response = self.client.get(reverse("memberships:auth_required", args=[self.package.pk]))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200) 
         self.assertContains(response, "Sign in to continue")
         self.assertContains(response, "AUTHENTICATION REQUIRED")
 
