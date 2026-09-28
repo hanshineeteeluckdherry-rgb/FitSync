@@ -2,19 +2,18 @@
 {% load static %}
 {% block page_title %}Workout Plans{% endblock %}
 {% block dashboard_heading %}Workout{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
 {% block dashboard_content %}
 <div class="workout-page">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
-        <div class="page-heading mb-0">
-            <h1>Workout Plans</h1>
-            <p>Your training plans — personal and coach-assigned</p>
-        </div>
-        <a class="btn btn-primary-fitsync px-4 py-2" href="{% url 'workouts:plan_create' %}">
-            <i class="bi bi-plus-lg me-2"></i>Create New Plan
-        </a>
-    </div>
 
+      <!-- Page title -->
+     <div class="page-heading mb-0">
+        <h1>Workout Plans</h1>
+        <p>Your training plans — personal and coach-assigned</p>
+      </div>
+
+    </div>
     <div class="workout-tabs mb-4">
         <a class="active" href="{% url 'workouts:plans' %}">Workout Plans</a>
         <a href="{% url 'workouts:exercise_library' %}">Exercise Library</a>
