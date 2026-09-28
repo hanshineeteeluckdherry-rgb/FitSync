@@ -187,6 +187,7 @@ class MemberProfileForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = MemberProfile
         fields = [
+            "profile_picture",
             "phone",
             "date_of_birth",
             "emergency_contact",

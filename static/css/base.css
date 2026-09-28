@@ -693,3 +693,24 @@ body.dashboard-body .dashboard-content {
         padding: 1.25rem;
     }
 }
+
+.profile-avatar-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #00dfb3;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.profile-avatar-placeholder {
+    display: grid;
+    width: 60px;
+    height: 60px;
+    place-items: center;
+    color: #a9bad3;
+    background: rgba(16, 31, 55, 0.85);
+    border: 1px dashed #21334e;
+    border-radius: 50%;
+    font-size: 1.6rem;
+}
