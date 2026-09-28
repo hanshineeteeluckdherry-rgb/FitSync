@@ -28,6 +28,8 @@ class MemberProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="member_profile",
     )
+
+    profile_picture=models.ImageField(upload_to="profile_pics/",blank=True,null=True)
     phone = models.CharField(max_length=30, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     emergency_contact = models.CharField(max_length=100, blank=True)
