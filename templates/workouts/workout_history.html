@@ -1,1 +1,119 @@
-{% extends "layouts/member_base.html" %}{% load static %}{% block page_title %}Workout History{% endblock %}{% block dashboard_heading %}Workout{% endblock %}{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}">{% endblock %}{% block dashboard_content %}<div class="workout-page"><div class="page-heading"><h1>Workout History</h1><p>Your completed workouts and exercise records.</p></div>{% if sessions %}<div class="d-grid gap-3">{% for session in sessions %}<a class="workout-card text-decoration-none d-flex justify-content-between align-items-center gap-3" href="{% url 'workouts:history_detail' session.id %}"><div><strong>{{ session.workout_plan.name|default:"Workout" }}</strong><div class="small text-muted">{{ session.completed_at|date:"d M Y, H:i" }} · {{ session.duration_minutes|default:"—" }} min · {{ session.exercise_records.count }} exercises</div></div><i class="bi bi-chevron-right"></i></a>{% endfor %}</div>{% else %}<div class="workout-empty-state"><div class="empty-state-icon"><i class="bi bi-clock-history"></i></div><h3>No workout history yet</h3><p>Completed workouts will appear here.</p></div>{% endif %}</div>{% endblock %}
+{% extends "layouts/member_base.html" %}
+{% load static %}
+
+{% block page_title %}
+Workout History
+{% endblock %}
+
+{% block dashboard_heading %}
+Workout
+{% endblock %}
+
+{% block extra_css %}
+<!-- Workout page styling -->
+<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="workout-page">
+
+    <!-- Page title -->
+    <div class="page-heading">
+        <h1>Workout History</h1>
+        <p>Your completed workouts and exercise records.</p>
+    </div>
+
+    <!-- Navigation between workout pages -->
+    <div class="workout-tabs">
+
+        <a
+            href="{% url 'workouts:plans' %}"
+            class="workout-tab"
+        >
+            Workout Plans
+        </a>
+
+        <a
+            href="{% url 'workouts:exercise_library' %}"
+            class="workout-tab"
+        >
+            Exercise Library
+        </a>
+
+        <a
+            href="{% url 'workouts:history' %}"
+            class="workout-tab active"
+        >
+            History
+        </a>
+
+    </div>
+
+    <!-- Show completed workouts if there are any -->
+    {% if sessions %}
+
+        <div class="d-grid gap-3">
+
+            {% for session in sessions %}
+
+                <!-- One completed workout -->
+                <a
+                    class="workout-card text-decoration-none d-flex justify-content-between align-items-center gap-3"
+                    href="{% url 'workouts:history_detail' session.id %}"
+                >
+
+                    <div>
+
+                        <strong>
+                            {{ session.workout_plan.name|default:"Workout" }}
+                        </strong>
+
+                        <div class="small text-muted">
+
+                            {{ session.completed_at|date:"d M Y, H:i" }}
+
+                            ·
+
+                            {{ session.duration_minutes|default:"—" }} min
+
+                            ·
+
+                            {{ session.exercise_records.count }} exercises
+
+                        </div>
+
+                    </div>
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <!-- Message shown when history is empty -->
+        <div class="workout-empty-state">
+
+            <div class="empty-state-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+
+            <h3>
+                No workout history yet
+            </h3>
+
+            <p>
+                Completed workouts will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

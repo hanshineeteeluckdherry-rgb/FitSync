@@ -10,8 +10,8 @@
         linear-gradient(180deg, #071a32 0%, #061629 100%);
 }
 
-.dashboard-topbar:has(+ .dashboard-scroll-content .dashboard-content .workout-page),
-.dashboard-topbar:has(+ .dashboard-scroll-content .dashboard-content .exercise-library-page) {
+.dashboard-topbar:has(+ .dashboard-content .workout-page),
+.dashboard-topbar:has(+ .dashboard-content .exercise-library-page) {
     color: #f7fbff;
     background: #06162b;
     border-bottom-color: #15314d;
@@ -818,3 +818,200 @@ html[data-theme="light"] .exercise-card-name {
         align-items: stretch;
     }
 }
+
+/* =========================================================
+   WORKOUT THEME FIX
+   Makes Workout Plans, Exercise Library and Create Plan
+   use the shared FitSync light/dark theme correctly.
+   ========================================================= */
+
+/* The workout module must use the same page gradient as FitSync. */
+.dashboard-stage:has(.workout-page),
+.dashboard-stage:has(.exercise-library-page) {
+    background: var(--page-gradient) !important;
+}
+
+/* Do not cover the shared gradient with a second workout-only background. */
+.dashboard-content:has(.workout-page),
+.dashboard-content:has(.exercise-library-page) {
+    background: transparent !important;
+}
+
+/* The current layout has dashboard-scroll-content between topbar and page. */
+.dashboard-stage:has(.workout-page) > .dashboard-topbar,
+.dashboard-stage:has(.exercise-library-page) > .dashboard-topbar {
+    color: var(--text-color) !important;
+    background: var(--surface-color) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+/* -------------------------
+   LIGHT MODE
+   ------------------------- */
+html[data-theme="light"] .workout-page,
+html[data-theme="light"] .exercise-library-page,
+html[data-theme="light"] .workout-page h1,
+html[data-theme="light"] .workout-page h2,
+html[data-theme="light"] .workout-page h3,
+html[data-theme="light"] .exercise-library-page h1,
+html[data-theme="light"] .exercise-library-page h2,
+html[data-theme="light"] .exercise-library-page h3 {
+    color: #080d17 !important;
+}
+
+html[data-theme="light"] .workout-page p,
+html[data-theme="light"] .exercise-library-page p,
+html[data-theme="light"] .plan-meta,
+html[data-theme="light"] .selected-exercise-count,
+html[data-theme="light"] .exercise-description,
+html[data-theme="light"] .exercise-equipment,
+html[data-theme="light"] .chart-value,
+html[data-theme="light"] .chart-column small,
+html[data-theme="light"] .history-row small {
+    color: #5b748f !important;
+}
+
+html[data-theme="light"] .workout-panel,
+html[data-theme="light"] .workout-card,
+html[data-theme="light"] .workout-builder-panel,
+html[data-theme="light"] .exercise-card,
+html[data-theme="light"] .plan-builder-actions,
+html[data-theme="light"] .builder-motivation {
+    color: #080d17 !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: #dbe5f0 !important;
+    box-shadow: 0 10px 24px rgba(8, 13, 23, 0.08) !important;
+}
+
+/* Remove the dark grey empty-state blocks in light mode. */
+html[data-theme="light"] .workout-empty-state,
+html[data-theme="light"] .small-empty-state,
+html[data-theme="light"] .grid-empty {
+    color: #5b748f !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: #cbdce8 !important;
+}
+
+html[data-theme="light"] .workout-empty-state h3 {
+    color: #080d17 !important;
+}
+
+html[data-theme="light"] .workout-tabs {
+    border-bottom-color: #b9cad8 !important;
+}
+
+html[data-theme="light"] .workout-tabs a,
+html[data-theme="light"] .workout-tabs span {
+    color: #7890a9 !important;
+}
+
+html[data-theme="light"] .workout-tabs a:hover,
+html[data-theme="light"] .workout-tabs a.active,
+html[data-theme="light"] .workout-tabs span.active {
+    color: #00ad8a !important;
+}
+
+html[data-theme="light"] .count-badge {
+    color: #5b748f !important;
+    background: #eef6f8 !important;
+    border-color: #d6e4ee !important;
+}
+
+/* Forms and filters in both Workout Plans and Exercise Library. */
+html[data-theme="light"] .workout-page .form-control,
+html[data-theme="light"] .workout-page .form-select,
+html[data-theme="light"] .exercise-library-page .form-control,
+html[data-theme="light"] .exercise-library-page .form-select,
+html[data-theme="light"] .builder-search input,
+html[data-theme="light"] .workout-back-button,
+html[data-theme="light"] .builder-clear-button,
+html[data-theme="light"] .exercise-filters .input-group-text {
+    color: #080d17 !important;
+    background: #ffffff !important;
+    border-color: #d6e4ee !important;
+}
+
+html[data-theme="light"] .workout-page .form-control::placeholder,
+html[data-theme="light"] .exercise-library-page .form-control::placeholder,
+html[data-theme="light"] .builder-search input::placeholder {
+    color: #7890a9 !important;
+}
+
+html[data-theme="light"] .workout-page .form-control:focus,
+html[data-theme="light"] .workout-page .form-select:focus,
+html[data-theme="light"] .exercise-library-page .form-control:focus,
+html[data-theme="light"] .exercise-library-page .form-select:focus,
+html[data-theme="light"] .builder-search input:focus {
+    color: #080d17 !important;
+    background: #ffffff !important;
+    border-color: #00ad8a !important;
+    box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.14) !important;
+}
+
+html[data-theme="light"] .workout-page .form-label,
+html[data-theme="light"] .exercise-library-page .form-label,
+html[data-theme="light"] .exercise-card-name {
+    color: #080d17 !important;
+}
+
+html[data-theme="light"] .day-choice span {
+    color: #5b748f !important;
+    background: #ffffff !important;
+    border-color: #d6e4ee !important;
+}
+
+html[data-theme="light"] .day-choice input:checked + span {
+    color: #04131e !important;
+    background: #00d4aa !important;
+    border-color: #00d4aa !important;
+}
+
+html[data-theme="light"] .builder-search i {
+    color: #7890a9 !important;
+}
+
+html[data-theme="light"] .exercise-card-check {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-color: #91a7ba !important;
+}
+
+html[data-theme="light"] .builder-exercise-card.selected .exercise-card-check {
+    color: #04131e !important;
+    background: #00d4aa !important;
+    border-color: #00d4aa !important;
+}
+
+html[data-theme="light"] .exercise-image {
+    background: #eef4f7 !important;
+}
+
+html[data-theme="light"] .history-row {
+    color: #080d17 !important;
+    border-bottom-color: #dbe5f0 !important;
+}
+
+html[data-theme="light"] .simple-chart {
+    border-bottom-color: #dbe5f0 !important;
+}
+
+/* Keep the sticky Create Plan action bar readable in light mode. */
+html[data-theme="light"] .plan-builder-actions {
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(12px);
+}
+
+/* -------------------------
+   DARK MODE
+   ------------------------- */
+html[data-theme="dark"] .dashboard-stage:has(.workout-page),
+html[data-theme="dark"] .dashboard-stage:has(.exercise-library-page) {
+    background: var(--page-gradient) !important;
+}
+
+html[data-theme="dark"] .dashboard-stage:has(.workout-page) > .dashboard-topbar,
+html[data-theme="dark"] .dashboard-stage:has(.exercise-library-page) > .dashboard-topbar {
+    color: #f7fbff !important;
+    background: #06162b !important;
+    border-bottom-color: #15314d !important;
+}
+
