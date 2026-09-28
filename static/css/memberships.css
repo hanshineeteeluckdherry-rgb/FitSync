@@ -1772,3 +1772,100 @@ html[data-theme] .figma-plan-student .figma-plan-features i {
     .membership-auth-card h1 { font-size: 38px; }
     .membership-auth-selected-plan { flex-direction: column; }
 }
+
+
+/* =========================================================
+   PUBLIC MEMBERSHIP PAGE - USE THE SHARED FITSYNC NAVBAR
+   AND FOOTER FROM templates/base.html
+   ========================================================= */
+
+/* The public membership page no longer creates its own navbar.
+   base.html includes the same navbar used by the Home page. */
+.figma-membership-public-main {
+    min-height: 982px;
+    margin: 0;
+    padding: 0 2rem 4rem;
+    box-sizing: border-box;
+}
+
+.figma-public-memberships {
+    min-height: 900px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* The heading/cards are positioned relative to the membership
+   content area, not relative to a custom navbar. */
+.figma-membership-heading-wrap {
+    top: 68px;
+}
+
+.figma-membership-card-grid {
+    top: 162px;
+}
+
+/* Keep the normal shared FitSync footer visible after the page. */
+.figma-membership-public-body .site-footer {
+    position: relative;
+    z-index: 2;
+}
+
+/* Responsive layout when Bootstrap collapses the shared navbar. */
+@media (max-width: 1199.98px) {
+    .figma-membership-public-main {
+        min-height: auto;
+        padding: 0 1.25rem 3rem;
+    }
+
+    .figma-public-memberships {
+        min-height: auto;
+        overflow: visible;
+        padding-top: 2rem;
+    }
+
+    .figma-membership-heading-wrap,
+    .figma-membership-card-grid {
+        position: static;
+        width: min(100%, 1072px);
+        transform: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .figma-membership-heading-wrap {
+        padding-top: 2rem;
+    }
+
+    .figma-membership-card-grid {
+        margin-top: 3rem;
+        padding-bottom: 2rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .figma-membership-public-main {
+        padding: 0 1rem 2.5rem;
+    }
+
+    .figma-membership-heading-wrap {
+        width: 100%;
+        padding-top: 1.5rem;
+    }
+
+    .figma-membership-heading-wrap h1 {
+        font-size: 32px;
+    }
+
+    .figma-membership-heading-wrap p {
+        font-size: 16px;
+    }
+
+    .figma-membership-card-grid {
+        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-top: 2.5rem;
+    }
+}
