@@ -1,290 +1,317 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Bookings | FitSync{% endblock %}
+{% block title %}Book a Session | FitSync{% endblock %}
+
+{% block body_class %}figma-booking-body{% endblock %}
 
 {% block extra_css %}
-    <!-- Styling specifically for the booking schedule page. -->
-    <link rel="stylesheet" href="{% static 'css/bookings.css' %}">
+<!-- Condensed font used by the Figma booking design. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+
+<!-- Styles used by the booking schedule and My Bookings pages. -->
+<link rel="stylesheet" href="{% static 'css/bookings.css' %}">
 {% endblock %}
 
+{% block main_class %}figma-booking-main{% endblock %}
+
 {% block content %}
-<section class="booking-page">
-    <div class="container py-5">
+<section class="figma-booking-page" aria-labelledby="booking-page-title">
+    <div class="figma-booking-container">
 
-        <!-- Page heading -->
-        <div class="booking-heading text-center mb-4">
-            <p class="booking-eyebrow">Find your next workout</p>
-            <h1>Book a Session</h1>
-            <p>
-                Browse our available fitness sessions and choose the one
-                that works best for you.
+        <!-- Page heading copied from the approved booking design. -->
+        <header class="figma-booking-heading">
+            <p class="figma-booking-eyebrow">Classes &amp; Services</p>
+
+            <h1 id="booking-page-title">Book a Session</h1>
+
+            <p class="figma-booking-introduction">
+                Browse and book upcoming classes, training sessions, and services.
             </p>
-            {% if request.user.is_authenticated %}
-                <!-- Gives logged-in members quick access to their booking history. -->
+        </header>
+
+        <!--
+            The form uses GET so searches can be refreshed, bookmarked
+            and cleared without changing any booking information.
+        -->
+        <form method="get"
+              action="{% url 'bookings:schedule' %}"
+              class="figma-booking-filters">
+
+            <!-- Search by session name, description or instructor name. -->
+            <div class="figma-search-field">
+                <label class="visually-hidden" for="booking-search">
+                    Search sessions
+                </label>
+
+                <input
+                    id="booking-search"
+                    type="search"
+                    name="search"
+                    value="{{ search_query }}"
+                    placeholder="Search sessions..."
+                    aria-label="Search sessions"
+                >
+            </div>
+
+            <!-- Selecting a type automatically submits the filter form. -->
+            <div class="figma-filter-field">
+                <label class="visually-hidden" for="booking-type">
+                    Session type
+                </label>
+
+                <select
+                    id="booking-type"
+                    name="type"
+                    aria-label="Session type"
+                    onchange="this.form.submit()"
+                >
+                    <option value="">All Types</option>
+
+                    {% for type_value, type_label in service_types %}
+                    <option
+                        value="{{ type_value }}"
+                        {% if selected_type == type_value %}selected{% endif %}
+                    >
+                        {{ type_label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filter sessions according to whether spaces remain. -->
+            <div class="figma-filter-field">
+                <label class="visually-hidden" for="booking-status">
+                    Availability
+                </label>
+
+                <select
+                    id="booking-status"
+                    name="status"
+                    aria-label="Availability"
+                    onchange="this.form.submit()"
+                >
+                    <option value="">All Status</option>
+
+                    <option
+                        value="AVAILABLE"
+                        {% if selected_status == "AVAILABLE" %}selected{% endif %}
+                    >
+                        Available
+                    </option>
+
+                    <option
+                        value="FULL"
+                        {% if selected_status == "FULL" %}selected{% endif %}
+                    >
+                        Full
+                    </option>
+                </select>
+            </div>
+
+            <div class="figma-filter-actions">
+                <!-- Return to the complete unfiltered schedule. -->
                 <a
-                     class="btn btn-secondary-fitsync mt-2"
-                     href="{% url 'bookings:my_bookings' %}"
-            > 
-                     <i class="bi bi-calendar-check me-1" aria-hidden="true"></i>
-                     My Bookings
-            </a>
-            {% endif %}
+                    class="figma-clear-button"
+                    href="{% url 'bookings:schedule' %}"
+                >
+                    Clear Filters
+                </a>
 
-        </div>
-
-        <!-- Search and filter form -->
-        <form method="get" class="booking-filters mb-5">
-            <div class="row g-3">
-
-                <!-- Search by session, description or instructor -->
-                <div class="col-lg-6">
-                    <label class="form-label" for="booking-search">
-                        Search
-                    </label>
-
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-search" aria-hidden="true"></i>
-                        </span>
-
-                        <input
-                            id="booking-search"
-                            class="form-control"
-                            type="search"
-                            name="search"
-                            value="{{ search_query }}"
-                            placeholder="Search sessions or instructors"
-                        >
-                    </div>
-                </div>
-
-                <!-- Filter sessions by service type -->
-                <div class="col-md-6 col-lg-3">
-                    <label class="form-label" for="service-type">
-                        Session type
-                    </label>
-
-                    <select
-                        id="service-type"
-                        class="form-select"
-                        name="type"
-                    >
-                        <option value="">All types</option>
-
-                        {% for type_value, type_label in service_types %}
-                            <option
-                                value="{{ type_value }}"
-                                {% if selected_type == type_value %}selected{% endif %}
-                            >
-                                {{ type_label }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Filter sessions by availability -->
-                <div class="col-md-6 col-lg-3">
-                    <label class="form-label" for="availability-status">
-                        Availability
-                    </label>
-
-                    <select
-                        id="availability-status"
-                        class="form-select"
-                        name="status"
-                    >
-                        <option value="">All sessions</option>
-
-                        <option
-                            value="AVAILABLE"
-                            {% if selected_status == "AVAILABLE" %}selected{% endif %}
-                        >
-                            Available
-                        </option>
-
-                        <option
-                            value="FULL"
-                            {% if selected_status == "FULL" %}selected{% endif %}
-                        >
-                            Full
-                        </option>
-                    </select>
-                </div>
-
-                <!-- Apply or clear the selected filters -->
-                <div class="col-12 d-flex justify-content-end gap-2">
-                    <a
-                        class="btn btn-secondary-fitsync"
-                        href="{% url 'bookings:schedule' %}"
-                    >
-                        Clear
-                    </a>
-
-                    <button class="btn btn-primary-fitsync" type="submit">
-                        Apply Filters
-                    </button>
-                </div>
+                <!--
+                    This button appears only after login because the public
+                    Figma design shows only the Clear Filters button.
+                -->
+                {% if request.user.is_authenticated %}
+                <a
+                    class="figma-my-bookings-button"
+                    href="{% url 'bookings:my_bookings' %}"
+                >
+                    My Bookings
+                </a>
+                {% endif %}
             </div>
         </form>
 
-        <!-- Display all sessions returned by the view -->
-        <div class="row g-4">
+        <!-- Three cards per row on desktop, as shown in Figma. -->
+        <div class="figma-session-grid">
             {% for session in sessions %}
-                <div class="col-md-6 col-xl-4">
-                    <article class="session-card h-100">
+            <article class="figma-session-card">
 
-                        <!-- Session type and availability -->
-                        <div class="d-flex justify-content-between align-items-start gap-3">
-                            <span class="session-type">
-                                {{ session.service.get_service_type_display }}
-                            </span>
+                <!-- Session type and availability badge. -->
+                <div class="figma-card-header">
+                    <span class="figma-session-type">
+                        {{ session.service.get_service_type_display }}
+                    </span>
 
-                            {% if session.remaining_spaces > 0 %}
-                                <span class="availability available">
-                                    Available
-                                </span>
-                            {% else %}
-                                <span class="availability full">
-                                    Full
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        <!-- Main session information -->
-                        <h2 class="session-name">
-                            {{ session.service.name }}
-                        </h2>
-
-                        <p class="session-description">
-                            {{ session.service.description|default:"Join this FitSync training session." }}
-                        </p>
-
-                        <!-- Date -->
-                        <div class="session-detail">
-                            <i class="bi bi-calendar-event" aria-hidden="true"></i>
-
-                            <div>
-                                <span>Date</span>
-                                <strong>{{ session.date|date:"l, d F Y" }}</strong>
-                            </div>
-                        </div>
-
-                        <!-- Start and end time -->
-                        <div class="session-detail">
-                            <i class="bi bi-clock" aria-hidden="true"></i>
-
-                            <div>
-                                <span>Time</span>
-                                <strong>
-                                    {{ session.start_time|time:"H:i" }}
-                                    –
-                                    {{ session.end_time|time:"H:i" }}
-                                </strong>
-                            </div>
-                        </div>
-
-                        <!-- Instructor -->
-                        <div class="session-detail">
-                            <i class="bi bi-person" aria-hidden="true"></i>
-
-                            <div>
-                                <span>Instructor</span>
-                                <strong>
-                                    {% if session.instructor %}
-                                        {{ session.instructor.get_full_name|default:session.instructor.username }}
-                                    {% else %}
-                                        To be confirmed
-                                    {% endif %}
-                                </strong>
-                            </div>
-                        </div>
-
-                        <!-- Price -->
-                        <div class="session-detail">
-                            <i class="bi bi-tag" aria-hidden="true"></i>
-
-                            <div>
-                                <span>Price</span>
-                                <strong>Rs {{ session.service.price }}</strong>
-                            </div>
-                        </div>
-
-                        <!-- Remaining capacity and booking action -->
-                        <div class="session-footer">
-                            <p class="remaining-spaces">
-                                <i class="bi bi-people" aria-hidden="true"></i>
-
-                                {{ session.remaining_spaces }}
-                                space{{ session.remaining_spaces|pluralize }}
-                                remaining
-                            </p>
-
-                            {% if session.remaining_spaces <= 0 %}
-                                <button
-                                    class="btn btn-secondary-fitsync w-100"
-                                    type="button"
-                                    disabled
-                                >
-                                    Session Full
-                                </button>
-                            {% elif session.id in booked_session_ids %}
-                                <!-- Prevent the member from booking the same session again. -->
-                                <button
-                                    class="btn btn-secondary-fitsync w-100"
-                                    type="button"
-                                    disabled
-                                >
-                                    <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
-                                    Already Booked
-                                </button>
-                           
-                            {% elif request.user.is_authenticated %}
-                                <!-- POST is used because clicking this button creates database data. -->
-                                <form
-                                    method="post"
-                                    action="{% url 'bookings:book_session' session.id %}"
-                                >
-                                    {% csrf_token %}
-
-                                    <button
-                                        class="btn btn-primary-fitsync w-100"
-                                        type="submit"
-                                   >
-                                        Book Session
-                                   </button>
-                                </form>
-                            {% else %}
-                                <!-- Visitors must log in before making a booking. -->
-                                <a
-                                    class="btn btn-primary-fitsync w-100"
-                                    href="{% url 'accounts:login' %}?next={{ request.path }}"
-                                >
-                                    Login to Book
-                                </a>
-                            {% endif %}
-                        </div>
-                    </article>
+                    {% if session.confirmed_count >= session.capacity %}
+                    <span class="figma-status-badge is-full">
+                        Full
+                    </span>
+                    {% else %}
+                    <span class="figma-status-badge is-available">
+                        Available
+                    </span>
+                    {% endif %}
                 </div>
 
-            {% empty %}
-                <!-- This appears when no sessions match the selected filters. -->
-                <div class="col-12">
-                    <div class="no-sessions text-center">
-                        <i class="bi bi-calendar-x" aria-hidden="true"></i>
-                        <h2>No sessions found</h2>
-                        <p>
-                            Try changing your search or filters to find another session.
-                        </p>
+                <!-- Main session information. -->
+                <h2 class="figma-session-name">
+                    {{ session.service.name }}
+                </h2>
+
+                <p class="figma-session-description">
+                    {{ session.service.description }}
+                </p>
+
+                <!-- Compact label/value rows matching the Figma cards. -->
+                <dl class="figma-session-details">
+                    <div class="figma-detail-row">
+                        <dt>Date</dt>
+                        <dd>{{ session.date|date:"D d M" }}</dd>
+                    </div>
+
+                    <div class="figma-detail-row">
+                        <dt>Time</dt>
+                        <dd>
+                            {{ session.start_time|time:"H:i" }}
+                            &ndash;
+                            {{ session.end_time|time:"H:i" }}
+                        </dd>
+                    </div>
+
+                    <div class="figma-detail-row">
+                        <dt>Instructor</dt>
+                        <dd>
+                            {{ session.instructor.get_full_name|default:session.instructor.username }}
+                        </dd>
+                    </div>
+
+                    <div class="figma-detail-row">
+                        <dt>Price</dt>
+                        <dd class="figma-price">
+                            Rs {{ session.service.price|floatformat:0 }}
+                        </dd>
+                    </div>
+
+                    <div class="figma-detail-row">
+                        <dt>Availability</dt>
+
+                        {% if session.confirmed_count >= session.capacity %}
+                        <dd class="figma-spaces is-full">
+                            0 / {{ session.capacity }} spots
+                        </dd>
+                        {% elif session.remaining_spaces <= 2 %}
+                        <dd class="figma-spaces is-limited">
+                            {{ session.remaining_spaces }} /
+                            {{ session.capacity }} spots
+                        </dd>
+                        {% else %}
+                        <dd class="figma-spaces">
+                            {{ session.remaining_spaces }} /
+                            {{ session.capacity }} spots
+                        </dd>
+                        {% endif %}
+                    </div>
+                </dl>
+
+                <!-- Booking controls change according to the current state. -->
+                <div class="figma-card-actions">
+                    {% if session.confirmed_count >= session.capacity %}
+
+                        <!-- Fully booked appearance from the Figma design. -->
+                        <div class="figma-full-bar">
+                            Fully Booked
+                        </div>
+
+                        {% if not request.user.is_authenticated %}
+                        <a
+                            class="figma-register-link"
+                            href="{% url 'accounts:register' %}"
+                        >
+                            Register to Book
+                        </a>
+                        {% endif %}
+
+                    {% elif request.user.is_authenticated %}
+
+                        {% if session.id in booked_session_ids %}
+                        <!-- Prevent the member from booking twice. -->
+                        <button
+                            class="figma-booking-button is-disabled"
+                            type="button"
+                            disabled
+                        >
+                            Already Booked
+                        </button>
+
+                        {% elif request.user.role == "MEMBER" %}
+                        <!-- Booking is a POST action protected by CSRF. -->
+                        <form
+                            method="post"
+                            action="{% url 'bookings:book_session' session.id %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                class="figma-booking-button"
+                                type="submit"
+                            >
+                                Book Session
+                            </button>
+                        </form>
+
+                        {% else %}
+                        <!-- Coaches, staff and admins cannot book as members. -->
+                        <button
+                            class="figma-booking-button is-disabled"
+                            type="button"
+                            disabled
+                        >
+                            Member Access Only
+                        </button>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- Public visitors must log in before booking. -->
+                        <a
+                            class="figma-booking-button"
+                            href="{% url 'accounts:login' %}?next={{ request.path }}"
+                        >
+                            Log In to Book
+                        </a>
 
                         <a
-                            class="btn btn-primary-fitsync"
-                            href="{% url 'bookings:schedule' %}"
+                            class="figma-register-link"
+                            href="{% url 'accounts:register' %}"
                         >
-                            View All Sessions
+                            Register to Book
                         </a>
-                    </div>
+                    {% endif %}
                 </div>
+            </article>
+
+            {% empty %}
+            <!-- Displayed when no future session matches the filters. -->
+            <div class="figma-no-sessions">
+                <i class="bi bi-calendar-x" aria-hidden="true"></i>
+
+                <h2>No sessions found</h2>
+
+                <p>
+                    Try changing your search or filters to find another session.
+                </p>
+
+                <a
+                    class="figma-booking-button figma-view-all-button"
+                    href="{% url 'bookings:schedule' %}"
+                >
+                    View All Sessions
+                </a>
+            </div>
             {% endfor %}
         </div>
     </div>
