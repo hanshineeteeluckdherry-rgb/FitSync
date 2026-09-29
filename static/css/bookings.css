@@ -1,0 +1,344 @@
+/* =========================================================
+   FitSync booking pages
+   Styles the booking schedule and the My Bookings page.
+   The variables below provide matching light and dark themes.
+   ========================================================= */
+
+/* Light-mode colours. */
+:root,
+html[data-theme="light"] {
+    --booking-page-bg: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f7fbfd 40%,
+        #dff7f1 72%,
+        #b9efe5 100%
+    );
+    --booking-card-bg: #ffffff;
+    --booking-field-bg: #f8fafc;
+    --booking-icon-bg: #e8f8f4;
+    --booking-border: #dbe5f0;
+    --booking-text: #080d17;
+    --booking-muted: #5b748f;
+    --booking-accent: #17a88b;
+    --booking-accent-dark: #11735f;
+    --booking-success: #198754;
+    --booking-danger: #dc3545;
+    --booking-warning: #b77900;
+    --booking-shadow: 0 10px 28px rgba(8, 13, 23, 0.10);
+    --booking-hover-shadow: 0 16px 38px rgba(8, 13, 23, 0.15);
+}
+
+/* Dark-mode colours. */
+html[data-theme="dark"] {
+    --booking-page-bg: linear-gradient(
+        180deg,
+        #0a1834 0%,
+        #0a1834 40%,
+        #102d3b 72%,
+        #1f4b42 100%
+    );
+    --booking-card-bg: #0d1525;
+    --booking-field-bg: #121d30;
+    --booking-icon-bg: #153631;
+    --booking-border: #263a52;
+    --booking-text: #ffffff;
+    --booking-muted: #a8bfdb;
+    --booking-accent: #20d2b0;
+    --booking-accent-dark: #69dbc4;
+    --booking-success: #42cf87;
+    --booking-danger: #ff6473;
+    --booking-warning: #ffc107;
+    --booking-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    --booking-hover-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+/* Main background shared by both booking pages. */
+.booking-page {
+    min-height: 75vh;
+    padding-bottom: 5rem;
+    color: var(--booking-text);
+    background: var(--booking-page-bg);
+}
+
+/* Small text displayed above the main heading. */
+.booking-eyebrow {
+    margin-bottom: 0.5rem;
+    color: var(--booking-accent);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* Main page title. */
+.booking-heading h1 {
+    margin-bottom: 0.75rem;
+    color: var(--booking-text);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+}
+
+/* Introductory text below the title. */
+.booking-heading > p:last-child {
+    max-width: 640px;
+    margin-right: auto;
+    margin-left: auto;
+    color: var(--booking-muted);
+}
+
+/* Ensure Bootstrap secondary text follows the selected theme. */
+.booking-page .text-body-secondary {
+    color: var(--booking-muted) !important;
+}
+
+/* Search and filter container. */
+.booking-filters {
+    padding: 1.5rem;
+    border: 1px solid var(--booking-border);
+    border-radius: 1.25rem;
+    background-color: var(--booking-card-bg);
+    box-shadow: var(--booking-shadow);
+}
+
+/* Labels displayed above each filter. */
+.booking-filters .form-label {
+    color: var(--booking-text);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Search input, dropdowns and search icon container. */
+.booking-filters .form-control,
+.booking-filters .form-select,
+.booking-filters .input-group-text {
+    min-height: 48px;
+    border-color: var(--booking-border);
+    color: var(--booking-text);
+    background-color: var(--booking-field-bg);
+}
+
+/* Search input placeholder. */
+.booking-filters .form-control::placeholder {
+    color: var(--booking-muted);
+    opacity: 1;
+}
+
+/* Dropdown options. */
+.booking-filters .form-select option {
+    color: var(--booking-text);
+    background-color: var(--booking-card-bg);
+}
+
+/* Keep the search icon connected to its input. */
+.booking-filters .input-group-text {
+    border-right: 0;
+    color: var(--booking-accent);
+}
+
+.booking-filters .input-group .form-control {
+    border-left: 0;
+}
+
+/* Accessible focus state for all filter controls. */
+.booking-filters .form-control:focus,
+.booking-filters .form-select:focus {
+    border-color: var(--booking-accent);
+    box-shadow: 0 0 0 0.2rem rgba(23, 168, 139, 0.18);
+}
+
+/* Card containing one session or booking. */
+.session-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--booking-border);
+    border-radius: 1.25rem;
+    color: var(--booking-text);
+    background-color: var(--booking-card-bg);
+    box-shadow: var(--booking-shadow);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Move a card slightly when the mouse is over it. */
+.session-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--booking-accent);
+    box-shadow: var(--booking-hover-shadow);
+}
+
+/* Badge showing the session type. */
+.session-type {
+    display: inline-flex;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    color: var(--booking-accent-dark);
+    background-color: var(--booking-icon-bg);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Shared style for status badges. */
+.availability {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+/* Sessions with spaces available. */
+.availability.available,
+.availability.confirmed {
+    color: var(--booking-success);
+    background-color: rgba(25, 135, 84, 0.14);
+}
+
+/* Sessions that have reached capacity. */
+.availability.full,
+.availability.cancelled {
+    color: var(--booking-danger);
+    background-color: rgba(220, 53, 69, 0.14);
+}
+
+/* Additional booking status colours. */
+.availability.completed {
+    color: var(--booking-muted);
+    background-color: rgba(91, 116, 143, 0.16);
+}
+
+.availability.pending {
+    color: var(--booking-warning);
+    background-color: rgba(255, 193, 7, 0.14);
+}
+
+/* Session title. */
+.session-name {
+    margin-top: 1.25rem;
+    margin-bottom: 0.65rem;
+    color: var(--booking-text);
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+/* Session description. */
+.session-description {
+    min-height: 3rem;
+    margin-bottom: 1.25rem;
+    color: var(--booking-muted);
+    line-height: 1.6;
+}
+
+/* Row containing an icon and a session detail. */
+.session-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--booking-border);
+}
+
+/* Icon displayed beside a session detail. */
+.session-detail > i {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 0.7rem;
+    color: var(--booking-accent);
+    background-color: var(--booking-icon-bg);
+    font-size: 1rem;
+}
+
+/* Small labels such as Date, Time and Instructor. */
+.session-detail span {
+    display: block;
+    color: var(--booking-muted);
+    font-size: 0.75rem;
+}
+
+/* Actual session detail value. */
+.session-detail strong {
+    display: block;
+    color: var(--booking-text);
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+/* Keep the capacity and button at the bottom of the card. */
+.session-footer {
+    margin-top: auto;
+    padding-top: 1.25rem;
+}
+
+/* Number of spaces remaining. */
+.remaining-spaces {
+    margin-bottom: 0.9rem;
+    color: var(--booking-muted);
+    font-size: 0.88rem;
+}
+
+/* Empty result container. */
+.no-sessions {
+    padding: 4rem 1.5rem;
+    border: 1px dashed var(--booking-border);
+    border-radius: 1.25rem;
+    color: var(--booking-text);
+    background-color: var(--booking-card-bg);
+    box-shadow: var(--booking-shadow);
+}
+
+/* Large calendar icon in the empty result container. */
+.no-sessions > i {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--booking-accent);
+    font-size: 3rem;
+}
+
+.no-sessions h2 {
+    color: var(--booking-text);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.no-sessions p {
+    color: var(--booking-muted);
+}
+
+/* Make disabled buttons clearly unavailable. */
+.booking-page .btn:disabled,
+.booking-page .btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/* Smaller spacing for phones. */
+@media (max-width: 575.98px) {
+    .booking-page {
+        padding-bottom: 3rem;
+    }
+
+    .booking-filters,
+    .session-card {
+        padding: 1.15rem;
+        border-radius: 1rem;
+    }
+
+    .booking-heading h1 {
+        font-size: 2rem;
+    }
+
+    .session-name {
+        font-size: 1.25rem;
+    }
+}
