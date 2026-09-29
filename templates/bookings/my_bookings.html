@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Bookings | FitSync{% endblock %}
+
+{% block extra_css %}
+    <!-- Reuse the same design as the public booking schedule. -->
+    <link rel="stylesheet" href="{% static 'css/bookings.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="booking-page">
+    <div class="container py-5">
+
+        <!-- Page heading and link back to the session schedule. -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-5">
+            <div>
+                <p class="booking-eyebrow">Your fitness schedule</p>
+                <h1 class="mb-2">My Bookings</h1>
+                <p class="text-body-secondary mb-0">
+                    View and manage the sessions you have booked.
+                </p>
+            </div>
+
+            <a
+                class="btn btn-primary-fitsync"
+                href="{% url 'bookings:schedule' %}"
+            >
+                <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
+                Book Another Session
+            </a>
+        </div>
+
+        <!-- Display every booking belonging to the logged-in member. -->
+        <div class="row g-4">
+            {% for booking in bookings %}
+                <div class="col-md-6 col-xl-4">
+                    <article class="session-card h-100">
+
+                        <!-- Service type and current booking status. -->
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <span class="session-type">
+                                {{ booking.session.service.get_service_type_display }}
+                            </span>
+
+                            {% if booking.status == "CONFIRMED" %}
+                                <span class="availability available">
+                                    Confirmed
+                                </span>
+                            {% elif booking.status == "CANCELLED" %}
+                                <span class="availability full">
+                                    Cancelled
+                                </span>
+                            {% else %}
+                                <span class="availability">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Booked session information. -->
+                        <h2 class="session-name">
+                            {{ booking.session.service.name }}
+                        </h2>
+
+                        <p class="session-description">
+                            {{ booking.session.service.description|default:"FitSync training session." }}
+                        </p>
+
+                        <!-- Session date. -->
+                        <div class="session-detail">
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+
+                            <div>
+                                <span>Date</span>
+                                <strong>
+                                    {{ booking.session.date|date:"l, d F Y" }}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <!-- Session time. -->
+                        <div class="session-detail">
+                            <i class="bi bi-clock" aria-hidden="true"></i>
+
+                            <div>
+                                <span>Time</span>
+                                <strong>
+                                    {{ booking.session.start_time|time:"H:i" }}
+                                    –
+                                    {{ booking.session.end_time|time:"H:i" }}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <!-- Instructor name. -->
+                        <div class="session-detail">
+                            <i class="bi bi-person" aria-hidden="true"></i>
+
+                            <div>
+                                <span>Instructor</span>
+                                <strong>
+                                    {% if booking.session.instructor %}
+                                        {{ booking.session.instructor.get_full_name|default:booking.session.instructor.username }}
+                                    {% else %}
+                                        To be confirmed
+                                    {% endif %}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <!-- Date on which the booking was created. -->
+                        <div class="session-detail">
+                            <i class="bi bi-check-circle" aria-hidden="true"></i>
+
+                            <div>
+                                <span>Booked on</span>
+                                <strong>
+                                    {{ booking.booked_at|date:"d F Y, H:i" }}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="session-footer">
+                            {% if booking.status == "CONFIRMED" %}
+                                <!-- POST safely updates this booking to Cancelled. -->
+                                <form
+                                    method="post"
+                                    action="{% url 'bookings:cancel_booking' booking.id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        class="btn btn-outline-danger w-100"
+                                        type="submit"
+                                        onclick="return confirm('Are you sure you want to cancel this booking?');"
+                                    >
+                                        <i class="bi bi-x-circle me-1" aria-hidden="true"></i>
+                                        Cancel Booking
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button
+                                    class="btn btn-secondary-fitsync w-100"
+                                    type="button"
+                                    disabled
+                                >
+                                    Booking Cancelled
+                                </button>
+                            {% endif %}
+                        </div>
+                    </article>
+                </div>
+
+            {% empty %}
+                <!-- This message appears when the member has no bookings. -->
+                <div class="col-12">
+                    <div class="no-sessions text-center">
+                        <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+
+                        <h2>You have no bookings yet</h2>
+
+                        <p>
+                            Browse the schedule and reserve your first fitness session.
+                        </p>
+
+                        <a
+                            class="btn btn-primary-fitsync"
+                            href="{% url 'bookings:schedule' %}"
+                        >
+                            Browse Sessions
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

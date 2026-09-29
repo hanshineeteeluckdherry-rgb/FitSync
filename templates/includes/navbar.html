@@ -20,7 +20,13 @@
                 <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'memberships' and not request.user.is_authenticated %}active{% endif %}" href="{% url 'memberships:public_packages' %}">Memberships</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Bookings</a></li>
+                <!-- Opens the public bookings schedule and highlights this link on booking pages. -->
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.namespace == 'bookings' %}active{% endif %}"
+                       href="{% url 'bookings:schedule' %}">
+                        Bookings
+                    </a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="#">Our Team</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
             </ul>
