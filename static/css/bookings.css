@@ -342,3 +342,506 @@ html[data-theme="dark"] {
         font-size: 1.25rem;
     }
 }
+/* =========================================================
+   Figma booking schedule
+   These styles reproduce the approved desktop booking design.
+   ========================================================= */
+
+/* Light-mode colours for the booking schedule. */
+:root,
+html[data-theme="light"] {
+    --figma-booking-background:
+        linear-gradient(
+            180deg,
+            #f8fbff 0%,
+            #eef7fa 55%,
+            #c5eee6 100%
+        );
+    --figma-booking-card: #ffffff;
+    --figma-booking-field: #eaf1f8;
+    --figma-booking-border: #cad8e8;
+    --figma-booking-text: #101b2d;
+    --figma-booking-muted: #667b93;
+    --figma-booking-accent: #00d9ad;
+    --figma-booking-accent-dark: #008b72;
+    --figma-booking-badge: #d8f7ef;
+    --figma-booking-full: #f0a500;
+    --figma-booking-danger: #e34b5f;
+    --figma-booking-button-text: #07111f;
+    --figma-booking-shadow: 0 12px 30px rgba(7, 17, 31, 0.08);
+}
+
+/* Dark-mode colours taken from the supplied Figma page. */
+html[data-theme="dark"] {
+    --figma-booking-background:
+        linear-gradient(
+            180deg,
+            #08162f 0%,
+            #0a1933 45%,
+            #123842 75%,
+            #194e45 100%
+        );
+    --figma-booking-card: #101f38;
+    --figma-booking-field: #1a3252;
+    --figma-booking-border: #243a57;
+    --figma-booking-text: #edf4ff;
+    --figma-booking-muted: #71859f;
+    --figma-booking-accent: #00dcae;
+    --figma-booking-accent-dark: #00dcae;
+    --figma-booking-badge: #084c4a;
+    --figma-booking-full: #f0a500;
+    --figma-booking-danger: #ff5268;
+    --figma-booking-button-text: #06121d;
+    --figma-booking-shadow: none;
+}
+
+/* Remove the normal main-container spacing for this full-width design. */
+.figma-booking-main {
+    padding: 0 !important;
+}
+
+/* Full booking-page background. */
+.figma-booking-page {
+    min-height: 100vh;
+    padding: 2rem 1.25rem 5rem;
+    color: var(--figma-booking-text);
+    background: var(--figma-booking-background);
+}
+
+/* Keeps the content aligned and prevents excessive stretching. */
+.figma-booking-container {
+    width: min(100%, 1160px);
+    margin: 0 auto;
+}
+
+/* Left-aligned heading used in the Figma design. */
+.figma-booking-heading {
+    margin-bottom: 2.25rem;
+}
+
+/* Small turquoise heading above the page title. */
+.figma-booking-eyebrow {
+    margin: 0 0 0.65rem;
+    color: var(--figma-booking-accent);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+/* Large condensed page title. */
+.figma-booking-heading h1 {
+    margin: 0;
+    color: var(--figma-booking-text);
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+    text-transform: uppercase;
+}
+
+/* Text immediately below the main heading. */
+.figma-booking-introduction {
+    margin: 1rem 0 0;
+    color: var(--figma-booking-muted);
+    font-size: 0.98rem;
+}
+
+/* Filters intentionally have no surrounding card in Figma. */
+.figma-booking-filters {
+    width: min(100%, 900px);
+    margin-bottom: 2.5rem;
+}
+
+/* Compact search input shown above the dropdowns. */
+.figma-search-field {
+    width: min(100%, 250px);
+    margin-bottom: 0.75rem;
+}
+
+.figma-search-field input {
+    width: 100%;
+    height: 44px;
+    padding: 0 1rem;
+    border: 1px solid var(--figma-booking-border);
+    border-radius: 0.45rem;
+    outline: none;
+    color: var(--figma-booking-text);
+    background-color: var(--figma-booking-field);
+    font-size: 0.9rem;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.figma-search-field input::placeholder {
+    color: var(--figma-booking-muted);
+    opacity: 1;
+}
+
+/* Thin dropdown fields displayed in the Figma filter section. */
+.figma-filter-field {
+    width: 100%;
+    margin-bottom: 0.55rem;
+}
+
+.figma-filter-field select {
+    width: 100%;
+    height: 34px;
+    padding: 0 0.75rem;
+    border: 1px solid var(--figma-booking-border);
+    border-radius: 0.25rem;
+    outline: none;
+    color: var(--figma-booking-text);
+    background-color: var(--figma-booking-field);
+    font-size: 0.82rem;
+}
+
+/* Dropdown options must remain readable in both themes. */
+.figma-filter-field select option {
+    color: var(--figma-booking-text);
+    background-color: var(--figma-booking-card);
+}
+
+/* Shared focus indicator for keyboard users. */
+.figma-search-field input:focus,
+.figma-filter-field select:focus {
+    border-color: var(--figma-booking-accent);
+    box-shadow: 0 0 0 0.18rem rgba(0, 220, 174, 0.16);
+}
+
+/* Clear and My Bookings actions below the dropdowns. */
+.figma-filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+}
+
+/* Outlined button from the Figma design. */
+.figma-clear-button,
+.figma-my-bookings-button {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--figma-booking-border);
+    border-radius: 0.65rem;
+    color: var(--figma-booking-text);
+    background: transparent;
+    font-family: "Oswald", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.figma-clear-button:hover,
+.figma-my-bookings-button:hover {
+    border-color: var(--figma-booking-accent);
+    color: var(--figma-booking-accent);
+}
+
+/* Three-column card grid displayed in the desktop design. */
+.figma-session-grid {
+    display: grid;
+    width: min(100%, 1030px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 0 auto;
+}
+
+/* Individual compact session card. */
+.figma-session-card {
+    display: flex;
+    min-width: 0;
+    min-height: 390px;
+    flex-direction: column;
+    padding: 1.55rem;
+    border: 1px solid var(--figma-booking-border);
+    border-radius: 1rem;
+    color: var(--figma-booking-text);
+    background-color: var(--figma-booking-card);
+    box-shadow: var(--figma-booking-shadow);
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Subtle movement when a card is selected with the mouse. */
+.figma-session-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 220, 174, 0.48);
+    box-shadow: 0 14px 32px rgba(3, 13, 28, 0.15);
+}
+
+/* Type and availability badge row. */
+.figma-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Yoga, Fitness, Zumba and other session types. */
+.figma-session-type {
+    overflow: hidden;
+    color: var(--figma-booking-accent);
+    font-family: "Oswald", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Available and Full pills. */
+.figma-status-badge {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-family: "Oswald", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.figma-status-badge.is-available {
+    color: var(--figma-booking-accent);
+    background-color: var(--figma-booking-badge);
+}
+
+.figma-status-badge.is-full {
+    color: var(--figma-booking-full);
+    background-color: rgba(240, 165, 0, 0.16);
+}
+
+/* Session card title. */
+.figma-session-name {
+    margin: 0.6rem 0 0;
+    color: var(--figma-booking-text);
+    font-family: "Oswald", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+/* Session description occupies consistent space across cards. */
+.figma-session-description {
+    min-height: 3.8rem;
+    margin: 0.75rem 0 0.9rem;
+    color: var(--figma-booking-muted);
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+/* Remove the browser's default description-list spacing. */
+.figma-session-details {
+    margin: 0;
+}
+
+/* Compact left-label/right-value detail rows. */
+.figma-detail-row {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) minmax(110px, auto);
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 0.55rem;
+}
+
+.figma-detail-row dt,
+.figma-detail-row dd {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.figma-detail-row dt {
+    color: var(--figma-booking-muted);
+    font-weight: 400;
+}
+
+.figma-detail-row dd {
+    overflow-wrap: anywhere;
+    color: var(--figma-booking-text);
+    font-weight: 500;
+    text-align: right;
+}
+
+/* Turquoise price value used by every card. */
+.figma-detail-row dd.figma-price {
+    color: var(--figma-booking-accent);
+}
+
+/* Availability becomes yellow when very few spaces remain. */
+.figma-detail-row dd.figma-spaces.is-limited {
+    color: #ffd000;
+}
+
+/* Full sessions use the red value shown in Figma. */
+.figma-detail-row dd.figma-spaces.is-full {
+    color: var(--figma-booking-danger);
+}
+
+/* Keeps the card action at the bottom of cards of different heights. */
+.figma-card-actions {
+    margin-top: auto;
+    padding-top: 0.9rem;
+}
+
+/* Main turquoise booking button. */
+.figma-booking-button {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 0.75rem;
+    color: var(--figma-booking-button-text);
+    background-color: var(--figma-booking-accent);
+    box-shadow: 0 8px 22px rgba(0, 220, 174, 0.16);
+    font-family: "Oswald", sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+.figma-booking-button:hover {
+    color: var(--figma-booking-button-text);
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}
+
+/* Disabled and already-booked button. */
+.figma-booking-button.is-disabled {
+    cursor: not-allowed;
+    color: var(--figma-booking-muted);
+    background-color: transparent;
+    border: 1px solid var(--figma-booking-border);
+    box-shadow: none;
+    opacity: 0.8;
+}
+
+/* Registration link beneath the login button. */
+.figma-register-link {
+    display: block;
+    margin-top: 0.65rem;
+    color: var(--figma-booking-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    text-decoration: none;
+}
+
+.figma-register-link:hover {
+    color: var(--figma-booking-accent);
+}
+
+/* Fully booked progress-style bar. */
+.figma-full-bar {
+    display: flex;
+    width: 100%;
+    min-height: 32px;
+    align-items: center;
+    padding: 0.35rem 0.8rem;
+    overflow: hidden;
+    border-radius: 999px;
+    color: var(--figma-booking-full);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(240, 165, 0, 0.20) 0%,
+            rgba(240, 165, 0, 0.20) 38%,
+            rgba(240, 165, 0, 0.10) 38%,
+            rgba(240, 165, 0, 0.10) 100%
+        );
+    font-family: "Oswald", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+/* Empty search result spans the entire card grid. */
+.figma-no-sessions {
+    grid-column: 1 / -1;
+    padding: 4rem 1.5rem;
+    border: 1px dashed var(--figma-booking-border);
+    border-radius: 1rem;
+    color: var(--figma-booking-text);
+    background-color: var(--figma-booking-card);
+    text-align: center;
+}
+
+.figma-no-sessions > i {
+    color: var(--figma-booking-accent);
+    font-size: 3rem;
+}
+
+.figma-no-sessions h2 {
+    margin: 1rem 0 0.5rem;
+    font-family: "Oswald", sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.figma-no-sessions p {
+    color: var(--figma-booking-muted);
+}
+
+.figma-view-all-button {
+    width: fit-content;
+    margin: 1.25rem auto 0;
+}
+
+/* Use two columns on tablets. */
+@media (max-width: 991.98px) {
+    .figma-session-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Use one card per row on phones. */
+@media (max-width: 575.98px) {
+    .figma-booking-page {
+        padding: 1.5rem 1rem 3.5rem;
+    }
+
+    .figma-booking-heading h1 {
+        font-size: 2.65rem;
+    }
+
+    .figma-booking-filters,
+    .figma-search-field {
+        width: 100%;
+    }
+
+    .figma-session-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .figma-session-card {
+        min-height: 370px;
+        padding: 1.25rem;
+    }
+}
