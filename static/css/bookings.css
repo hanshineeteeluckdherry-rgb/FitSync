@@ -1,10 +1,6 @@
-/* =========================================================
-   FitSync booking pages
-   Styles the booking schedule and the My Bookings page.
-   The variables below provide matching light and dark themes.
-   ========================================================= */
+﻿
 
-/* Light-mode colours. */
+
 :root,
 html[data-theme="light"] {
     --booking-page-bg: linear-gradient(
@@ -29,7 +25,7 @@ html[data-theme="light"] {
     --booking-hover-shadow: 0 16px 38px rgba(8, 13, 23, 0.15);
 }
 
-/* Dark-mode colours. */
+
 html[data-theme="dark"] {
     --booking-page-bg: linear-gradient(
         180deg,
@@ -53,7 +49,7 @@ html[data-theme="dark"] {
     --booking-hover-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
 }
 
-/* Main background shared by both booking pages. */
+
 .booking-page {
     min-height: 75vh;
     padding-bottom: 5rem;
@@ -61,7 +57,7 @@ html[data-theme="dark"] {
     background: var(--booking-page-bg);
 }
 
-/* Small text displayed above the main heading. */
+
 .booking-eyebrow {
     margin-bottom: 0.5rem;
     color: var(--booking-accent);
@@ -71,7 +67,7 @@ html[data-theme="dark"] {
     text-transform: uppercase;
 }
 
-/* Main page title. */
+
 .booking-heading h1 {
     margin-bottom: 0.75rem;
     color: var(--booking-text);
@@ -79,7 +75,7 @@ html[data-theme="dark"] {
     font-weight: 700;
 }
 
-/* Introductory text below the title. */
+
 .booking-heading > p:last-child {
     max-width: 640px;
     margin-right: auto;
@@ -87,12 +83,12 @@ html[data-theme="dark"] {
     color: var(--booking-muted);
 }
 
-/* Ensure Bootstrap secondary text follows the selected theme. */
+
 .booking-page .text-body-secondary {
     color: var(--booking-muted) !important;
 }
 
-/* Search and filter container. */
+
 .booking-filters {
     padding: 1.5rem;
     border: 1px solid var(--booking-border);
@@ -101,14 +97,14 @@ html[data-theme="dark"] {
     box-shadow: var(--booking-shadow);
 }
 
-/* Labels displayed above each filter. */
+
 .booking-filters .form-label {
     color: var(--booking-text);
     font-size: 0.9rem;
     font-weight: 600;
 }
 
-/* Search input, dropdowns and search icon container. */
+
 .booking-filters .form-control,
 .booking-filters .form-select,
 .booking-filters .input-group-text {
@@ -118,19 +114,19 @@ html[data-theme="dark"] {
     background-color: var(--booking-field-bg);
 }
 
-/* Search input placeholder. */
+
 .booking-filters .form-control::placeholder {
     color: var(--booking-muted);
     opacity: 1;
 }
 
-/* Dropdown options. */
+
 .booking-filters .form-select option {
     color: var(--booking-text);
     background-color: var(--booking-card-bg);
 }
 
-/* Keep the search icon connected to its input. */
+
 .booking-filters .input-group-text {
     border-right: 0;
     color: var(--booking-accent);
@@ -140,14 +136,14 @@ html[data-theme="dark"] {
     border-left: 0;
 }
 
-/* Accessible focus state for all filter controls. */
+
 .booking-filters .form-control:focus,
 .booking-filters .form-select:focus {
     border-color: var(--booking-accent);
     box-shadow: 0 0 0 0.2rem rgba(23, 168, 139, 0.18);
 }
 
-/* Card containing one session or booking. */
+
 .session-card {
     display: flex;
     flex-direction: column;
@@ -165,14 +161,14 @@ html[data-theme="dark"] {
         border-color 0.2s ease;
 }
 
-/* Move a card slightly when the mouse is over it. */
+
 .session-card:hover {
     transform: translateY(-4px);
     border-color: var(--booking-accent);
     box-shadow: var(--booking-hover-shadow);
 }
 
-/* Badge showing the session type. */
+
 .session-type {
     display: inline-flex;
     padding: 0.4rem 0.75rem;
@@ -185,7 +181,7 @@ html[data-theme="dark"] {
     text-transform: uppercase;
 }
 
-/* Shared style for status badges. */
+
 .availability {
     display: inline-flex;
     align-items: center;
@@ -195,21 +191,21 @@ html[data-theme="dark"] {
     font-weight: 700;
 }
 
-/* Sessions with spaces available. */
+
 .availability.available,
 .availability.confirmed {
     color: var(--booking-success);
     background-color: rgba(25, 135, 84, 0.14);
 }
 
-/* Sessions that have reached capacity. */
+
 .availability.full,
 .availability.cancelled {
     color: var(--booking-danger);
     background-color: rgba(220, 53, 69, 0.14);
 }
 
-/* Additional booking status colours. */
+
 .availability.completed {
     color: var(--booking-muted);
     background-color: rgba(91, 116, 143, 0.16);
@@ -220,7 +216,7 @@ html[data-theme="dark"] {
     background-color: rgba(255, 193, 7, 0.14);
 }
 
-/* Session title. */
+
 .session-name {
     margin-top: 1.25rem;
     margin-bottom: 0.65rem;
@@ -229,7 +225,7 @@ html[data-theme="dark"] {
     font-weight: 700;
 }
 
-/* Session description. */
+
 .session-description {
     min-height: 3rem;
     margin-bottom: 1.25rem;
@@ -237,7 +233,7 @@ html[data-theme="dark"] {
     line-height: 1.6;
 }
 
-/* Row containing an icon and a session detail. */
+
 .session-detail {
     display: flex;
     align-items: center;
@@ -246,7 +242,7 @@ html[data-theme="dark"] {
     border-bottom: 1px solid var(--booking-border);
 }
 
-/* Icon displayed beside a session detail. */
+
 .session-detail > i {
     display: grid;
     width: 38px;
@@ -259,14 +255,14 @@ html[data-theme="dark"] {
     font-size: 1rem;
 }
 
-/* Small labels such as Date, Time and Instructor. */
+
 .session-detail span {
     display: block;
     color: var(--booking-muted);
     font-size: 0.75rem;
 }
 
-/* Actual session detail value. */
+
 .session-detail strong {
     display: block;
     color: var(--booking-text);
@@ -274,20 +270,20 @@ html[data-theme="dark"] {
     font-weight: 600;
 }
 
-/* Keep the capacity and button at the bottom of the card. */
+
 .session-footer {
     margin-top: auto;
     padding-top: 1.25rem;
 }
 
-/* Number of spaces remaining. */
+
 .remaining-spaces {
     margin-bottom: 0.9rem;
     color: var(--booking-muted);
     font-size: 0.88rem;
 }
 
-/* Empty result container. */
+
 .no-sessions {
     padding: 4rem 1.5rem;
     border: 1px dashed var(--booking-border);
@@ -297,7 +293,7 @@ html[data-theme="dark"] {
     box-shadow: var(--booking-shadow);
 }
 
-/* Large calendar icon in the empty result container. */
+
 .no-sessions > i {
     display: inline-block;
     margin-bottom: 1rem;
@@ -315,14 +311,14 @@ html[data-theme="dark"] {
     color: var(--booking-muted);
 }
 
-/* Make disabled buttons clearly unavailable. */
+
 .booking-page .btn:disabled,
 .booking-page .btn.disabled {
     cursor: not-allowed;
     opacity: 0.65;
 }
 
-/* Smaller spacing for phones. */
+
 @media (max-width: 575.98px) {
     .booking-page {
         padding-bottom: 3rem;
@@ -342,12 +338,9 @@ html[data-theme="dark"] {
         font-size: 1.25rem;
     }
 }
-/* =========================================================
-   Figma booking schedule
-   These styles reproduce the approved desktop booking design.
-   ========================================================= */
 
-/* Light-mode colours for the booking schedule. */
+
+
 :root,
 html[data-theme="light"] {
     --figma-booking-background:
@@ -371,7 +364,7 @@ html[data-theme="light"] {
     --figma-booking-shadow: 0 12px 30px rgba(7, 17, 31, 0.08);
 }
 
-/* Dark-mode colours taken from the supplied Figma page. */
+
 html[data-theme="dark"] {
     --figma-booking-background:
         linear-gradient(
@@ -395,12 +388,12 @@ html[data-theme="dark"] {
     --figma-booking-shadow: none;
 }
 
-/* Remove the normal main-container spacing for this full-width design. */
+
 .figma-booking-main {
     padding: 0 !important;
 }
 
-/* Full booking-page background. */
+
 .figma-booking-page {
     min-height: 100vh;
     padding: 2rem 1.25rem 5rem;
@@ -408,18 +401,18 @@ html[data-theme="dark"] {
     background: var(--figma-booking-background);
 }
 
-/* Keeps the content aligned and prevents excessive stretching. */
+
 .figma-booking-container {
     width: min(100%, 1160px);
     margin: 0 auto;
 }
 
-/* Left-aligned heading used in the Figma design. */
+
 .figma-booking-heading {
     margin-bottom: 2.25rem;
 }
 
-/* Small turquoise heading above the page title. */
+
 .figma-booking-eyebrow {
     margin: 0 0 0.65rem;
     color: var(--figma-booking-accent);
@@ -429,7 +422,7 @@ html[data-theme="dark"] {
     text-transform: uppercase;
 }
 
-/* Large condensed page title. */
+
 .figma-booking-heading h1 {
     margin: 0;
     color: var(--figma-booking-text);
@@ -441,20 +434,20 @@ html[data-theme="dark"] {
     text-transform: uppercase;
 }
 
-/* Text immediately below the main heading. */
+
 .figma-booking-introduction {
     margin: 1rem 0 0;
     color: var(--figma-booking-muted);
     font-size: 0.98rem;
 }
 
-/* Filters intentionally have no surrounding card in Figma. */
+
 .figma-booking-filters {
     width: min(100%, 900px);
     margin-bottom: 2.5rem;
 }
 
-/* Compact search input shown above the dropdowns. */
+
 .figma-search-field {
     width: min(100%, 250px);
     margin-bottom: 0.75rem;
@@ -480,7 +473,7 @@ html[data-theme="dark"] {
     opacity: 1;
 }
 
-/* Thin dropdown fields displayed in the Figma filter section. */
+
 .figma-filter-field {
     width: 100%;
     margin-bottom: 0.55rem;
@@ -498,20 +491,20 @@ html[data-theme="dark"] {
     font-size: 0.82rem;
 }
 
-/* Dropdown options must remain readable in both themes. */
+
 .figma-filter-field select option {
     color: var(--figma-booking-text);
     background-color: var(--figma-booking-card);
 }
 
-/* Shared focus indicator for keyboard users. */
+
 .figma-search-field input:focus,
 .figma-filter-field select:focus {
     border-color: var(--figma-booking-accent);
     box-shadow: 0 0 0 0.18rem rgba(0, 220, 174, 0.16);
 }
 
-/* Clear and My Bookings actions below the dropdowns. */
+
 .figma-filter-actions {
     display: flex;
     flex-wrap: wrap;
@@ -519,7 +512,7 @@ html[data-theme="dark"] {
     margin-top: 0.9rem;
 }
 
-/* Outlined button from the Figma design. */
+
 .figma-clear-button,
 .figma-my-bookings-button {
     display: inline-flex;
@@ -549,7 +542,7 @@ html[data-theme="dark"] {
     color: var(--figma-booking-accent);
 }
 
-/* Three-column card grid displayed in the desktop design. */
+
 .figma-session-grid {
     display: grid;
     width: min(100%, 1030px);
@@ -558,7 +551,7 @@ html[data-theme="dark"] {
     margin: 0 auto;
 }
 
-/* Individual compact session card. */
+
 .figma-session-card {
     display: flex;
     min-width: 0;
@@ -576,14 +569,14 @@ html[data-theme="dark"] {
         box-shadow 0.2s ease;
 }
 
-/* Subtle movement when a card is selected with the mouse. */
+
 .figma-session-card:hover {
     transform: translateY(-3px);
     border-color: rgba(0, 220, 174, 0.48);
     box-shadow: 0 14px 32px rgba(3, 13, 28, 0.15);
 }
 
-/* Type and availability badge row. */
+
 .figma-card-header {
     display: flex;
     align-items: center;
@@ -591,7 +584,7 @@ html[data-theme="dark"] {
     gap: 1rem;
 }
 
-/* Yoga, Fitness, Zumba and other session types. */
+
 .figma-session-type {
     overflow: hidden;
     color: var(--figma-booking-accent);
@@ -604,7 +597,7 @@ html[data-theme="dark"] {
     white-space: nowrap;
 }
 
-/* Available and Full pills. */
+
 .figma-status-badge {
     display: inline-flex;
     flex-shrink: 0;
@@ -629,7 +622,7 @@ html[data-theme="dark"] {
     background-color: rgba(240, 165, 0, 0.16);
 }
 
-/* Session card title. */
+
 .figma-session-name {
     margin: 0.6rem 0 0;
     color: var(--figma-booking-text);
@@ -639,7 +632,7 @@ html[data-theme="dark"] {
     line-height: 1.25;
 }
 
-/* Session description occupies consistent space across cards. */
+
 .figma-session-description {
     min-height: 3.8rem;
     margin: 0.75rem 0 0.9rem;
@@ -648,12 +641,12 @@ html[data-theme="dark"] {
     line-height: 1.5;
 }
 
-/* Remove the browser's default description-list spacing. */
+
 .figma-session-details {
     margin: 0;
 }
 
-/* Compact left-label/right-value detail rows. */
+
 .figma-detail-row {
     display: grid;
     grid-template-columns: minmax(80px, 1fr) minmax(110px, auto);
@@ -680,28 +673,28 @@ html[data-theme="dark"] {
     text-align: right;
 }
 
-/* Turquoise price value used by every card. */
+
 .figma-detail-row dd.figma-price {
     color: var(--figma-booking-accent);
 }
 
-/* Availability becomes yellow when very few spaces remain. */
+
 .figma-detail-row dd.figma-spaces.is-limited {
     color: #ffd000;
 }
 
-/* Full sessions use the red value shown in Figma. */
+
 .figma-detail-row dd.figma-spaces.is-full {
     color: var(--figma-booking-danger);
 }
 
-/* Keeps the card action at the bottom of cards of different heights. */
+
 .figma-card-actions {
     margin-top: auto;
     padding-top: 0.9rem;
 }
 
-/* Main turquoise booking button. */
+
 .figma-booking-button {
     display: flex;
     width: 100%;
@@ -732,7 +725,7 @@ html[data-theme="dark"] {
     transform: translateY(-1px);
 }
 
-/* Disabled and already-booked button. */
+
 .figma-booking-button.is-disabled {
     cursor: not-allowed;
     color: var(--figma-booking-muted);
@@ -742,7 +735,7 @@ html[data-theme="dark"] {
     opacity: 0.8;
 }
 
-/* Registration link beneath the login button. */
+
 .figma-register-link {
     display: block;
     margin-top: 0.65rem;
@@ -756,7 +749,7 @@ html[data-theme="dark"] {
     color: var(--figma-booking-accent);
 }
 
-/* Fully booked progress-style bar. */
+
 .figma-full-bar {
     display: flex;
     width: 100%;
@@ -781,7 +774,7 @@ html[data-theme="dark"] {
     text-transform: uppercase;
 }
 
-/* Empty search result spans the entire card grid. */
+
 .figma-no-sessions {
     grid-column: 1 / -1;
     padding: 4rem 1.5rem;
@@ -813,14 +806,14 @@ html[data-theme="dark"] {
     margin: 1.25rem auto 0;
 }
 
-/* Use two columns on tablets. */
+
 @media (max-width: 991.98px) {
     .figma-session-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-/* Use one card per row on phones. */
+
 @media (max-width: 575.98px) {
     .figma-booking-page {
         padding: 1.5rem 1rem 3.5rem;

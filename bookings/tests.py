@@ -1,4 +1,4 @@
-from datetime import time, timedelta
+﻿from datetime import time, timedelta
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -10,7 +10,6 @@ from memberships.models import Membership, MembershipPackage
 from .models import Booking, Service, Session
 
 
-# Use the custom FitSync user model from the accounts application.
 User = get_user_model()
 
 
@@ -20,7 +19,6 @@ class BookingViewTests(TestCase):
     def setUp(self):
         """Create reusable users, membership data, service and session."""
 
-        # Create a member who will make the booking.
         self.member = User.objects.create_user(
             username="test_member",
             email="member@example.com",
@@ -28,7 +26,6 @@ class BookingViewTests(TestCase):
             role="MEMBER",
         )
 
-        # Create a coach who will lead the session.
         self.coach = User.objects.create_user(
             username="test_coach",
             email="coach@example.com",
@@ -36,7 +33,6 @@ class BookingViewTests(TestCase):
             role="COACH",
         )
 
-        # Create a membership package for the test member.
         self.package = MembershipPackage.objects.create(
             name="Standard Membership",
             slug="standard-membership",
@@ -47,7 +43,6 @@ class BookingViewTests(TestCase):
             is_active=True,
         )
 
-        # Give the member an active and unexpired membership.
         today = timezone.localdate()
 
         self.membership = Membership.objects.create(
@@ -58,7 +53,6 @@ class BookingViewTests(TestCase):
             status=Membership.Status.ACTIVE,
         )
 
-        # Create an active gym service.
         self.service = Service.objects.create(
             name="Morning Yoga",
             service_type=Service.Type.YOGA,
@@ -67,7 +61,6 @@ class BookingViewTests(TestCase):
             is_active=True,
         )
 
-        # Create a scheduled session in the future.
         self.session = Session.objects.create(
             service=self.service,
             instructor=self.coach,
@@ -111,7 +104,6 @@ class BookingViewTests(TestCase):
     def test_member_without_active_membership_cannot_book(self):
         """A member without an active membership should be blocked."""
 
-        # Remove the active membership created during test setup.
         self.membership.delete()
 
         self.client.force_login(self.member)
@@ -124,13 +116,11 @@ class BookingViewTests(TestCase):
             follow=True,
         )
 
-        # Check that the member receives the correct error message.
         self.assertContains(
             response,
             "You need an active membership to book a session.",
         )
 
-        # Confirm that no booking was created.
         self.assertFalse(
             Booking.objects.filter(
                 member=self.member,
@@ -149,7 +139,6 @@ class BookingViewTests(TestCase):
             args=[self.session.id],
         )
 
-        # Attempt to book the same session twice.
         self.client.post(booking_url)
         self.client.post(booking_url)
 
@@ -164,11 +153,9 @@ class BookingViewTests(TestCase):
     def test_member_cannot_book_full_session(self):
         """A booking should not be created after capacity is reached."""
 
-        # Reduce the session to only one available space.
         self.session.capacity = 1
         self.session.save(update_fields=["capacity"])
 
-        # Another member takes the only available space.
         other_member = User.objects.create_user(
             username="other_member",
             email="other@example.com",
@@ -191,7 +178,6 @@ class BookingViewTests(TestCase):
             )
         )
 
-        # No confirmed booking should exist for the current member.
         self.assertFalse(
             Booking.objects.filter(
                 member=self.member,
@@ -203,14 +189,12 @@ class BookingViewTests(TestCase):
     def test_member_cannot_book_overlapping_session(self):
         """A member cannot book two sessions whose times overlap."""
 
-        # The member already has the 08:00 to 09:00 session.
         Booking.objects.create(
             member=self.member,
             session=self.session,
             status=Booking.Status.CONFIRMED,
         )
 
-        # Create another session on the same date from 08:30 to 09:30.
         overlapping_session = Session.objects.create(
             service=self.service,
             instructor=self.coach,
@@ -231,13 +215,11 @@ class BookingViewTests(TestCase):
             follow=True,
         )
 
-        # The member should receive a time-conflict error.
         self.assertContains(
             response,
             "You already have another booking at this time.",
         )
 
-        # No booking should be created for the overlapping session.
         self.assertFalse(
             Booking.objects.filter(
                 member=self.member,
@@ -266,7 +248,6 @@ class BookingViewTests(TestCase):
 
         self.assertRedirects(response, reverse("bookings:my_bookings"))
 
-        # Reload the booking from the database after the request.
         booking.refresh_from_db()
 
         self.assertEqual(booking.status, Booking.Status.CANCELLED)
