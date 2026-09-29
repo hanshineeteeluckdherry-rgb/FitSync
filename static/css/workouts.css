@@ -1,0 +1,1017 @@
+/* FitSync Person 2 - Workout module */
+
+/* Workout pages use the same dark navy + mint language as the approved visual. */
+.dashboard-content:has(.workout-page),
+.dashboard-content:has(.exercise-library-page) {
+    min-height: calc(100vh - var(--topbar-height));
+    padding: 24px 28px 56px;
+    background:
+        radial-gradient(circle at 85% 0%, rgba(0, 212, 170, 0.08), transparent 32%),
+        linear-gradient(180deg, #071a32 0%, #061629 100%);
+}
+
+.dashboard-topbar:has(+ .dashboard-content .workout-page),
+.dashboard-topbar:has(+ .dashboard-content .exercise-library-page) {
+    color: #f7fbff;
+    background: #06162b;
+    border-bottom-color: #15314d;
+}
+
+.workout-page,
+.exercise-library-page {
+    width: 100%;
+    max-width: 1260px;
+    margin: 0 auto;
+    color: #f7fbff;
+}
+
+.workout-page h1,
+.workout-page h2,
+.workout-page h3,
+.exercise-library-page h1,
+.exercise-library-page h2,
+.exercise-library-page h3 {
+    color: #f7fbff;
+}
+
+.workout-page p,
+.exercise-library-page p {
+    color: #9fb5cd;
+}
+
+.workout-narrow,
+.workout-form-wrap {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.page-heading h1 {
+    margin-bottom: 0.35rem;
+    font-size: clamp(1.65rem, 2.2vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.page-heading p {
+    margin-bottom: 0;
+}
+
+.workout-panel,
+.workout-card,
+.workout-builder-panel {
+    color: #f7fbff;
+    background: rgba(7, 24, 45, 0.92);
+    border: 1px solid #173957;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.workout-card {
+    padding: 1.25rem;
+}
+
+.workout-card:hover {
+    border-color: rgba(0, 212, 170, 0.35);
+}
+
+/* Shared workout navigation */
+.workout-tabs {
+    display: flex;
+    gap: 1.8rem;
+    margin-bottom: 1.4rem;
+    border-bottom: 1px solid #173957;
+}
+
+.workout-tabs a,
+.workout-tabs span {
+    padding: 0.8rem 0;
+    color: #9fb5cd;
+    text-decoration: none;
+    font-weight: 650;
+}
+
+.workout-tabs a:hover,
+.workout-tabs a.active,
+.workout-tabs span.active {
+    color: #00ddb4;
+}
+
+.workout-tabs a.active,
+.workout-tabs span.active {
+    border-bottom: 2px solid #00ddb4;
+}
+
+.section-title {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 750;
+}
+
+.count-badge {
+    display: inline-grid;
+    min-width: 24px;
+    height: 24px;
+    place-items: center;
+    margin-left: 0.35rem;
+    color: #9fb5cd;
+    background: #0d2945;
+    border: 1px solid #21445f;
+    border-radius: 999px;
+    font-size: 0.75rem;
+}
+
+.plan-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    color: #9fb5cd;
+    font-size: 0.82rem;
+}
+
+.plan-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-fitsync {
+    color: #00ddb4;
+    background: rgba(0, 212, 170, 0.12);
+    border: 1px solid rgba(0, 212, 170, 0.22);
+}
+
+.workout-empty-state,
+.small-empty-state {
+    padding: 2.5rem 1.5rem;
+    color: #9fb5cd;
+    background: rgba(8, 29, 52, 0.7);
+    border: 1px dashed #244663;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.workout-empty-state h3 {
+    margin: 0 0 0.5rem;
+    color: #f7fbff;
+    font-size: 1rem;
+}
+
+.back-link {
+    color: #a7bfd6;
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+.back-link:hover {
+    color: #00ddb4;
+}
+
+/* Inputs used throughout workouts */
+.workout-page .form-control,
+.workout-page .form-select,
+.exercise-library-page .form-control,
+.exercise-library-page .form-select {
+    color: #f4f8fc;
+    background: #0a213c;
+    border: 1px solid #244663;
+    border-radius: 10px;
+}
+
+.workout-page .form-control::placeholder,
+.exercise-library-page .form-control::placeholder {
+    color: #7890a9;
+}
+
+.workout-page .form-control:focus,
+.workout-page .form-select:focus,
+.exercise-library-page .form-control:focus,
+.exercise-library-page .form-select:focus {
+    color: #ffffff;
+    background: #0a213c;
+    border-color: #00d8ae;
+    box-shadow: 0 0 0 3px rgba(0, 216, 174, 0.12);
+}
+
+.workout-page .form-label,
+.exercise-library-page .form-label {
+    margin-bottom: 0.45rem;
+    color: #f4f8fc;
+    font-size: 0.78rem;
+    font-weight: 650;
+}
+
+/* Create Workout Plan builder */
+.workout-builder-shell {
+    padding-bottom: 6rem;
+}
+
+.workout-builder-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.35rem;
+}
+
+.workout-builder-header h1 {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.8rem, 2.7vw, 2.45rem);
+    font-weight: 850;
+    letter-spacing: -0.045em;
+}
+
+.workout-builder-header p {
+    margin: 0;
+    font-size: 0.96rem;
+}
+
+.workout-back-button,
+.builder-clear-button {
+    color: #d9e5f0;
+    background: #0a213c;
+    border: 1px solid #244663;
+    border-radius: 10px;
+}
+
+.workout-back-button:hover,
+.builder-clear-button:hover {
+    color: #00ddb4;
+    background: #0d2945;
+    border-color: rgba(0, 221, 180, 0.45);
+}
+
+.workout-builder-panel {
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.builder-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.builder-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.builder-panel-title h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.builder-panel-title p {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+}
+
+.builder-step {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    place-items: center;
+    color: #03121e;
+    background: linear-gradient(135deg, #00d4aa, #13e8c0);
+    border-radius: 50%;
+    box-shadow: 0 6px 18px rgba(0, 212, 170, 0.18);
+    font-size: 1rem;
+    font-weight: 850;
+}
+
+.builder-motivation {
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 255px;
+    padding: 0.75rem 1rem;
+    color: #edf8ff;
+    background: #0b2743;
+    border: 1px solid #244663;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+.builder-motivation i {
+    color: #00ddb4;
+    font-size: 1.55rem;
+}
+
+.builder-form-grid .form-control,
+.builder-form-grid .form-select {
+    min-height: 42px;
+}
+
+.builder-form-grid textarea.form-control {
+    min-height: 72px;
+    resize: vertical;
+}
+
+.form-optional {
+    color: #7890a9;
+    font-weight: 500;
+}
+
+.required-star,
+.field-error {
+    color: #fb7185;
+}
+
+.field-error {
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+}
+
+.day-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.38rem;
+}
+
+.day-choice input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.day-choice span {
+    display: inline-flex;
+    min-width: 42px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    color: #b6c8da;
+    background: #0a213c;
+    border: 1px solid #244663;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.76rem;
+    font-weight: 650;
+}
+
+.day-choice input:checked + span {
+    color: #04131e;
+    background: #00ddb4;
+    border-color: #00ddb4;
+}
+
+.builder-selection-tools {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.selected-exercise-count {
+    color: #b7c9db;
+    font-size: 0.78rem;
+}
+
+.selected-exercise-count strong {
+    color: #00ddb4;
+    font-size: 1rem;
+}
+
+.exercise-builder-tools {
+    display: grid;
+    grid-template-columns: minmax(280px, 2fr) repeat(3, minmax(155px, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 0.9rem;
+}
+
+.builder-search {
+    position: relative;
+}
+
+.builder-search i {
+    position: absolute;
+    top: 50%;
+    left: 0.8rem;
+    color: #9fb5cd;
+    transform: translateY(-50%);
+}
+
+.builder-search input {
+    width: 100%;
+    height: 42px;
+    padding: 0 0.9rem 0 2.35rem;
+    color: #f4f8fc;
+    background: #0a213c;
+    border: 1px solid #244663;
+    border-radius: 10px;
+    outline: none;
+}
+
+.builder-search input::placeholder {
+    color: #7890a9;
+}
+
+.builder-search input:focus {
+    border-color: #00d8ae;
+    box-shadow: 0 0 0 3px rgba(0, 216, 174, 0.12);
+}
+
+.builder-exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.exercise-card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    color: #f7fbff;
+    background: #071b32;
+    border: 1px solid #21415d;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.exercise-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 221, 180, 0.5);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+}
+
+.builder-exercise-card.selected {
+    border-color: #00ddb4;
+    box-shadow: 0 0 0 2px rgba(0, 221, 180, 0.16), 0 12px 26px rgba(0, 0, 0, 0.2);
+}
+
+.exercise-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.exercise-card-check {
+    position: absolute;
+    z-index: 5;
+    top: 9px;
+    left: 9px;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    color: transparent;
+    background: rgba(4, 16, 31, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 6px;
+}
+
+.builder-exercise-card.selected .exercise-card-check {
+    color: #03121e;
+    background: #00ddb4;
+    border-color: #00ddb4;
+}
+
+.exercise-muscle-badge {
+    position: absolute;
+    z-index: 5;
+    top: 9px;
+    right: 9px;
+    padding: 0.22rem 0.5rem;
+    color: #d7fff7;
+    background: rgba(0, 157, 139, 0.82);
+    border: 1px solid rgba(54, 238, 203, 0.22);
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 750;
+}
+
+.exercise-image {
+    display: block;
+    width: 100%;
+    height: 116px;
+    object-fit: cover;
+    background: #0a213c;
+}
+
+.exercise-card-body {
+    padding: 0.7rem 0.72rem 0.75rem;
+}
+
+.exercise-card-name {
+    display: block;
+    margin-bottom: 0.28rem;
+    color: #ffffff;
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+
+.exercise-description {
+    display: -webkit-box;
+    min-height: 2.8em;
+    margin: 0;
+    overflow: hidden;
+    color: #9fb5cd;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 0.66rem;
+    line-height: 1.4;
+}
+
+.exercise-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    margin-top: 0.62rem;
+}
+
+.exercise-equipment {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.3rem;
+    overflow: hidden;
+    color: #b6c8da;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.62rem;
+}
+
+.difficulty {
+    position: static;
+    flex: 0 0 auto;
+    padding: 0.18rem 0.42rem;
+    border-radius: 999px;
+    font-size: 0.58rem;
+    font-weight: 750;
+}
+
+.difficulty-beginner {
+    color: #39e6ac;
+    background: rgba(21, 122, 85, 0.45);
+}
+
+.difficulty-intermediate {
+    color: #ffe680;
+    background: rgba(126, 96, 11, 0.5);
+}
+
+.difficulty-advanced {
+    color: #ff879a;
+    background: rgba(127, 39, 57, 0.55);
+}
+
+.grid-empty {
+    grid-column: 1 / -1;
+}
+
+.plan-builder-actions {
+    position: sticky;
+    z-index: 20;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0.7rem 0.8rem;
+    background: rgba(7, 24, 45, 0.94);
+    border: 1px solid #244663;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(12px);
+}
+
+.workout-save-button {
+    min-width: 190px;
+    min-height: 42px;
+}
+
+/* Exercise library and detail pages */
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.exercise-filters .input-group-text {
+    color: #9fb5cd;
+    background: #0a213c;
+    border-color: #244663;
+    border-right: 0;
+}
+
+.exercise-filters .input-group .form-control {
+    border-left: 0;
+}
+
+.exercise-select {
+    position: absolute;
+    z-index: 2;
+    top: 8px;
+    left: 8px;
+}
+
+.already-added {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: #00ddb4;
+    font-size: 0.7rem;
+    font-weight: 650;
+}
+
+.exercise-detail-image {
+    width: 100%;
+    min-height: 260px;
+    max-height: 380px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Progress and history */
+.progress-photo {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 1rem;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.simple-chart {
+    display: flex;
+    min-height: 180px;
+    align-items: end;
+    gap: 0.7rem;
+    overflow-x: auto;
+    padding: 1rem 0 0;
+    border-bottom: 1px solid #244663;
+}
+
+.chart-column {
+    display: flex;
+    min-width: 55px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: end;
+}
+
+.chart-value {
+    margin-bottom: 0.25rem;
+    color: #9fb5cd;
+    font-size: 0.68rem;
+}
+
+.chart-bar {
+    width: 28px;
+    max-height: 145px;
+    min-height: 20px;
+    background: #00ddb4;
+    border-radius: 7px 7px 0 0;
+}
+
+.chart-column small {
+    padding: 0.35rem 0;
+    color: #9fb5cd;
+    font-size: 0.65rem;
+}
+
+.history-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    color: #f7fbff;
+    border-bottom: 1px solid #244663;
+    text-decoration: none;
+}
+
+.history-row:last-child {
+    border-bottom: 0;
+}
+
+.history-row small {
+    display: block;
+    margin-top: 0.15rem;
+    color: #9fb5cd;
+}
+
+/* Light mode stays usable without changing the workout layout. */
+html[data-theme="light"] .dashboard-content:has(.workout-page),
+html[data-theme="light"] .dashboard-content:has(.exercise-library-page) {
+    background: linear-gradient(180deg, #f5fbff 0%, #eaf6f3 100%);
+}
+
+html[data-theme="light"] .workout-page,
+html[data-theme="light"] .exercise-library-page,
+html[data-theme="light"] .workout-page h1,
+html[data-theme="light"] .workout-page h2,
+html[data-theme="light"] .workout-page h3,
+html[data-theme="light"] .exercise-library-page h1,
+html[data-theme="light"] .exercise-library-page h2,
+html[data-theme="light"] .exercise-library-page h3 {
+    color: #0a1627;
+}
+
+html[data-theme="light"] .workout-panel,
+html[data-theme="light"] .workout-card,
+html[data-theme="light"] .workout-builder-panel,
+html[data-theme="light"] .exercise-card,
+html[data-theme="light"] .plan-builder-actions {
+    color: #0a1627;
+    background: #ffffff;
+    border-color: #d6e4ee;
+}
+
+html[data-theme="light"] .workout-page .form-control,
+html[data-theme="light"] .workout-page .form-select,
+html[data-theme="light"] .builder-search input,
+html[data-theme="light"] .day-choice span,
+html[data-theme="light"] .workout-back-button,
+html[data-theme="light"] .builder-clear-button {
+    color: #0a1627;
+    background: #f6fafc;
+    border-color: #d6e4ee;
+}
+
+html[data-theme="light"] .exercise-card-name {
+    color: #0a1627;
+}
+
+@media (max-width: 1199.98px) {
+    .builder-exercise-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .exercise-builder-tools {
+        grid-template-columns: minmax(250px, 2fr) 1fr 1fr;
+    }
+
+    #sort-filter {
+        grid-column: 3;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .dashboard-content:has(.workout-page),
+    .dashboard-content:has(.exercise-library-page) {
+        padding: 20px 16px 48px;
+    }
+
+    .workout-builder-header {
+        flex-direction: column;
+    }
+
+    .builder-exercise-grid,
+    .exercise-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .exercise-builder-tools {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .builder-search {
+        grid-column: 1 / -1;
+    }
+
+    #sort-filter {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .builder-panel-header,
+    .builder-library-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .builder-selection-tools {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .builder-exercise-grid,
+    .exercise-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .exercise-builder-tools {
+        grid-template-columns: 1fr;
+    }
+
+    .builder-search {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 479.98px) {
+    .builder-exercise-grid,
+    .exercise-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .plan-builder-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+}
+
+/* =========================================================
+   WORKOUT THEME FIX
+   Makes Workout Plans, Exercise Library and Create Plan
+   use the shared FitSync light/dark theme correctly.
+   ========================================================= */
+
+/* The workout module must use the same page gradient as FitSync. */
+.dashboard-stage:has(.workout-page),
+.dashboard-stage:has(.exercise-library-page) {
+    background: var(--page-gradient) !important;
+}
+
+/* Do not cover the shared gradient with a second workout-only background. */
+.dashboard-content:has(.workout-page),
+.dashboard-content:has(.exercise-library-page) {
+    background: transparent !important;
+}
+
+/* The current layout has dashboard-scroll-content between topbar and page. */
+.dashboard-stage:has(.workout-page) > .dashboard-topbar,
+.dashboard-stage:has(.exercise-library-page) > .dashboard-topbar {
+    color: var(--text-color) !important;
+    background: var(--surface-color) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+/* -------------------------
+   LIGHT MODE
+   ------------------------- */
+html[data-theme="light"] .workout-page,
+html[data-theme="light"] .exercise-library-page,
+html[data-theme="light"] .workout-page h1,
+html[data-theme="light"] .workout-page h2,
+html[data-theme="light"] .workout-page h3,
+html[data-theme="light"] .exercise-library-page h1,
+html[data-theme="light"] .exercise-library-page h2,
+html[data-theme="light"] .exercise-library-page h3 {
+    color: #080d17 !important;
+}
+
+html[data-theme="light"] .workout-page p,
+html[data-theme="light"] .exercise-library-page p,
+html[data-theme="light"] .plan-meta,
+html[data-theme="light"] .selected-exercise-count,
+html[data-theme="light"] .exercise-description,
+html[data-theme="light"] .exercise-equipment,
+html[data-theme="light"] .chart-value,
+html[data-theme="light"] .chart-column small,
+html[data-theme="light"] .history-row small {
+    color: #5b748f !important;
+}
+
+html[data-theme="light"] .workout-panel,
+html[data-theme="light"] .workout-card,
+html[data-theme="light"] .workout-builder-panel,
+html[data-theme="light"] .exercise-card,
+html[data-theme="light"] .plan-builder-actions,
+html[data-theme="light"] .builder-motivation {
+    color: #080d17 !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: #dbe5f0 !important;
+    box-shadow: 0 10px 24px rgba(8, 13, 23, 0.08) !important;
+}
+
+/* Remove the dark grey empty-state blocks in light mode. */
+html[data-theme="light"] .workout-empty-state,
+html[data-theme="light"] .small-empty-state,
+html[data-theme="light"] .grid-empty {
+    color: #5b748f !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: #cbdce8 !important;
+}
+
+html[data-theme="light"] .workout-empty-state h3 {
+    color: #080d17 !important;
+}
+
+html[data-theme="light"] .workout-tabs {
+    border-bottom-color: #b9cad8 !important;
+}
+
+html[data-theme="light"] .workout-tabs a,
+html[data-theme="light"] .workout-tabs span {
+    color: #7890a9 !important;
+}
+
+html[data-theme="light"] .workout-tabs a:hover,
+html[data-theme="light"] .workout-tabs a.active,
+html[data-theme="light"] .workout-tabs span.active {
+    color: #00ad8a !important;
+}
+
+html[data-theme="light"] .count-badge {
+    color: #5b748f !important;
+    background: #eef6f8 !important;
+    border-color: #d6e4ee !important;
+}
+
+/* Forms and filters in both Workout Plans and Exercise Library. */
+html[data-theme="light"] .workout-page .form-control,
+html[data-theme="light"] .workout-page .form-select,
+html[data-theme="light"] .exercise-library-page .form-control,
+html[data-theme="light"] .exercise-library-page .form-select,
+html[data-theme="light"] .builder-search input,
+html[data-theme="light"] .workout-back-button,
+html[data-theme="light"] .builder-clear-button,
+html[data-theme="light"] .exercise-filters .input-group-text {
+    color: #080d17 !important;
+    background: #ffffff !important;
+    border-color: #d6e4ee !important;
+}
+
+html[data-theme="light"] .workout-page .form-control::placeholder,
+html[data-theme="light"] .exercise-library-page .form-control::placeholder,
+html[data-theme="light"] .builder-search input::placeholder {
+    color: #7890a9 !important;
+}
+
+html[data-theme="light"] .workout-page .form-control:focus,
+html[data-theme="light"] .workout-page .form-select:focus,
+html[data-theme="light"] .exercise-library-page .form-control:focus,
+html[data-theme="light"] .exercise-library-page .form-select:focus,
+html[data-theme="light"] .builder-search input:focus {
+    color: #080d17 !important;
+    background: #ffffff !important;
+    border-color: #00ad8a !important;
+    box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.14) !important;
+}
+
+html[data-theme="light"] .workout-page .form-label,
+html[data-theme="light"] .exercise-library-page .form-label,
+html[data-theme="light"] .exercise-card-name {
+    color: #080d17 !important;
+}
+
+html[data-theme="light"] .day-choice span {
+    color: #5b748f !important;
+    background: #ffffff !important;
+    border-color: #d6e4ee !important;
+}
+
+html[data-theme="light"] .day-choice input:checked + span {
+    color: #04131e !important;
+    background: #00d4aa !important;
+    border-color: #00d4aa !important;
+}
+
+html[data-theme="light"] .builder-search i {
+    color: #7890a9 !important;
+}
+
+html[data-theme="light"] .exercise-card-check {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-color: #91a7ba !important;
+}
+
+html[data-theme="light"] .builder-exercise-card.selected .exercise-card-check {
+    color: #04131e !important;
+    background: #00d4aa !important;
+    border-color: #00d4aa !important;
+}
+
+html[data-theme="light"] .exercise-image {
+    background: #eef4f7 !important;
+}
+
+html[data-theme="light"] .history-row {
+    color: #080d17 !important;
+    border-bottom-color: #dbe5f0 !important;
+}
+
+html[data-theme="light"] .simple-chart {
+    border-bottom-color: #dbe5f0 !important;
+}
+
+/* Keep the sticky Create Plan action bar readable in light mode. */
+html[data-theme="light"] .plan-builder-actions {
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(12px);
+}
+
+/* -------------------------
+   DARK MODE
+   ------------------------- */
+html[data-theme="dark"] .dashboard-stage:has(.workout-page),
+html[data-theme="dark"] .dashboard-stage:has(.exercise-library-page) {
+    background: var(--page-gradient) !important;
+}
+
+html[data-theme="dark"] .dashboard-stage:has(.workout-page) > .dashboard-topbar,
+html[data-theme="dark"] .dashboard-stage:has(.exercise-library-page) > .dashboard-topbar {
+    color: #f7fbff !important;
+    background: #06162b !important;
+    border-bottom-color: #15314d !important;
+}
+

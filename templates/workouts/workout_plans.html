@@ -1,0 +1,86 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Workout Plans{% endblock %}
+{% block dashboard_heading %}Workout{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-page">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+
+      <!-- Page title -->
+     <div class="page-heading mb-0">
+        <h1>Workout Plans</h1>
+        <p>Your training plans — personal and coach-assigned</p>
+      </div>
+
+    </div>
+    <div class="workout-tabs mb-4">
+        <a class="active" href="{% url 'workouts:plans' %}">Workout Plans</a>
+        <a href="{% url 'workouts:exercise_library' %}">Exercise Library</a>
+        <a href="{% url 'workouts:history' %}">History</a>
+    </div>
+
+    <section class="mb-5">
+        <h2 class="section-title">My Plans <span class="count-badge">{{ personal_plans|length }}</span></h2>
+        {% if personal_plans %}
+            <div class="d-grid gap-3">
+                {% for plan in personal_plans %}
+                    <article class="workout-card d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                        <div>
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                <h3 class="h5 mb-0">{{ plan.name }}</h3>
+                                <span class="badge badge-fitsync">Personal</span>
+                            </div>
+                            <div class="plan-meta">
+                                <span><i class="bi bi-bullseye"></i>{{ plan.goal|default:"General fitness" }}</span>
+                                <span><i class="bi bi-activity"></i>{{ plan.plan_exercises.count }} exercises</span>
+                                {% if plan.workout_days %}<span><i class="bi bi-calendar3"></i>{{ plan.workout_days }}</span>{% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-secondary-fitsync" href="{% url 'workouts:plan_detail' plan.id %}">View Plan</a>
+                            <a class="btn btn-primary-fitsync" href="{% url 'workouts:start_workout' plan.id %}"><i class="bi bi-play-fill me-1"></i>Start Workout</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="workout-empty-state">
+                <div class="empty-state-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                <h3>No personal plans yet</h3>
+                <p>Create your first workout plan with your own exercises and schedule.</p>
+                <a class="btn btn-primary-fitsync px-4" href="{% url 'workouts:plan_create' %}"><i class="bi bi-plus-lg me-2"></i>Create New Plan</a>
+            </div>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2 class="section-title">Coach-Assigned Plans <span class="count-badge">{{ coach_plans|length }}</span></h2>
+        {% if coach_plans %}
+            <div class="d-grid gap-3">
+                {% for plan in coach_plans %}
+                    <article class="workout-card d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                        <div>
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                <h3 class="h5 mb-0">{{ plan.name }}</h3>
+                                <span class="badge badge-fitsync">Coach Assigned</span>
+                            </div>
+                            <div class="plan-meta">
+                                {% if plan.coach %}<span><i class="bi bi-person-badge"></i>{{ plan.coach.get_full_name|default:plan.coach.username }}</span>{% endif %}
+                                <span><i class="bi bi-activity"></i>{{ plan.plan_exercises.count }} exercises</span>
+                                <span><i class="bi bi-bullseye"></i>{{ plan.goal|default:"General fitness" }}</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-secondary-fitsync" href="{% url 'workouts:plan_detail' plan.id %}">View Plan</a>
+                            <a class="btn btn-primary-fitsync" href="{% url 'workouts:start_workout' plan.id %}"><i class="bi bi-play-fill me-1"></i>Start Workout</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="small-empty-state">No coach-assigned plans yet.</div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

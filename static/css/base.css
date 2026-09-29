@@ -1,4 +1,4 @@
-/* 1. CSS variables */
+/*  CSS variables */
 :root {
     --bg-color: #f4f7fb;
     --surface-color: #ffffff;
@@ -20,14 +20,14 @@
     --topbar-height: 70px;
 }
 
-/* 2. Light theme */
+/*  Light theme */
 html[data-theme="light"] {
     color-scheme: light;
     --page-gradient: linear-gradient(to bottom, #ffffff, #04cfa6);
     --sidebar-color: #ffffff;
 }
 
-/* 3. Dark theme */
+/*  Dark theme */
 html[data-theme="dark"] {
     color-scheme: dark;
     --bg-color: #071225;
@@ -43,7 +43,7 @@ html[data-theme="dark"] {
     --page-gradient: linear-gradient(to bottom, #11213A, #04cfa6);
 }
 
-/* 4. Typography */
+/*  Typography */
 *,
 *::before,
 *::after {
@@ -86,7 +86,7 @@ a {
     min-height: 55vh;
 }
 
-/* 5. Navbar */
+/*  Navbar */
 .fitsync-navbar {
     min-height: 76px;
     background: var(--navbar-color);
@@ -184,7 +184,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     height: 52px;
 }
 
-/* 6. Footer */
+/*  Footer */
 .site-footer {
     color: var(--text-color);
     background: var(--footer-color);
@@ -223,18 +223,19 @@ html[data-theme="dark"] .navbar-toggler-icon {
     border-top: 1px solid var(--border-color);
 }
 
-/* 7. Sidebars */
+/* Sidebars */
 .dashboard-layout {
     display: flex;
     min-height: 100vh;
     background: var(--page-gradient);
 }
-.dashboard-layout > main,
-.dashboard-layout > div:not(.dashboard-sidebar) {
+
+.dashboard-layout>main,
+.dashboard-layout>div:not(.dashboard-sidebar) {
     background: transparent !important;
 }
 
-.dashboard-sidebar{
+.dashboard-sidebar {
     width: var(--sidebar-width) !important;
     flex: 0 0 var(--sidebar-width);
     color: var(--text-color);
@@ -282,23 +283,23 @@ html[data-theme="dark"] .navbar-toggler-icon {
     border-radius: var(--radius-sm);
 }
 
-.sidebar-nav .nav-link{
-    display:flex;
-    min-height:40px;
+.sidebar-nav .nav-link {
+    display: flex;
+    min-height: 40px;
     align-items: center;
     gap: 12px;
     padding: 10px 12px;
     color: var(--muted-color);
-    font-size:0.875rem;
+    font-size: 0.875rem;
     font-weight: 500;
     border-radius: var(--radius-sm);
 }
 
 .sidebar-nav .nav-link i,
-.sidebar-nav .nav-link span{
+.sidebar-nav .nav-link span {
     background: transparent !important;
     background-color: transparent !important;
-} 
+}
 
 .sidebar-nav .nav-link i {
     width: 18px;
@@ -308,13 +309,13 @@ html[data-theme="dark"] .navbar-toggler-icon {
 
 .sidebar-nav .nav-link:hover,
 .sidebar-nav .nav-link:focus {
-    color:#00dfb3 !important;
-    background: rgba(0, 223, 179, 0.09)!important;
+    color: #00dfb3 !important;
+    background: rgba(0, 223, 179, 0.09) !important;
 }
 
 .sidebar-nav .nav-link.active {
     color: #00dfb3 !important;
-    background:rgba(0,223,179,0.15)!important;
+    background: rgba(0, 223, 179, 0.15) !important;
 }
 
 .sidebar-nav .nav-link.active i,
@@ -322,7 +323,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     color: #00dfb3 !important;
 }
 
-/* 8. Buttons */
+/* Buttons */
 .btn-primary-fitsync {
     color: #080d17;
     background: var(--primary-color);
@@ -357,7 +358,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     border-radius: var(--radius-md);
 }
 
-/* 9. Cards */
+/*  Cards */
 .card,
 .summary-card,
 .empty-state,
@@ -386,7 +387,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     font-weight: 700;
 }
 
-/* 10. Forms */
+/*  Forms */
 .form-control,
 .form-select,
 .input-group-text {
@@ -409,7 +410,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     opacity: 0.8;
 }
 
-/* 11. Tables */
+/* Tables */
 .table {
     --bs-table-color: var(--text-color);
     --bs-table-bg: var(--surface-color);
@@ -426,7 +427,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     text-transform: uppercase;
 }
 
-/* 12. Alerts */
+/*  Alerts */
 .fitsync-messages {
     position: relative;
     z-index: 1040;
@@ -437,7 +438,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     border-radius: var(--radius-md);
 }
 
-/* 13. Badges */
+/*  Badges */
 .badge-fitsync {
     color: var(--primary-strong);
     background: rgba(0, 212, 170, 0.12);
@@ -445,7 +446,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     border-radius: 999px;
 }
 
-/* 14. Layout and shared states */
+/*  Layout and shared states */
 .dashboard-stage {
     min-width: 0;
     flex: 1 1 auto;
@@ -530,7 +531,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
     background: rgba(0, 212, 170, 0.09);
 }
 
-/* 15. Responsive rules */
+/*  Responsive rules */
 @media (max-width: 1199.98px) {
     .fitsync-navbar .navbar-collapse {
         padding: 1rem 0 0.5rem;
@@ -583,4 +584,133 @@ html[data-theme="dark"] .navbar-toggler-icon {
 .home-hero-inner {
     padding-left: 2rem;
     padding-right: 2rem;
+}
+
+/* Member dashboard: fixed sidebar, scrollable right content */
+body.dashboard-body {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+main.dashboard-shell {
+    width: 100%;
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+body.dashboard-body .dashboard-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--page-gradient);
+}
+
+body.dashboard-body .dashboard-sidebar {
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+    max-width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    flex: 0 0 var(--sidebar-width) !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: var(--text-color);
+    background: var(--sidebar-color) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+body.dashboard-body .dashboard-stage {
+    display: flex;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 90% 95%, rgba(0, 212, 170, 0.13), transparent 34%),
+        var(--bg-color);
+}
+
+body.dashboard-body .dashboard-topbar {
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    min-height: var(--topbar-height);
+    height: var(--topbar-height);
+    flex: 0 0 var(--topbar-height);
+    padding: 0 24px;
+    background: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+body.dashboard-body .dashboard-scroll-content {
+    width: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+body.dashboard-body .dashboard-content {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+@media (min-width: 992px) {
+    body.dashboard-body .dashboard-sidebar.offcanvas-lg {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        bottom: auto !important;
+        visibility: visible !important;
+        transform: none !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body.dashboard-body .dashboard-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1055;
+        height: 100vh !important;
+        overflow-y: auto;
+        box-shadow: 12px 0 30px var(--shadow-color);
+    }
+
+    body.dashboard-body .dashboard-stage {
+        width: 100%;
+    }
+
+    body.dashboard-body .dashboard-content {
+        padding: 1.25rem;
+    }
+}
+
+.profile-avatar-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #00dfb3;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.profile-avatar-placeholder {
+    display: grid;
+    width: 60px;
+    height: 60px;
+    place-items: center;
+    color: #a9bad3;
+    background: rgba(16, 31, 55, 0.85);
+    border: 1px dashed #21334e;
+    border-radius: 50%;
+    font-size: 1.6rem;
 }

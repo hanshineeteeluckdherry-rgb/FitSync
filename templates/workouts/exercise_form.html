@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ title }} | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
+{% block content %}
+<div class="container py-5"><div class="workout-narrow"><h1 class="h3 mb-4">{{ title }}</h1><form method="post" enctype="multipart/form-data" class="workout-panel p-4">{% csrf_token %}{% for field in form %}<div class="mb-3"><label class="form-label">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}<button class="btn btn-primary-fitsync" type="submit">Save Exercise</button></form></div></div>
+{% endblock %}

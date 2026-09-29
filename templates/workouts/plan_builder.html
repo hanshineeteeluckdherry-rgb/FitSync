@@ -1,0 +1,231 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Create Workout Plan{% endblock %}
+{% block dashboard_heading %}Workout Plans{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="workout-page workout-builder-shell">
+    <div class="workout-builder-header">
+        <div>
+            <h1>Create New Workout Plan</h1>
+            <p>Build your personalised plan by selecting exercises from the library.</p>
+        </div>
+        <a class="btn workout-back-button" href="{% url 'workouts:plans' %}">
+            <i class="bi bi-arrow-left me-2"></i>Back to Workout Plans
+        </a>
+    </div>
+
+    <form method="post" id="plan-builder-form">
+        {% csrf_token %}
+
+        <section class="workout-builder-panel plan-builder-details">
+            <div class="builder-panel-header">
+                <div class="builder-panel-title">
+                    <span class="builder-step">1</span>
+                    <div>
+                        <h2>Plan Details</h2>
+                        <p>Name your plan, choose a goal and select workout days.</p>
+                    </div>
+                </div>
+                <div class="builder-motivation d-none d-xl-flex">
+                    <i class="bi bi-bullseye"></i>
+                    <span>“A goal without a plan<br>is just a wish.”</span>
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="row g-3 builder-form-grid">
+                <div class="col-lg-5">
+                    <label class="form-label" for="{{ form.name.id_for_label }}">Plan Name <span class="required-star">*</span></label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="col-lg-4">
+                    <label class="form-label" for="{{ form.goal.id_for_label }}">Fitness Goal</label>
+                    {{ form.goal }}
+                    {% for error in form.goal.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="col-lg-3">
+                    <label class="form-label">Workout Days</label>
+                    <div class="day-picker">
+                        {% for checkbox in form.workout_days %}
+                            <label class="day-choice">
+                                {{ checkbox.tag }}
+                                <span>{{ checkbox.choice_label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {% for error in form.workout_days.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="col-lg-9">
+                    <label class="form-label" for="{{ form.description.id_for_label }}">Description <span class="form-optional">(optional)</span></label>
+                    {{ form.description }}
+                    {% for error in form.description.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="workout-builder-panel exercise-picker-panel">
+            <div class="builder-panel-header builder-library-heading">
+                <div class="builder-panel-title">
+                    <span class="builder-step">2</span>
+                    <div>
+                        <h2>Exercise Library</h2>
+                        <p>Choose the exercises you want in this workout plan.</p>
+                    </div>
+                </div>
+                <div class="builder-selection-tools">
+                    <span class="selected-exercise-count"><strong id="selected-count">0</strong> exercises selected</span>
+                    <button class="btn builder-clear-button" id="clear-exercises" type="button">Clear All</button>
+                </div>
+            </div>
+
+            <div class="exercise-builder-tools">
+                <div class="builder-search">
+                    <i class="bi bi-search"></i>
+                    <input id="exercise-search" type="search" placeholder="Search exercises..." autocomplete="off">
+                </div>
+                <select id="muscle-filter" class="form-select">
+                    <option value="">All Muscle Groups</option>
+                    {% for value, label in muscle_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                </select>
+                <select id="equipment-filter" class="form-select">
+                    <option value="">All Equipment</option>
+                    {% for value, label in equipment_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+                </select>
+                <select id="sort-filter" class="form-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="difficulty">Sort by Difficulty</option>
+                    <option value="muscle">Sort by Muscle</option>
+                </select>
+            </div>
+
+            <div class="exercise-grid builder-exercise-grid" id="exercise-grid">
+                {% for exercise in exercises %}
+                    <label
+                        class="exercise-card builder-exercise-card"
+                        data-name="{{ exercise.name|lower }}"
+                        data-category="{{ exercise.category }}"
+                        data-category-label="{{ exercise.get_category_display|lower }}"
+                        data-equipment="{{ exercise.equipment }}"
+                        data-equipment-label="{{ exercise.get_equipment_display|lower }}"
+                        data-difficulty="{{ exercise.difficulty }}"
+                    >
+                        <input class="exercise-checkbox" type="checkbox" name="exercise_ids" value="{{ exercise.id }}">
+                        <div class="exercise-card-check"><i class="bi bi-check-lg"></i></div>
+                        <span class="exercise-muscle-badge">{{ exercise.get_category_display }}</span>
+
+                        {% if exercise.image %}
+                            <img class="exercise-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">
+                        {% else %}
+                            <img class="exercise-image" src="{% static exercise.library_image %}" alt="{{ exercise.name }}" onerror="this.onerror=null;this.src='{% static exercise.fallback_image %}';">
+                        {% endif %}
+
+                        <div class="exercise-card-body">
+                            <strong class="exercise-card-name">{{ exercise.name }}</strong>
+                            <p class="exercise-description">{{ exercise.description|default:"Exercise from the FitSync library." }}</p>
+                            <div class="exercise-card-footer">
+                                <span class="exercise-equipment"><i class="bi bi-tools"></i>{{ exercise.get_equipment_display }}</span>
+                                <span class="difficulty difficulty-{{ exercise.difficulty|lower }}">{{ exercise.get_difficulty_display }}</span>
+                            </div>
+                        </div>
+                    </label>
+                {% empty %}
+                    <div class="workout-empty-state grid-empty">
+                        <h3>No exercises available</h3>
+                        <p>Run <code>python manage.py seed_exercises</code> to populate the Exercise Library.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="exercise-empty-filter" class="workout-empty-state d-none mt-3">
+                <h3>No exercises match those filters</h3>
+                <p>Try a different search, muscle group or equipment filter.</p>
+            </div>
+        </section>
+
+        <div class="plan-builder-actions">
+            <a class="btn btn-secondary-fitsync" href="{% url 'workouts:plans' %}">Cancel</a>
+            <button class="btn btn-primary-fitsync workout-save-button" type="submit">
+                <i class="bi bi-check-lg me-2"></i>Create Workout Plan
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const grid = document.getElementById("exercise-grid");
+    const cards = Array.from(document.querySelectorAll(".builder-exercise-card"));
+    const search = document.getElementById("exercise-search");
+    const muscle = document.getElementById("muscle-filter");
+    const equipment = document.getElementById("equipment-filter");
+    const sort = document.getElementById("sort-filter");
+    const count = document.getElementById("selected-count");
+    const clearButton = document.getElementById("clear-exercises");
+    const empty = document.getElementById("exercise-empty-filter");
+
+    function updateCount() {
+        count.textContent = document.querySelectorAll(".exercise-checkbox:checked").length;
+    }
+
+    function filterCards() {
+        const searchValue = search.value.trim().toLowerCase();
+        const muscleValue = muscle.value;
+        const equipmentValue = equipment.value;
+        let visible = 0;
+
+        cards.forEach(function (card) {
+            const text = [card.dataset.name, card.dataset.categoryLabel, card.dataset.equipmentLabel].join(" ");
+            const show = (!searchValue || text.includes(searchValue)) &&
+                (!muscleValue || card.dataset.category === muscleValue) &&
+                (!equipmentValue || card.dataset.equipment === equipmentValue);
+            card.hidden = !show;
+            if (show) visible += 1;
+        });
+
+        empty.classList.toggle("d-none", visible !== 0);
+    }
+
+    function sortCards() {
+        const mode = sort.value;
+        const sorted = cards.slice().sort(function (a, b) {
+            if (mode === "difficulty") return a.dataset.difficulty.localeCompare(b.dataset.difficulty);
+            if (mode === "muscle") return a.dataset.categoryLabel.localeCompare(b.dataset.categoryLabel) || a.dataset.name.localeCompare(b.dataset.name);
+            return a.dataset.name.localeCompare(b.dataset.name);
+        });
+        sorted.forEach(function (card) { grid.appendChild(card); });
+    }
+
+    cards.forEach(function (card) {
+        const checkbox = card.querySelector(".exercise-checkbox");
+        checkbox.addEventListener("change", function () {
+            card.classList.toggle("selected", checkbox.checked);
+            updateCount();
+        });
+    });
+
+    clearButton.addEventListener("click", function () {
+        cards.forEach(function (card) {
+            const checkbox = card.querySelector(".exercise-checkbox");
+            checkbox.checked = false;
+            card.classList.remove("selected");
+        });
+        updateCount();
+    });
+
+    search.addEventListener("input", filterCards);
+    muscle.addEventListener("change", filterCards);
+    equipment.addEventListener("change", filterCards);
+    sort.addEventListener("change", sortCards);
+    updateCount();
+    sortCards();
+});
+</script>
+{% endblock %}

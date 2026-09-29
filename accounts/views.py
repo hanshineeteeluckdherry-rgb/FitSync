@@ -165,7 +165,9 @@ def profile_edit(request):
 
     if request.user.role == User.Role.MEMBER:
         member_profile, _ = MemberProfile.objects.get_or_create(user=request.user)
-        member_form = MemberProfileForm(request.POST or None, instance=member_profile)
+        member_form = MemberProfileForm(request.POST or None, 
+                                        request.FILES or None,
+                                        instance=member_profile)
 
     forms_are_valid = user_form.is_valid()
     if member_form is not None:
