@@ -433,7 +433,7 @@ html[data-theme="dark"] {
 .figma-booking-heading h1 {
     margin: 0;
     color: var(--figma-booking-text);
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 400;
     letter-spacing: 0.01em;
@@ -531,7 +531,7 @@ html[data-theme="dark"] {
     border-radius: 0.65rem;
     color: var(--figma-booking-text);
     background: transparent;
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -595,7 +595,7 @@ html[data-theme="dark"] {
 .figma-session-type {
     overflow: hidden;
     color: var(--figma-booking-accent);
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.2em;
@@ -612,7 +612,7 @@ html[data-theme="dark"] {
     justify-content: center;
     padding: 0.35rem 0.75rem;
     border-radius: 999px;
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -633,7 +633,7 @@ html[data-theme="dark"] {
 .figma-session-name {
     margin: 0.6rem 0 0;
     color: var(--figma-booking-text);
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 1.25rem;
     font-weight: 400;
     line-height: 1.25;
@@ -714,7 +714,7 @@ html[data-theme="dark"] {
     color: var(--figma-booking-button-text);
     background-color: var(--figma-booking-accent);
     box-shadow: 0 8px 22px rgba(0, 220, 174, 0.16);
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 0.86rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -774,7 +774,7 @@ html[data-theme="dark"] {
             rgba(240, 165, 0, 0.10) 38%,
             rgba(240, 165, 0, 0.10) 100%
         );
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -799,7 +799,7 @@ html[data-theme="dark"] {
 
 .figma-no-sessions h2 {
     margin: 1rem 0 0.5rem;
-    font-family: "Oswald", sans-serif;
+    font-family: "Outfit", sans-serif;
     font-weight: 500;
     text-transform: uppercase;
 }
