@@ -1,16 +1,137 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}
-FitSync | Home
+{% block title %}FitSync | Home{% endblock %}
+{% block body_class %}home-page{% endblock %}
+{% block main_class %}home-main{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=1">
+{% endblock %}
+
+{% block site_header %}
+<header class="home-header">
+    <nav class="home-nav" aria-label="Main navigation">
+        <a class="home-brand" href="{% url 'core:home' %}" aria-label="FitSync home">
+            <img src="{% static 'img/fitsync-mark.svg' %}" alt="" class="home-brand-mark">
+            <span>Fit<span>Sync</span></span>
+        </a>
+
+        <button class="home-nav-toggle" type="button" aria-controls="homeNavLinks" aria-expanded="false">
+            <i class="bi bi-list" aria-hidden="true"></i>
+            <span class="visually-hidden">Open navigation</span>
+        </button>
+
+        <div class="home-nav-links" id="homeNavLinks">
+            <a class="active" href="{% url 'core:home' %}">Home</a>
+            <a href="#">About Us</a>
+            <a href="{% url 'memberships:public_packages' %}">Memberships</a>
+            <a href="#features">Features</a>
+            <a href="#">Bookings</a>
+            <a href="#">Our Team</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <div class="home-nav-actions">
+            {% if request.user.is_authenticated %}
+                <a class="home-btn home-btn-secondary home-btn-small" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                <form method="post" action="{% url 'accounts:logout' %}" class="home-logout-form">
+                    {% csrf_token %}
+                    <button class="home-btn home-btn-primary home-btn-small" type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a class="home-btn home-btn-secondary home-btn-small" href="{% url 'accounts:login' %}">Sign In</a>
+                <a class="home-btn home-btn-primary home-btn-small" href="{% url 'accounts:register' %}">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
 {% endblock %}
 
 {% block content %}
+<section class="home-hero" aria-labelledby="homeHeroTitle">
+    <div class="home-hero-shade" aria-hidden="true"></div>
 
-<section class="home-hero">
-    <div class="container-fluid home-hero-inner">
-        <h1>Welcome to FitSync</h1>
-        <p>Gym Management and Personal Fitness System</p>
+    <div class="home-hero-copy">
+        <h1 id="homeHeroTitle" class="home-hero-title">
+            <span>RUN THE GYM.</span>
+            <span>OWN THE</span>
+            <span class="home-hero-accent">MOMENT.</span>
+        </h1>
+
+        <p class="home-hero-text">
+            FitSync connects gym members with their gym, coaches, and goals. Track workouts,
+            log calories, book classes, and measure real progress — all in one premium platform.
+        </p>
+
+        <div class="home-hero-actions">
+            <a class="home-btn home-btn-primary home-btn-large" href="{% url 'accounts:register' %}">
+                <span>Get Started Free</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+            <a class="home-btn home-btn-secondary home-btn-large" href="#features">
+                <i class="bi bi-play" aria-hidden="true"></i>
+                <span>Explore Features</span>
+            </a>
+        </div>
+
+        <div class="home-mini-stats" aria-label="FitSync statistics">
+            <div class="home-mini-stat">
+                <strong>1,400+</strong>
+                <span>Active Members</span>
+            </div>
+            <div class="home-mini-stat">
+                <strong>6</strong>
+                <span>Expert Coaches</span>
+            </div>
+            <div class="home-mini-stat">
+                <strong>99.9%</strong>
+                <span>Uptime</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="home-live-strip" aria-label="Live gym activity">
+        <article class="home-live-item home-live-teal">
+            <div class="home-live-icon"><i class="bi bi-people" aria-hidden="true"></i></div>
+            <div>
+                <div class="home-live-value">34 <span class="home-live-dot"></span></div>
+                <p>Members in gym</p>
+            </div>
+        </article>
+
+        <article class="home-live-item home-live-blue">
+            <div class="home-live-icon"><i class="bi bi-activity" aria-hidden="true"></i></div>
+            <div>
+                <div class="home-live-value">129 <span class="home-live-dot"></span></div>
+                <p>Workouts logged today</p>
+            </div>
+        </article>
+
+        <article class="home-live-item home-live-amber">
+            <div class="home-live-icon"><i class="bi bi-fire" aria-hidden="true"></i></div>
+            <div>
+                <div class="home-live-value">84,470 <span class="home-live-dot"></span></div>
+                <p>Calories burned today</p>
+            </div>
+        </article>
+
+        <article class="home-live-item home-live-teal">
+            <div class="home-live-icon"><i class="bi bi-graph-up" aria-hidden="true"></i></div>
+            <div>
+                <div class="home-live-value">7 <span class="home-live-dot"></span></div>
+                <p>Classes running now</p>
+            </div>
+        </article>
     </div>
 </section>
 
+<!-- Anchor used by the Figma "Explore Features" button. -->
+<div id="features" class="home-features-anchor" aria-hidden="true"></div>
+{% endblock %}
+
+{% block site_footer %}{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}" defer></script>
 {% endblock %}
