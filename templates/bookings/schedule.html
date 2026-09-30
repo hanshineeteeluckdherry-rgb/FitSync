@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 
 {% block title %}Book a Session | FitSync{% endblock %}
@@ -6,13 +6,13 @@
 {% block body_class %}figma-booking-body{% endblock %}
 
 {% block extra_css %}
-<!-- Condensed font used by the Figma booking design. -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap"
       rel="stylesheet">
 
-<!-- Styles used by the booking schedule and My Bookings pages. -->
+
 <link rel="stylesheet" href="{% static 'css/bookings.css' %}">
 {% endblock %}
 
@@ -22,7 +22,7 @@
 <section class="figma-booking-page" aria-labelledby="booking-page-title">
     <div class="figma-booking-container">
 
-        <!-- Page heading copied from the approved booking design. -->
+
         <header class="figma-booking-heading">
             <p class="figma-booking-eyebrow">Classes &amp; Services</p>
 
@@ -33,15 +33,12 @@
             </p>
         </header>
 
-        <!--
-            The form uses GET so searches can be refreshed, bookmarked
-            and cleared without changing any booking information.
-        -->
+
         <form method="get"
               action="{% url 'bookings:schedule' %}"
               class="figma-booking-filters">
 
-            <!-- Search by session name, description or instructor name. -->
+
             <div class="figma-search-field">
                 <label class="visually-hidden" for="booking-search">
                     Search sessions
@@ -57,7 +54,7 @@
                 >
             </div>
 
-            <!-- Selecting a type automatically submits the filter form. -->
+
             <div class="figma-filter-field">
                 <label class="visually-hidden" for="booking-type">
                     Session type
@@ -82,7 +79,7 @@
                 </select>
             </div>
 
-            <!-- Filter sessions according to whether spaces remain. -->
+
             <div class="figma-filter-field">
                 <label class="visually-hidden" for="booking-status">
                     Availability
@@ -113,7 +110,7 @@
             </div>
 
             <div class="figma-filter-actions">
-                <!-- Return to the complete unfiltered schedule. -->
+
                 <a
                     class="figma-clear-button"
                     href="{% url 'bookings:schedule' %}"
@@ -121,10 +118,7 @@
                     Clear Filters
                 </a>
 
-                <!--
-                    This button appears only after login because the public
-                    Figma design shows only the Clear Filters button.
-                -->
+
                 {% if request.user.is_authenticated %}
                 <a
                     class="figma-my-bookings-button"
@@ -136,12 +130,12 @@
             </div>
         </form>
 
-        <!-- Three cards per row on desktop, as shown in Figma. -->
+
         <div class="figma-session-grid">
             {% for session in sessions %}
             <article class="figma-session-card">
 
-                <!-- Session type and availability badge. -->
+
                 <div class="figma-card-header">
                     <span class="figma-session-type">
                         {{ session.service.get_service_type_display }}
@@ -158,7 +152,7 @@
                     {% endif %}
                 </div>
 
-                <!-- Main session information. -->
+
                 <h2 class="figma-session-name">
                     {{ session.service.name }}
                 </h2>
@@ -167,7 +161,7 @@
                     {{ session.service.description }}
                 </p>
 
-                <!-- Compact label/value rows matching the Figma cards. -->
+
                 <dl class="figma-session-details">
                     <div class="figma-detail-row">
                         <dt>Date</dt>
@@ -218,11 +212,11 @@
                     </div>
                 </dl>
 
-                <!-- Booking controls change according to the current state. -->
+
                 <div class="figma-card-actions">
                     {% if session.confirmed_count >= session.capacity %}
 
-                        <!-- Fully booked appearance from the Figma design. -->
+
                         <div class="figma-full-bar">
                             Fully Booked
                         </div>
@@ -239,7 +233,7 @@
                     {% elif request.user.is_authenticated %}
 
                         {% if session.id in booked_session_ids %}
-                        <!-- Prevent the member from booking twice. -->
+
                         <button
                             class="figma-booking-button is-disabled"
                             type="button"
@@ -249,7 +243,7 @@
                         </button>
 
                         {% elif request.user.role == "MEMBER" %}
-                        <!-- Booking is a POST action protected by CSRF. -->
+
                         <form
                             method="post"
                             action="{% url 'bookings:book_session' session.id %}"
@@ -265,7 +259,7 @@
                         </form>
 
                         {% else %}
-                        <!-- Coaches, staff and admins cannot book as members. -->
+
                         <button
                             class="figma-booking-button is-disabled"
                             type="button"
@@ -276,7 +270,7 @@
                         {% endif %}
 
                     {% else %}
-                        <!-- Public visitors must log in before booking. -->
+
                         <a
                             class="figma-booking-button"
                             href="{% url 'accounts:login' %}?next={{ request.path }}"
@@ -295,7 +289,7 @@
             </article>
 
             {% empty %}
-            <!-- Displayed when no future session matches the filters. -->
+
             <div class="figma-no-sessions">
                 <i class="bi bi-calendar-x" aria-hidden="true"></i>
 

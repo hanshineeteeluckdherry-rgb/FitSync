@@ -1,4 +1,4 @@
-from django.conf import settings
+﻿from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -27,7 +27,6 @@ class Service(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        # Services will be displayed alphabetically.
         ordering = ["name"]
 
     def __str__(self):
@@ -42,14 +41,12 @@ class Session(models.Model):
         CANCELLED = "CANCELLED", "Cancelled"
         COMPLETED = "COMPLETED", "Completed"
 
-    # One service can have several scheduled sessions.
     service = models.ForeignKey(
         Service,
         on_delete=models.PROTECT,
         related_name="sessions",
     )
 
-    # The instructor must be a user with the Coach role.
     instructor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -71,7 +68,6 @@ class Session(models.Model):
     )
 
     class Meta:
-        # Earlier sessions will be displayed first.
         ordering = ["date", "start_time"]
 
     def clean(self):
@@ -116,7 +112,6 @@ class Booking(models.Model):
         CANCELLED = "CANCELLED", "Cancelled"
         COMPLETED = "COMPLETED", "Completed"
 
-    # The person making the booking must have the Member role.
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -124,7 +119,6 @@ class Booking(models.Model):
         limit_choices_to={"role": "MEMBER"},
     )
 
-    # One session can have bookings from several members.
     session = models.ForeignKey(
         Session,
         on_delete=models.CASCADE,
@@ -139,19 +133,15 @@ class Booking(models.Model):
 
     booked_at = models.DateTimeField(auto_now_add=True)
 
-    # This remains empty until the booking is cancelled.
     cancelled_at = models.DateTimeField(
         null=True,
         blank=True,
     )
 
     class Meta:
-        # Newest bookings will be displayed first.
         ordering = ["-booked_at"]
 
         constraints = [
-            # A member cannot have two confirmed bookings
-            # for the same session.
             models.UniqueConstraint(
                 fields=["member", "session"],
                 condition=models.Q(status="CONFIRMED"),

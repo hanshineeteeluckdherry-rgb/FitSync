@@ -1,4 +1,4 @@
-"""Create reusable booking data based on the FitSync Figma design."""
+﻿"""Create reusable booking data based on the FitSync Figma design."""
 
 from datetime import time, timedelta
 from decimal import Decimal
@@ -10,7 +10,6 @@ from django.utils import timezone
 from bookings.models import Service, Session
 
 
-# Use the custom FitSync user model.
 User = get_user_model()
 
 
@@ -24,7 +23,6 @@ class Command(BaseCommand):
 
         today = timezone.localdate()
 
-        # Find the next Monday so the sessions always have future dates.
         days_until_monday = (7 - today.weekday()) % 7
 
         if days_until_monday == 0:
@@ -32,7 +30,6 @@ class Command(BaseCommand):
 
         next_monday = today + timedelta(days=days_until_monday)
 
-        # Coach accounts shown in the Figma design.
         coach_data = [
             {
                 "username": "chloe_ting",
@@ -75,7 +72,6 @@ class Command(BaseCommand):
         coaches = {}
 
         for item in coach_data:
-            # Create the coach if the username does not already exist.
             coach, created = User.objects.get_or_create(
                 username=item["username"],
                 defaults={
@@ -87,14 +83,11 @@ class Command(BaseCommand):
                 },
             )
 
-            # Keep existing sample coaches updated.
             coach.first_name = item["first_name"]
             coach.last_name = item["last_name"]
             coach.role = User.Role.COACH
             coach.is_active = True
 
-            # Sample coach accounts cannot log in until an admin
-            # explicitly assigns them a password.
             if created:
                 coach.set_unusable_password()
 
@@ -102,7 +95,6 @@ class Command(BaseCommand):
 
             coaches[item["username"]] = coach
 
-        # Services and sessions copied from the booking Figma page.
         sessions = [
             {
                 "name": "Power Yoga",
@@ -192,7 +184,6 @@ class Command(BaseCommand):
         updated_count = 0
 
         for item in sessions:
-            # Create or update the service used by the session.
             service, unused_created = Service.objects.update_or_create(
                 name=item["name"],
                 defaults={
@@ -207,8 +198,6 @@ class Command(BaseCommand):
                 days=item["day_offset"]
             )
 
-            # Re-running the command updates the existing session
-            # instead of creating a duplicate.
             session, created = Session.objects.update_or_create(
                 service=service,
                 date=session_date,
