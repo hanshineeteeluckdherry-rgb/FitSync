@@ -8,7 +8,7 @@
     <a class="back-link" href="{% url 'workouts:exercise_library' %}">← Exercise Library</a>
     <div class="workout-panel p-4 mt-3">
         <div class="row g-4 align-items-start">
-            <div class="col-md-5">{% if exercise.image %}<img class="exercise-detail-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">{% else %}<img class="exercise-detail-image" src="{% static exercise.fallback_image %}" alt="{{ exercise.get_category_display }} exercise">{% endif %}</div>
+            <div class="col-md-5">{% if exercise.image %}<img class="exercise-detail-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">{% else %}<img class="exercise-detail-image" src="{% static exercise.library_image %}" alt="{{ exercise.get_category_display }} exercise">{% endif %}</div>
             <div class="col-md-7">
                 <div class="d-flex flex-wrap gap-2 mb-2"><span class="badge badge-fitsync">{{ exercise.get_category_display }}</span><span class="badge text-bg-secondary">{{ exercise.get_difficulty_display }}</span></div>
                 <h1 class="h3">{{ exercise.name }}</h1>
