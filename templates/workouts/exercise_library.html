@@ -2,7 +2,7 @@
 {% load static %}
 {% block page_title %}Exercise Library{% endblock %}
 {% block dashboard_heading %}Workout Plans{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=4">{% endblock %}
 {% block dashboard_content %}
 <div class="exercise-library-page">
     <div class="workout-builder-header">
@@ -43,25 +43,72 @@
 
     <div class="exercise-grid">
         {% for exercise in exercises %}
-            <a class="exercise-card text-decoration-none" href="{% url 'workouts:exercise_detail' exercise.id %}">
+            <article class="exercise-card">
                 <span class="exercise-muscle-badge">{{ exercise.get_category_display }}</span>
-                {% if exercise.image %}
-                    <img class="exercise-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">
-                {% else %}
-                    <img class="exercise-image" src="{% static exercise.library_image %}" alt="{{ exercise.name }}" onerror="this.onerror=null;this.src='{% static exercise.fallback_image %}';">
-                {% endif %}
-                <div class="exercise-card-body">
+                <button
+                    class="exercise-image-button"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exerciseImagePreview"
+                    data-exercise-name="{{ exercise.name }}"
+                    aria-label="Preview {{ exercise.name }} image"
+                >
+                    {% if exercise.image %}
+                        <img class="exercise-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">
+                    {% else %}
+                        <img class="exercise-image" src="{% static exercise.library_image %}?v=2" alt="{{ exercise.name }}" onerror="this.onerror=null;this.src='{% static exercise.fallback_image %}';">
+                    {% endif %}
+                </button>
+                <a class="exercise-card-body text-decoration-none" href="{% url 'workouts:exercise_detail' exercise.id %}">
                     <strong class="exercise-card-name">{{ exercise.name }}</strong>
                     <p class="exercise-description">{{ exercise.description|default:"Exercise from the FitSync library." }}</p>
                     <div class="exercise-card-footer">
                         <span class="exercise-equipment"><i class="bi bi-tools"></i>{{ exercise.get_equipment_display }}</span>
                         <span class="difficulty difficulty-{{ exercise.difficulty|lower }}">{{ exercise.get_difficulty_display }}</span>
                     </div>
-                </div>
-            </a>
+                </a>
+            </article>
         {% empty %}
             <div class="workout-empty-state grid-empty"><h3>No exercises found</h3><p>Try another search or filter.</p></div>
         {% endfor %}
     </div>
 </div>
+
+<!-- Bootstrap modal for exercise image preview -->
+<div class="modal fade" id="exerciseImagePreview" tabindex="-1" aria-labelledby="exerciseImagePreviewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content exercise-image-preview-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="exerciseImagePreviewTitle"></h2>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img class="exercise-preview-image" id="exerciseImagePreviewImage" src="" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const exerciseImagePreview = document.getElementById("exerciseImagePreview");
+
+    exerciseImagePreview.addEventListener("show.bs.modal", (event) => {
+        const trigger = event.relatedTarget;
+        const thumbnail = trigger.querySelector(".exercise-image");
+        const exerciseName = trigger.dataset.exerciseName;
+        const previewImage = document.getElementById("exerciseImagePreviewImage");
+
+        document.getElementById("exerciseImagePreviewTitle").textContent = exerciseName;
+        previewImage.src = thumbnail.currentSrc || thumbnail.src;
+        previewImage.alt = exerciseName;
+    });
+
+    exerciseImagePreview.addEventListener("hidden.bs.modal", () => {
+        const previewImage = document.getElementById("exerciseImagePreviewImage");
+        previewImage.removeAttribute("src");
+        previewImage.alt = "";
+    });
+</script>
 {% endblock %}
