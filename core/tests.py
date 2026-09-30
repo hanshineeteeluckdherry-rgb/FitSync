@@ -1,3 +1,17 @@
 from django.test import TestCase
+from django.urls import reverse
 
-# Create your tests here.
+
+class HomePageTests(TestCase):
+    def test_home_page_loads(self):
+        response = self.client.get(reverse("core:home"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "core/home.html")
+
+    def test_home_page_contains_figma_hero_copy(self):
+        response = self.client.get(reverse("core:home"))
+        self.assertContains(response, "RUN THE GYM.")
+        self.assertContains(response, "OWN THE")
+        self.assertContains(response, "MOMENT.")
+        self.assertContains(response, "Get Started Free")
+        self.assertContains(response, "Members in gym")
