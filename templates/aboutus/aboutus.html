@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us | FitSync{% endblock %}
+
+
+{% block content %}
+<div class="about-page">
+    
+    <section class="about-hero" style="background: url('{% static 'img/about us/gyminterior.png' %}') center/cover no-repeat;">
+        <div class="about-hero-overlay"></div>
+        <div class="container text-center position-relative z-1">
+            <span class="section-subtitle d-block mb-2">ABOUT FITSYNC</span>
+            <h1 class="hero-title">MORE THAN A GYM.</h1>
+        </div>
+    </section>
+
+   <section class="about-mission py-5">
+        <div class="container py-lg-4">
+            <div class="row align-items-center g-5">
+
+                <div class="col-lg-6">
+                    <span class="section-subtitle d-block mb-2">OUR MISSION</span>
+                    <h2 class="section-title mb-4">BUILDING STRONGER PEOPLE,<br>STRONGER COMMUNITIES.</h2>
+                    
+                    <p class="section-text">
+                        Founded in 2026, FitSync began as a single gym floor and has grown into a comprehensive fitness ecosystem. We believe that health is not a destination — it's a daily practice.
+                    </p>
+
+                    <p class="section-text">
+                        Our platform merges world-class facilities with cutting-edge technology so every member gets the tools, guidance, and community they need to achieve their personal best.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-3 mt-4 pt-2">
+                        <a href="{% url 'memberships:public_packages' %}" class="btn btn-fitsync-primary">VIEW MEMBERSHIPS</a>
+                        <a href="{% url 'core:home' %}#features" class="btn btn-fitsync-outline">EXPLORE FEATURES</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="about-image-wrapper">
+                        <img src="{% static 'img/about us/athlete.png' %}" 
+                        onerror="this.src='https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1000&q=80'"
+                        alt="FitSync Athlete Training" 
+                        class="img-fluid rounded-4 shadow-lg">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
