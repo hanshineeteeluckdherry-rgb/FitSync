@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Chakra+Petch:wght@600&display=swap');
+
 :root {
     --auth-navy: #07152d;
     --auth-navy-soft: #0c1c35;
@@ -31,31 +34,68 @@
 }
 
 .section-subtitle {
-    display: inline-block;
-    color: var(--about-subtitle-color);
-    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
-    font-size: 0.8rem;
+    color: #00E5A0;
+    text-align: center;
+    font-family: "Chakra Petch","JetBrains Mono" !important;
+    font-size: 0.85rem;
+    font-style: normal;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    line-height: 19.2px; /* 160% */
+    letter-spacing: 0.45em;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    justify-content: center;
+    margin-bottom:0.5rem
 }
 
 .about-hero {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 420px;
     display: flex;
-    width: 1427px;
-    height: 340px;
-    padding: 72px 484.313px 170px 578px;
-    justify-content: flex-end;
+    flex-direction: column;
     align-items: center;
-    }
+    justify-content: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    background-image: var(--hero-bg);
+    background-size: cover !important;
+    background-position: center 30% !important;
+    background-repeat: no-repeat !important;
+    text-align: center;
+    overflow: hidden;
+}    
+
+
+
+.about-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(7, 21, 45, 0.40) 0%,
+        rgba(7, 21, 45, 0.50) 70%,
+        #07142b 100%
+    );
+    z-index: 1;
+}
 
 .hero-title {
-    font-size: clamp(2.2rem, 4vw, 3.5rem);
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    color: var(--about-text-main);
-    margin: 0;
+    color: #E8EEF6;
+    text-align: center;
+    font-family:"Chakra Petch","JetBrains Mono";
+    font-size: clamp(3.2rem, 6vw, 4.8rem);
+    font-style: normal;
+    font-weight: 0;
+    line-height: 1; /* 110% */
+    letter-spacing: 0.04em;
+    justify-content:center;
+    text-transform:uppercase;
+    white-space:nowrap;
+    margin:0 auto;
 }
 
 .about-mission {
@@ -80,17 +120,11 @@
 }
 
 .btn-fitsync-primary {
-    background-color: #00dfb3;
-    color: #07152d;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    display: flex;
     padding: 12px 28px;
-    border-radius: 6px;
-    border: none;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.2s ease-in-out;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
 }
 
 .btn-fitsync-primary:hover {
