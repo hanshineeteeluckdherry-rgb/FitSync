@@ -6,46 +6,7 @@
 {% block main_class %}home-main{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=1">
-{% endblock %}
-
-{% block site_header %}
-<header class="home-header">
-    <nav class="home-nav" aria-label="Main navigation">
-        <a class="home-brand" href="{% url 'core:home' %}" aria-label="FitSync home">
-            <img src="{% static 'img/fitsync-mark.svg' %}" alt="" class="home-brand-mark">
-            <span>Fit<span>Sync</span></span>
-        </a>
-
-        <button class="home-nav-toggle" type="button" aria-controls="homeNavLinks" aria-expanded="false">
-            <i class="bi bi-list" aria-hidden="true"></i>
-            <span class="visually-hidden">Open navigation</span>
-        </button>
-
-        <div class="home-nav-links" id="homeNavLinks">
-            <a class="active" href="{% url 'core:home' %}">Home</a>
-            <a href="{% url 'aboutus:index' %}">About Us</a>
-            <a href="{% url 'memberships:public_packages' %}">Memberships</a>
-            <a href="#features">Features</a>
-            <a href="{% url 'bookings:schedule' %}">Bookings</a>
-            <a href="{% url 'ourteam:index' %}">Our Team</a>
-            <a href="#">Contact</a>
-        </div>
-
-        <div class="home-nav-actions">
-            {% if request.user.is_authenticated %}
-                <a class="home-btn home-btn-secondary home-btn-small" href="{% url 'accounts:dashboard' %}">Dashboard</a>
-                <form method="post" action="{% url 'accounts:logout' %}" class="home-logout-form">
-                    {% csrf_token %}
-                    <button class="home-btn home-btn-primary home-btn-small" type="submit">Logout</button>
-                </form>
-            {% else %}
-                <a class="home-btn home-btn-secondary home-btn-small" href="{% url 'accounts:login' %}">Sign In</a>
-                <a class="home-btn home-btn-primary home-btn-small" href="{% url 'accounts:register' %}">Get Started</a>
-            {% endif %}
-        </div>
-    </nav>
-</header>
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=2">
 {% endblock %}
 
 {% block content %}
@@ -65,8 +26,8 @@
         </p>
 
         <div class="home-hero-actions">
-            <a class="home-btn home-btn-primary home-btn-large" href="{% url 'accounts:register' %}">
-                <span>Get Started Free</span>
+            <a class="home-btn home-btn-primary home-btn-large" href="{% if request.user.is_authenticated %}{% url 'accounts:dashboard' %}{% else %}{% url 'accounts:register' %}{% endif %}">
+                <span>{% if request.user.is_authenticated %}Open Dashboard{% else %}Get Started Free{% endif %}</span>
                 <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </a>
             <a class="home-btn home-btn-secondary home-btn-large" href="#features">
@@ -131,7 +92,3 @@
 {% endblock %}
 
 {% block site_footer %}{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/home.js' %}" defer></script>
-{% endblock %}
