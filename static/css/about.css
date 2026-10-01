@@ -1,16 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Chakra+Petch:wght@600&display=swap');
 
+html[data-theme="dark"],
 :root {
-    --auth-navy: #07152d;
-    --auth-navy-soft: #0c1c35;
-    --auth-panel: #0b172b;
-    --auth-field: #101f37;
-    --auth-border: #21334e;
-    --auth-text: #f7fbff;
-    --auth-muted: #a9bad3;
-    --auth-green: #00dfb3;
-    --auth-green-strong: #00cda4;
+    --page-bg-gradient: linear-gradient(
+        180deg, 
+        #091d34 0%,      
+        #082a38 45%,     
+        #0b3a3b 75%,    
+        #074d44 100%     
+    );
+    --hero-overlay-gradient: linear-gradient(
+        180deg,
+        rgba(9, 29, 52, 0.45) 0%,
+        rgba(9, 29, 52, 0.70) 65%,
+        #091d34 100%
+    );
+    --text-primary: #FFFFFF;
+    --text-muted: rgba(255, 255, 255, 0.85);
+}
+
+html[data-theme="light"] {
+    --page-bg-gradient: linear-gradient(
+        180deg, 
+         #eef5f3 0%, 
+        #b7c9ce 35%, 
+        #65b2a0 70%, 
+        #a4e3d5 100%
+    );
+    --hero-overlay-gradient: linear-gradient(
+        180deg,
+        rgba(15, 30, 42, 0.65) 0%,
+        rgba(26, 51, 60, 0.80) 65%,
+        #74a79b 100%
+    );
+    --text-primary: #080d17;
+    --text-muted: #3a4d5f;
 }
 
 .auth-body {
@@ -26,11 +51,12 @@
 }
 
 .about-page {
-    color: var(--about-text-main);
+    color: var(--text-primary);
     min-height: 100vh;
-    background: var(--about-page-bg);
+    background: var(--page-bg-gradient);
     padding-bottom: 80px;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background 0.3s ease, color 0.1s ease;
+    overflow:hidden;
 }
 
 .section-subtitle {
@@ -39,7 +65,7 @@
     font-family: "Chakra Petch","JetBrains Mono" !important;
     font-size: 0.85rem;
     font-style: normal;
-    font-weight: 600;
+    font-weight: bold;
     line-height: 19.2px; /* 160% */
     letter-spacing: 0.45em;
     text-transform: uppercase;
@@ -74,13 +100,9 @@
 .about-hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(7, 21, 45, 0.40) 0%,
-        rgba(7, 21, 45, 0.50) 70%,
-        #07142b 100%
-    );
+    background: var(--hero-overlay-gradient);
     z-index: 1;
+    transition: background 0.1s ease;
 }
 
 .hero-title {
@@ -98,9 +120,36 @@
     margin:0 auto;
 }
 
+.hero-subtitle{
+    color: #00E5A0 !important;
+    font-family: 'Chakra Petch', 'JetBrains Mono', monospace !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.45em !important;
+    text-transform: uppercase !important;
+}
+
+
+
 .about-mission {
+    text-align: left;
     padding-top: 40px;
     padding-bottom: 80px;
+}
+
+.mission-subtitle {
+    display:flex;
+    color: #00dfb3;
+    background: var(--mission-badge-bg);
+    border: 1px solid var(--mission-badge-border);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: large;
+    font-weight: bold;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase !important;
+    align-items:flex-start;
 }
 
 .section-title {
@@ -108,7 +157,9 @@
     font-weight: 800;
     line-height: 1.25;
     letter-spacing: 0.03em;
-    color: var(--about-text-main);
+    color: var(--text-primary);
+    text-align: left;
+    font-family:"JetBrains Mono"
 }
 
 .section-text {
@@ -125,6 +176,10 @@
     align-items: center;
     gap: 8px;
     align-self: stretch;
+    border-radius: 12px;
+    background: #00E5A0;
+    font-family:"JetBrains Mono";
+    font-weight:bold;
 }
 
 .btn-fitsync-primary:hover {
@@ -141,10 +196,11 @@
     letter-spacing: 0.08em;
     padding: 12px 28px;
     border-radius: 6px;
-    border: 1px solid var(--about-btn-ghost-border);
+    border: 1px solid #FFFFFF;
     text-decoration: none;
     display: inline-block;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.1s ease-in-out;
+    border-radius: 12px;
 }
 
 .btn-fitsync-outline:hover {
@@ -158,7 +214,7 @@
     overflow: hidden;
     border: 1px solid var(--about-img-border);
     box-shadow: var(--about-img-shadow);
-    transition: border 0.3s ease, box-shadow 0.3s ease;
+    transition: border 0.3s ease, box-shadow 0.1s ease;
 }
 
 .about-image-wrapper img {
