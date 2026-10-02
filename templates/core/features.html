@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Features | FitSync{% endblock %}
+{% block body_class %}features-page-body{% endblock %}
+{% block main_class %}features-main{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/features.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<section class="features-page" aria-labelledby="features-title">
+    <div class="container features-container">
+        <!-- Features page introduction -->
+        <header class="features-intro">
+            <p class="features-badge">
+                <span aria-hidden="true"></span>
+                Premium Fitness Platform
+            </p>
+            <div class="features-intro-copy">
+                <h1 id="features-title">One Platform. Total Fitness Control.</h1>
+                <p>
+                    From gym check-in to coach communication, workout logging to progress
+                    analytics &mdash; FitSync brings your entire fitness journey into one seamless
+                    platform.
+                </p>
+            </div>
+        </header>
+
+        <!-- Responsive feature card grid based on the Figma layout -->
+        <div class="features-grid">
+            <article class="feature-card feature-card-primary">
+                <div class="feature-primary-header">
+                    <span class="feature-icon feature-icon-large feature-tone-teal">
+                        <img src="{% static 'img/features/gym-management.svg' %}" alt="" aria-hidden="true">
+                    </span>
+                    <span class="feature-pill feature-pill-teal">Core Platform</span>
+                </div>
+                <h2>Gym Management</h2>
+                <p>
+                    Real-time occupancy tracking, member check-in, class scheduling and
+                    membership management &mdash; all in one platform.
+                </p>
+                <div class="feature-metric">
+                    <strong>2,400+</strong>
+                    <span>Active Members</span>
+                </div>
+            </article>
+
+            <article class="feature-card feature-card-standard feature-workout">
+                <div class="feature-card-label feature-label-blue">
+                    <span class="feature-icon feature-tone-blue">
+                        <img src="{% static 'img/features/workout-tracking.svg' %}" alt="" aria-hidden="true">
+                    </span>
+                    <span>Training</span>
+                </div>
+                <h2>Workout Tracking</h2>
+                <p>
+                    Structured plans with sets, reps, weight, and rest tracking. Your
+                    performance data, beautifully visualised.
+                </p>
+            </article>
+
+            <article class="feature-card feature-card-standard feature-coach">
+                <div class="feature-card-label feature-label-amber">
+                    <span class="feature-icon feature-tone-amber">
+                        <img src="{% static 'img/features/coach-support.svg' %}" alt="" aria-hidden="true">
+                    </span>
+                    <span>Coaching</span>
+                </div>
+                <h2>Coach Support</h2>
+                <p>
+                    Certified coaches build personalised plans, monitor your progress, and keep
+                    you accountable every week.
+                </p>
+            </article>
+
+            <article class="feature-card feature-card-compact feature-progress">
+                <span class="feature-icon feature-icon-compact feature-tone-teal">
+                    <img src="{% static 'img/features/progress-tracking.svg' %}" alt="" aria-hidden="true">
+                </span>
+                <div>
+                    <div class="feature-compact-heading">
+                        <h2>Progress Tracking</h2>
+                        <span class="feature-mini-tag feature-mini-tag-teal">Analytics</span>
+                    </div>
+                    <p>
+                        Weight trends, workout stats, progress photos, and performance milestones
+                        tracked over weeks and months.
+                    </p>
+                </div>
+            </article>
+
+            <article class="feature-card feature-card-compact feature-analytics">
+                <span class="feature-icon feature-icon-compact feature-tone-blue">
+                    <img src="{% static 'img/features/analytics-insights.svg' %}" alt="" aria-hidden="true">
+                </span>
+                <div>
+                    <div class="feature-compact-heading">
+                        <h2>Analytics &amp; Insights</h2>
+                        <span class="feature-mini-tag feature-mini-tag-blue">Reports</span>
+                    </div>
+                    <p>
+                        Data-driven insights into your training and recovery so you can make
+                        smarter fitness decisions every day.
+                    </p>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}

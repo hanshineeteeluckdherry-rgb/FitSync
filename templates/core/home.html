@@ -30,7 +30,7 @@
                 <span>{% if request.user.is_authenticated %}Open Dashboard{% else %}Get Started Free{% endif %}</span>
                 <i class="bi bi-arrow-right" aria-hidden="true"></i>
             </a>
-            <a class="home-btn home-btn-secondary home-btn-large" href="#features">
+            <a class="home-btn home-btn-secondary home-btn-large" href="{% url 'core:features' %}">
                 <i class="bi bi-play" aria-hidden="true"></i>
                 <span>Explore Features</span>
             </a>
