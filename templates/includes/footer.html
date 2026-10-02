@@ -40,11 +40,11 @@
                     </li>
 
                     <li>
-                        <a href="#">Features</a>
+                        <a href="{% url 'core:features' %}">Features</a>
                     </li>
 
                     <li>
-                        <a href="#">Bookings</a>
+                        <a href="{% url 'bookings:schedule' %}">Bookings</a>
                     </li>
                 </ul>
             </div>
@@ -55,15 +55,15 @@
 
                 <ul class="list-unstyled footer-links mb-0">
                     <li>
-                        <a href="#">About Us</a>
+                        <a href="{% url 'aboutus:index' %}">About Us</a>
                     </li>
 
                     <li>
-                        <a href="#">Our Team</a>
+                        <a href="{% url 'ourteam:index' %}">Our Team</a>
                     </li>
 
                     <li>
-                        <a href="#">Contact</a>
+                        <a href="{% url 'aboutus:index' %}#contact">Contact</a>
                     </li>
                 </ul>
             </div>
