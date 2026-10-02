@@ -1,0 +1,414 @@
+:root,
+html[data-theme="light"] {
+    --features-page-bg: linear-gradient(180deg, #f7fbfc 0%, #edf7f5 48%, #bce8dd 100%);
+    --features-heading: #0a1628;
+    --features-copy: #58718a;
+    --features-card: rgba(255, 255, 255, 0.9);
+    --features-card-border: rgba(8, 50, 62, 0.12);
+    --features-card-shadow: 0 18px 42px rgba(24, 77, 72, 0.1);
+    --features-divider: #d8e6e9;
+}
+
+html[data-theme="dark"] {
+    --features-page-bg: linear-gradient(180deg, #0a1834 0%, #0a1834 39.9%, #1f4b42 100%);
+    --features-heading: #ffffff;
+    --features-copy: #a8bfdb;
+    --features-card: #0d1525;
+    --features-card-border: #1c2d45;
+    --features-card-shadow: none;
+    --features-divider: #1c2d45;
+}
+
+.features-page-body {
+    overflow-x: hidden;
+}
+
+.features-main {
+    min-height: 55vh;
+}
+
+.features-page {
+    min-height: calc(100vh - 79px);
+    padding: 35px 0 88px;
+    color: var(--features-heading);
+    background: var(--features-page-bg);
+    overflow-x: hidden;
+}
+
+.features-container {
+    max-width: 1230px;
+}
+
+.features-intro {
+    position: relative;
+    min-height: 235px;
+}
+
+.features-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 3px 10px;
+    color: #00b995;
+    background: rgba(0, 212, 170, 0.12);
+    border: 1px solid rgba(0, 212, 170, 0.2);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.features-badge > span {
+    width: 6px;
+    height: 6px;
+    background: #00d4aa;
+    border-radius: 50%;
+}
+
+.features-intro-copy {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-top: 30px;
+    text-align: center;
+}
+
+.features-intro h1 {
+    margin: 0;
+    color: var(--features-heading);
+    font-size: clamp(2rem, 3vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+}
+
+.features-intro-copy > p {
+    max-width: 672px;
+    margin: 16px auto 0;
+    color: var(--features-copy);
+    font-size: 1.125rem;
+    line-height: 1.55;
+}
+
+/* Asymmetric card grid from the desktop Figma frame. */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 210px 148px;
+    gap: 20px 32px;
+}
+
+.feature-card {
+    color: var(--features-heading);
+    background: var(--features-card);
+    border: 1px solid var(--features-card-border);
+    border-radius: 16px;
+    box-shadow: var(--features-card-shadow);
+}
+
+.feature-card h2,
+.feature-card p {
+    margin: 0;
+}
+
+.feature-card h2 {
+    color: var(--features-heading);
+}
+
+.feature-card p {
+    color: var(--features-copy);
+    font-size: 0.875rem;
+    line-height: 1.625;
+}
+
+.feature-card-primary {
+    display: flex;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    padding: 28px;
+    border-color: rgba(0, 212, 170, 0.18);
+}
+
+.feature-primary-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.feature-card-primary h2 {
+    margin-bottom: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.feature-icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+}
+
+.feature-icon-large {
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
+    border-radius: 16px;
+}
+
+.feature-icon-compact {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+}
+
+.feature-tone-teal {
+    background: rgba(0, 212, 170, 0.08);
+    border-color: rgba(0, 212, 170, 0.18);
+}
+
+.feature-tone-blue {
+    background: rgba(68, 136, 255, 0.08);
+    border-color: rgba(68, 136, 255, 0.18);
+}
+
+.feature-tone-amber {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.18);
+}
+
+.feature-pill {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.feature-pill-teal {
+    color: #00cba3;
+    background: rgba(0, 212, 170, 0.08);
+    border-color: rgba(0, 212, 170, 0.18);
+}
+
+.feature-metric {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--features-divider);
+}
+
+.feature-metric strong {
+    color: #00d4aa;
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.feature-metric span {
+    margin-top: 4px;
+    color: #5b748f;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.feature-card-standard {
+    min-height: 210px;
+    padding: 24px;
+}
+
+.feature-workout {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.feature-coach {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.feature-card-label {
+    display: flex;
+    height: 56px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding-bottom: 16px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.feature-label-blue {
+    color: #4488ff;
+}
+
+.feature-label-amber {
+    color: #f59e0b;
+}
+
+.feature-card-standard h2 {
+    margin-bottom: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.55;
+}
+
+.feature-card-compact {
+    display: flex;
+    min-height: 148px;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+}
+
+.feature-progress {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.feature-analytics {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.feature-card-compact > div {
+    min-width: 0;
+}
+
+.feature-compact-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.feature-compact-heading h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.feature-mini-tag {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.feature-mini-tag-teal {
+    color: #00cba3;
+    background: rgba(0, 212, 170, 0.08);
+}
+
+.feature-mini-tag-blue {
+    color: #4488ff;
+    background: rgba(68, 136, 255, 0.08);
+}
+
+@media (max-width: 991.98px) {
+    .features-page {
+        padding-top: 40px;
+    }
+
+    .features-intro {
+        min-height: 220px;
+    }
+
+    .features-badge {
+        position: static;
+        width: fit-content;
+        margin: 0 auto 20px;
+    }
+
+    .features-intro-copy {
+        padding-top: 0;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+        gap: 20px;
+    }
+
+    .feature-card-primary,
+    .feature-workout,
+    .feature-coach,
+    .feature-progress,
+    .feature-analytics {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .feature-card-primary {
+        min-height: 378px;
+    }
+
+    .feature-card-standard,
+    .feature-card-compact {
+        min-height: 180px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .features-page {
+        padding: 38px 0 64px;
+    }
+
+    .features-intro {
+        min-height: 240px;
+    }
+
+    .features-intro-copy > p {
+        font-size: 1rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card-primary,
+    .feature-card-standard,
+    .feature-card-compact {
+        min-height: auto;
+    }
+
+    .feature-card-primary {
+        min-height: 360px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .features-intro h1 {
+        font-size: 1.9rem;
+    }
+
+    .feature-card-primary,
+    .feature-card-standard,
+    .feature-card-compact {
+        padding: 22px;
+    }
+
+    .feature-card-compact {
+        align-items: flex-start;
+    }
+}
