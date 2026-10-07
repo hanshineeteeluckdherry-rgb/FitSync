@@ -16,6 +16,7 @@ from .forms import (
     UserProfileForm,
 )
 from .models import CoachAssignment, CoachProfile, MemberProfile, User
+from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
 
 
 def register(request):
@@ -100,9 +101,30 @@ def member_dashboard(request):
     ]
     completed_items = sum(1 for value in profile_fields if value)
     profile_percent = round((completed_items / len(profile_fields)) * 100)
+
+    personal_plan_count = WorkoutPlan.objects.filter(
+        member=request.user,
+        plan_type="PERSONAL",
+        is_active=True,
+    ).count()
+    coach_plan_count = WorkoutPlan.objects.filter(
+        member=request.user,
+        plan_type="COACH_ASSIGNED",
+        is_active=True,
+    ).count()
+    completed_workout_count = WorkoutSession.objects.filter(
+        member=request.user,
+        completed_at__isnull=False,
+    ).count()
+    latest_weight = WeightRecord.objects.filter(member=request.user).first()
+
     context = {
         "profile": profile,
         "profile_percent": profile_percent,
+        "personal_plan_count": personal_plan_count,
+        "coach_plan_count": coach_plan_count,
+        "completed_workout_count": completed_workout_count,
+        "latest_weight": latest_weight,
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/member_dashboard.html", context)
@@ -122,9 +144,23 @@ def coach_dashboard(request):
     assignments = CoachAssignment.objects.filter(
         coach=request.user, active=True, member__is_active=True
     ).select_related("member")
+
+    assigned_member_ids = assignments.values_list("member_id", flat=True)
+    coach_plan_count = WorkoutPlan.objects.filter(
+        coach=request.user,
+        plan_type="COACH_ASSIGNED",
+        is_active=True,
+    ).count()
+    completed_workout_count = WorkoutSession.objects.filter(
+        member_id__in=assigned_member_ids,
+        completed_at__isnull=False,
+    ).count()
+
     context = {
         "assignments": assignments,
         "assignment_count": assignments.count(),
+        "coach_plan_count": coach_plan_count,
+        "completed_workout_count": completed_workout_count,
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/coach_dashboard.html", context)

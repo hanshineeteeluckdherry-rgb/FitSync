@@ -4,8 +4,57 @@
 {% block dashboard_content %}
 <div class="page-heading"><h1>Welcome, {{ request.user.first_name|default:"Member" }}</h1><p>Your FitSync account overview.</p></div>
 <div class="row g-4 mb-4">
-    <div class="col-md-6 col-xl-4"><div class="summary-card h-100"><span class="summary-label">Profile completion</span><p class="summary-value">{{ profile_percent }}%</p><a href="{% url 'accounts:profile_edit' %}" class="small">Complete profile</a></div></div>
-    <div class="col-md-6 col-xl-4"><div class="summary-card h-100"><span class="summary-label">Account status</span><p class="summary-value fs-4">Active</p><span class="badge badge-fitsync">Member</span></div></div>
+    <div class="col-md-6 col-xl-3">
+        <div class="summary-card h-100">
+            <span class="summary-label">Profile completion</span>
+            <p class="summary-value">{{ profile_percent }}%</p>
+            <a href="{% url 'accounts:profile_edit' %}" class="small">Complete profile</a>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="summary-card h-100">
+            <span class="summary-label">Personal plans</span>
+            <p class="summary-value">{{ personal_plan_count }}</p>
+            <a href="{% url 'workouts:plans' %}" class="small">View workout plans</a>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="summary-card h-100">
+            <span class="summary-label">Coach plans</span>
+            <p class="summary-value">{{ coach_plan_count }}</p>
+            <a href="{% url 'workouts:plans' %}" class="small">View assigned plans</a>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="summary-card h-100">
+            <span class="summary-label">Completed workouts</span>
+            <p class="summary-value">{{ completed_workout_count }}</p>
+            <a href="{% url 'workouts:history' %}" class="small">View workout history</a>
+        </div>
+    </div>
 </div>
-<div class="card p-4"><h2 class="h5">Quick actions</h2><div class="d-flex flex-wrap gap-2 mt-2"><a class="btn btn-primary-fitsync" href="{% url 'accounts:profile' %}">View profile</a><a class="btn btn-secondary-fitsync" href="{% url 'accounts:password_change' %}">Change password</a></div></div>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card p-4 h-100">
+            <h2 class="h5">Quick actions</h2>
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                <a class="btn btn-primary-fitsync" href="{% url 'workouts:plan_create' %}">Create workout plan</a>
+                <a class="btn btn-secondary-fitsync" href="{% url 'workouts:progress' %}">Update progress</a>
+                <a class="btn btn-secondary-fitsync" href="{% url 'accounts:profile' %}">View profile</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-4 h-100">
+            <h2 class="h5">Latest weight</h2>
+            {% if latest_weight %}
+                <p class="summary-value mb-1">{{ latest_weight.weight_kg }} kg</p>
+                <p class="text-body-secondary mb-0">Recorded {{ latest_weight.recorded_date|date:"d M Y" }}</p>
+            {% else %}
+                <p class="text-body-secondary">No weight record added yet.</p>
+                <a href="{% url 'workouts:weight_add' %}" class="small">Add first record</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
