@@ -1,11 +1,13 @@
 from django import forms
 
-from .models import MembershipPackage, Payment
+from .models import Membership, MembershipPackage, Payment
 
 
 class BootstrapFormMixin:
     def add_bootstrap_classes(self):
         for field in self.fields.values():
+            if isinstance(field.widget, forms.CheckboxSelectMultiple):
+                continue
             if isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs["class"] = "form-check-input"
             elif isinstance(field.widget, forms.Select):
@@ -37,6 +39,13 @@ class SimulatedPaymentForm(BootstrapFormMixin, forms.Form):
 
 
 class MembershipPackageForm(BootstrapFormMixin, forms.ModelForm):
+    allowed_service_types = forms.MultipleChoiceField(
+        choices=MembershipPackage.SERVICE_TYPE_CHOICES,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        help_text="Select the services included in this plan. Leave all unchecked to allow every service.",
+    )
+
     class Meta:
         model = MembershipPackage
         fields = [
@@ -47,6 +56,7 @@ class MembershipPackageForm(BootstrapFormMixin, forms.ModelForm):
             "description",
             "features",
             "audience",
+            "allowed_service_types",
             "is_featured",
             "is_active",
         ]
@@ -54,6 +64,49 @@ class MembershipPackageForm(BootstrapFormMixin, forms.ModelForm):
             "description": forms.Textarea(attrs={"rows": 2}),
             "features": forms.Textarea(attrs={"rows": 6}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_bootstrap_classes()
+        if self.instance and self.instance.pk:
+            self.initial["allowed_service_types"] = self.instance.allowed_service_type_list
+
+    def save(self, commit=True):
+        package = super().save(commit=False)
+        package.allowed_service_types = ",".join(
+            self.cleaned_data.get("allowed_service_types", [])
+        )
+        if commit:
+            package.save()
+        return package
+
+
+class MembershipRecordForm(BootstrapFormMixin, forms.ModelForm):
+    class Meta:
+        model = Membership
+        fields = ["package", "start_date", "end_date", "status"]
+        widgets = {
+            "start_date": forms.DateInput(attrs={"type": "date"}),
+            "end_date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_bootstrap_classes()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+        if start_date and end_date and end_date < start_date:
+            self.add_error("end_date", "End date must be on or after the start date.")
+        return cleaned_data
+
+
+class PaymentRecordForm(BootstrapFormMixin, forms.ModelForm):
+    class Meta:
+        model = Payment
+        fields = ["payment_method", "status"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

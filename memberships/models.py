@@ -6,6 +6,14 @@ from django.db import models
 
 
 class MembershipPackage(models.Model):
+    SERVICE_TYPE_CHOICES = [
+        ("YOGA", "Yoga"),
+        ("ZUMBA", "Zumba"),
+        ("FITNESS", "Fitness"),
+        ("SAUNA", "Sauna"),
+        ("PERSONAL_TRAINING", "Personal Training"),
+    ]
+
     name = models.CharField(max_length=80)
     slug = models.SlugField(unique=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
@@ -13,6 +21,11 @@ class MembershipPackage(models.Model):
     description = models.CharField(max_length=220, blank=True)
     features = models.TextField(help_text="One feature per line")
     audience = models.CharField(max_length=80, blank=True)
+    allowed_service_types = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Leave empty to allow every service type.",
+    )
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -22,6 +35,14 @@ class MembershipPackage(models.Model):
     @property
     def feature_list(self):
         return [item.strip() for item in self.features.splitlines() if item.strip()]
+
+    @property
+    def allowed_service_type_list(self):
+        return [item.strip() for item in self.allowed_service_types.split(",") if item.strip()]
+
+    def allows_service(self, service_type):
+        allowed_types = self.allowed_service_type_list
+        return not allowed_types or service_type in allowed_types
 
     def __str__(self):
         return self.name

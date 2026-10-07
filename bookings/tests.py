@@ -101,6 +101,24 @@ class BookingViewTests(TestCase):
             ).exists()
         )
 
+    def test_plan_can_restrict_service_types(self):
+        self.package.allowed_service_types = Service.Type.ZUMBA
+        self.package.save(update_fields=["allowed_service_types"])
+        self.client.force_login(self.member)
+
+        response = self.client.post(
+            reverse("bookings:book_session", args=[self.session.id]),
+            follow=True,
+        )
+
+        self.assertContains(
+            response,
+            "Your membership plan does not include this service.",
+        )
+        self.assertFalse(
+            Booking.objects.filter(member=self.member, session=self.session).exists()
+        )
+
     def test_member_without_active_membership_cannot_book(self):
         """A member without an active membership should be blocked."""
 

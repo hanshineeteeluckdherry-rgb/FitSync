@@ -12,9 +12,11 @@
     <section class="payment-form-panel">
         <div class="payment-form-inner">
             <h2>Complete Payment</h2><p class="text-muted">{{ package.name }} Membership</p>
+            {% if renewal_membership %}<div class="alert alert-info">This payment will extend your current membership from {{ renewal_membership.end_date }}.</div>{% endif %}
             <div class="checkout-price-row"><span>Membership price</span><strong>Rs {{ package.price|floatformat:0 }}</strong></div>
             <div class="demo-payment-note"><i class="bi bi-info-circle"></i> Demo payment only. Do not enter real card details.</div>
             <form method="post" novalidate>{% csrf_token %}
+                {% if renewal_membership %}<input type="hidden" name="renewal_id" value="{{ renewal_membership.id }}">{% endif %}
                 {% for field in form %}
                     {% if field.name == 'simulate_failure' %}<div class="form-check mb-3">{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
                     {% else %}<div class="mb-3"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>{% endif %}

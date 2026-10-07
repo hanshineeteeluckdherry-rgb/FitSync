@@ -17,12 +17,27 @@ urlpatterns = [
     path("member/payment/<int:payment_id>/success/", views.payment_success, name="payment_success"),
     path("member/payment/<int:payment_id>/failed/", views.payment_failed, name="payment_failed"),
     path("member/receipt/<int:payment_id>/", views.receipt, name="receipt"),
+    path(
+        "member/receipt/<int:payment_id>/download/",
+        views.receipt_download,
+        name="receipt_download",
+    ),
     path("manage/packages/", views.admin_package_list, name="admin_package_list"),
     path("manage/packages/add/", views.admin_package_create, name="admin_package_create"),
     path("manage/packages/<int:package_id>/edit/", views.admin_package_edit, name="admin_package_edit"),
     path("manage/packages/<int:package_id>/toggle/", views.admin_package_toggle, name="admin_package_toggle"),
     path("manage/memberships/", views.admin_membership_list, name="admin_membership_list"),
+    path(
+        "manage/memberships/<int:membership_id>/edit/",
+        views.admin_membership_edit,
+        name="admin_membership_edit",
+    ),
     path("manage/payments/", views.admin_payment_list, name="admin_payment_list"),
     path("manage/payments/<int:payment_id>/", views.admin_payment_detail, name="admin_payment_detail"),
+    path(
+        "manage/payments/<int:payment_id>/edit/",
+        views.admin_payment_edit,
+        name="admin_payment_edit",
+    ),
     path("manage/report/", views.admin_membership_report, name="admin_membership_report"),
 ]
