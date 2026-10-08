@@ -1,0 +1,31 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}{{ page_name }}{% endblock %}
+{% block dashboard_heading %}{{ page_name }}{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading">
+    <h1>{{ page_name }}</h1>
+    <p>{{ record_name }}</p>
+</div>
+<div class="card p-4">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row g-3">
+            {% for field in form %}
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="d-flex gap-2 mt-4">
+            <button class="btn btn-primary-fitsync" type="submit">Save Changes</button>
+            {% if cancel_id %}
+                <a class="btn btn-secondary-fitsync" href="{% url cancel_url cancel_id %}">Cancel</a>
+            {% else %}
+                <a class="btn btn-secondary-fitsync" href="{% url cancel_url %}">Cancel</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

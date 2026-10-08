@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -72,6 +74,51 @@ class MembershipFlowTests(TestCase):
         self.assertFalse(Membership.objects.filter(member=self.member).exists())
         self.assertEqual(Payment.objects.get(member=self.member).status, Payment.Status.FAILED)
 
+    def test_renewal_extends_existing_membership(self):
+        old_end_date = date.today() + timedelta(days=12)
+        membership = Membership.objects.create(
+            member=self.member,
+            package=self.package,
+            start_date=date.today() - timedelta(days=18),
+            end_date=old_end_date,
+            status=Membership.Status.ACTIVE,
+        )
+        self.client.force_login(self.member)
+
+        response = self.client.post(
+            reverse("memberships:checkout", args=[self.package.pk]),
+            {
+                "payer_name": "Test Member",
+                "payment_method": Payment.Method.CARD,
+                "renewal_id": membership.pk,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        membership.refresh_from_db()
+        self.assertEqual(membership.end_date, old_end_date + timedelta(days=30))
+        self.assertEqual(Membership.objects.filter(member=self.member).count(), 1)
+        self.assertEqual(Payment.objects.get().membership, membership)
+
+    def test_member_can_download_own_receipt(self):
+        payment = Payment.objects.create(
+            member=self.member,
+            package=self.package,
+            amount=self.package.price,
+            payment_method=Payment.Method.CARD,
+            status=Payment.Status.SUCCESS,
+        )
+        self.client.force_login(self.member)
+
+        response = self.client.get(
+            reverse("memberships:receipt_download", args=[payment.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/plain")
+        self.assertIn("attachment", response["Content-Disposition"])
+        self.assertContains(response, payment.receipt_number)
+
 
 class MembershipRouteSmokeTests(TestCase):
     def setUp(self):
@@ -125,3 +172,80 @@ class MembershipRouteSmokeTests(TestCase):
             reverse("memberships:admin_membership_report"),
         ]:
             self.assertEqual(self.client.get(url).status_code, 200)
+
+
+class MembershipAdminTests(TestCase):
+    def setUp(self):
+        self.admin = User.objects.create_superuser(
+            username="membership-admin@example.com",
+            email="membership-admin@example.com",
+            password="TestPass123!",
+            role=User.Role.ADMIN,
+        )
+        self.member = User.objects.create_user(
+            username="search-member@example.com",
+            email="search-member@example.com",
+            password="TestPass123!",
+            role=User.Role.MEMBER,
+        )
+        self.package = MembershipPackage.objects.create(
+            name="Admin Plan",
+            slug="admin-plan",
+            price="1500.00",
+            duration_months=1,
+            features="Gym Access",
+        )
+        self.membership = Membership.objects.create(
+            member=self.member,
+            package=self.package,
+            start_date=date.today(),
+            end_date=date.today() + timedelta(days=30),
+            status=Membership.Status.ACTIVE,
+        )
+        self.payment = Payment.objects.create(
+            member=self.member,
+            package=self.package,
+            membership=self.membership,
+            amount=self.package.price,
+            payment_method=Payment.Method.CARD,
+            status=Payment.Status.SUCCESS,
+        )
+        self.client.force_login(self.admin)
+
+    def test_payment_list_filters_by_member(self):
+        response = self.client.get(
+            reverse("memberships:admin_payment_list"),
+            {"q": "search-member"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.payment.receipt_number)
+
+    def test_admin_can_correct_membership_record(self):
+        new_end_date = date.today() + timedelta(days=60)
+        response = self.client.post(
+            reverse("memberships:admin_membership_edit", args=[self.membership.pk]),
+            {
+                "package": self.package.pk,
+                "start_date": self.membership.start_date,
+                "end_date": new_end_date,
+                "status": Membership.Status.ACTIVE,
+            },
+        )
+        self.assertRedirects(response, reverse("memberships:admin_membership_list"))
+        self.membership.refresh_from_db()
+        self.assertEqual(self.membership.end_date, new_end_date)
+
+    def test_admin_can_correct_payment_record(self):
+        response = self.client.post(
+            reverse("memberships:admin_payment_edit", args=[self.payment.pk]),
+            {
+                "payment_method": Payment.Method.CASH,
+                "status": Payment.Status.SUCCESS,
+            },
+        )
+        self.assertRedirects(
+            response,
+            reverse("memberships:admin_payment_detail", args=[self.payment.pk]),
+        )
+        self.payment.refresh_from_db()
+        self.assertEqual(self.payment.payment_method, Payment.Method.CASH)

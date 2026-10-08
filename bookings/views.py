@@ -84,14 +84,19 @@ def book_session(request, session_id):
         return redirect("bookings:schedule")
     today = timezone.localdate()
 
-    has_active_membership = Membership.objects.filter(
-        member=request.user,
-        status=Membership.Status.ACTIVE,
-        start_date__lte=today,
-        end_date__gte=today,
-    ).exists()
+    active_membership = (
+        Membership.objects.select_related("package")
+        .filter(
+            member=request.user,
+            status=Membership.Status.ACTIVE,
+            start_date__lte=today,
+            end_date__gte=today,
+        )
+        .order_by("-end_date")
+        .first()
+    )
 
-    if not has_active_membership:
+    if not active_membership:
         messages.error(
             request,
             "You need an active membership to book a session.",
@@ -103,6 +108,13 @@ def book_session(request, session_id):
             Session.objects.select_for_update().select_related("service"),
             pk=session_id,
         )
+
+        if not active_membership.package.allows_service(session.service.service_type):
+            messages.error(
+                request,
+                "Your membership plan does not include this service.",
+            )
+            return redirect("bookings:schedule")
 
         if session.status != Session.Status.SCHEDULED:
             messages.error(

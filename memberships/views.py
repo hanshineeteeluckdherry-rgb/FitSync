@@ -3,11 +3,18 @@ from datetime import date, timedelta
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Case, Count, IntegerField, Q, Sum, Value, When
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from accounts.decorators import admin_required, member_required
 
-from .forms import MembershipPackageForm, SimulatedPaymentForm
+from .forms import (
+    MembershipPackageForm,
+    MembershipRecordForm,
+    PaymentRecordForm,
+    SimulatedPaymentForm,
+)
 from .models import Membership, MembershipPackage, Payment
 
 
@@ -118,6 +125,15 @@ def payment_history(request):
 def checkout(request, package_id):
     package = get_object_or_404(MembershipPackage, pk=package_id, is_active=True)
     form = SimulatedPaymentForm(request.POST or None, initial={"payer_name": request.user.get_full_name()})
+    renewal_id = request.POST.get("renewal_id") or request.GET.get("renew")
+    renewal_membership = None
+    if renewal_id:
+        renewal_membership = get_object_or_404(
+            Membership,
+            pk=renewal_id,
+            member=request.user,
+            package=package,
+        )
 
     if request.method == "POST" and form.is_valid():
         failed = form.cleaned_data["simulate_failure"]
@@ -133,19 +149,28 @@ def checkout(request, package_id):
             messages.error(request, "The simulated payment failed. No membership was activated.")
             return redirect("memberships:payment_failed", payment_id=payment.pk)
 
-        old_membership = _current_for(request.user)
-        if old_membership:
-            old_membership.status = Membership.Status.CANCELLED
-            old_membership.save(update_fields=["status"])
+        if renewal_membership:
+            extension_date = max(date.today(), renewal_membership.end_date)
+            renewal_membership.end_date = extension_date + timedelta(
+                days=30 * package.duration_months
+            )
+            renewal_membership.status = Membership.Status.ACTIVE
+            renewal_membership.save(update_fields=["end_date", "status"])
+            membership = renewal_membership
+        else:
+            old_membership = _current_for(request.user)
+            if old_membership:
+                old_membership.status = Membership.Status.CANCELLED
+                old_membership.save(update_fields=["status"])
 
-        start_date = date.today()
-        membership = Membership.objects.create(
-            member=request.user,
-            package=package,
-            start_date=start_date,
-            end_date=start_date + timedelta(days=30 * package.duration_months),
-            status=Membership.Status.ACTIVE,
-        )
+            start_date = date.today()
+            membership = Membership.objects.create(
+                member=request.user,
+                package=package,
+                start_date=start_date,
+                end_date=start_date + timedelta(days=30 * package.duration_months),
+                status=Membership.Status.ACTIVE,
+            )
         payment.membership = membership
         payment.save(update_fields=["membership"])
         messages.success(request, "Payment successful. Your membership is now active.")
@@ -154,7 +179,12 @@ def checkout(request, package_id):
     return render(
         request,
         "memberships/checkout.html",
-        {"package": package, "form": form, "active_sidebar": "membership"},
+        {
+            "package": package,
+            "form": form,
+            "renewal_membership": renewal_membership,
+            "active_sidebar": "membership",
+        },
     )
 
 
@@ -163,7 +193,8 @@ def renew_membership(request, membership_id):
     membership = get_object_or_404(Membership, pk=membership_id, member=request.user)
     if request.method != "POST":
         return redirect("memberships:current_membership")
-    return redirect("memberships:checkout", package_id=membership.package_id)
+    checkout_url = reverse("memberships:checkout", args=[membership.package_id])
+    return redirect(f"{checkout_url}?renew={membership.pk}")
 
 
 @member_required
@@ -205,6 +236,35 @@ def receipt(request, payment_id):
         status=Payment.Status.SUCCESS,
     )
     return render(request, "memberships/receipt.html", {"payment": payment})
+
+
+@member_required
+def receipt_download(request, payment_id):
+    payment = get_object_or_404(
+        Payment.objects.select_related("package", "membership", "member"),
+        pk=payment_id,
+        member=request.user,
+        status=Payment.Status.SUCCESS,
+    )
+    member_name = payment.member.get_full_name() or payment.member.email
+    receipt_text = "\n".join(
+        [
+            "FitSync Payment Receipt",
+            f"Receipt Number: {payment.receipt_number}",
+            f"Member: {member_name}",
+            f"Membership Plan: {payment.package.name}",
+            f"Payment Method: {payment.get_payment_method_display()}",
+            f"Payment Date: {payment.created_at:%d %b %Y, %H:%M}",
+            f"Status: {payment.get_status_display()}",
+            f"Total: Rs {payment.amount:.2f}",
+            "",
+            "This receipt records a simulated FitSync coursework payment.",
+        ]
+    )
+    response = HttpResponse(receipt_text, content_type="text/plain")
+    filename = f"receipt-{payment.receipt_number}.txt"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 @admin_required
@@ -283,17 +343,64 @@ def admin_membership_list(request):
 
 
 @admin_required
+def admin_membership_edit(request, membership_id):
+    membership = get_object_or_404(
+        Membership.objects.select_related("member", "package"),
+        pk=membership_id,
+    )
+    form = MembershipRecordForm(request.POST or None, instance=membership)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Membership record updated.")
+        return redirect("memberships:admin_membership_list")
+    return render(
+        request,
+        "memberships/admin/record_form.html",
+        {
+            "form": form,
+            "page_name": "Edit Membership",
+            "record_name": membership.member.get_full_name() or membership.member.email,
+            "cancel_url": "memberships:admin_membership_list",
+            "active_sidebar": "memberships",
+        },
+    )
+
+
+@admin_required
 def admin_payment_list(request):
     payments = Payment.objects.select_related("member", "package")
     status = request.GET.get("status", "")
     if status:
         payments = payments.filter(status=status)
+    query = request.GET.get("q", "").strip()
+    if query:
+        payments = payments.filter(
+            Q(member__first_name__icontains=query)
+            | Q(member__last_name__icontains=query)
+            | Q(member__email__icontains=query)
+            | Q(receipt_number__icontains=query)
+        )
+    date_from = request.GET.get("date_from", "")
+    if date_from:
+        try:
+            payments = payments.filter(created_at__date__gte=date.fromisoformat(date_from))
+        except ValueError:
+            date_from = ""
+    date_to = request.GET.get("date_to", "")
+    if date_to:
+        try:
+            payments = payments.filter(created_at__date__lte=date.fromisoformat(date_to))
+        except ValueError:
+            date_to = ""
     return render(
         request,
         "memberships/admin/payment_list.html",
         {
             "payments": payments,
             "status_filter": status,
+            "query": query,
+            "date_from": date_from,
+            "date_to": date_to,
             "status_choices": Payment.Status.choices,
             "active_sidebar": "payments",
         },
@@ -310,6 +417,28 @@ def admin_payment_detail(request, payment_id):
         request,
         "memberships/admin/payment_detail.html",
         {"payment": payment, "active_sidebar": "payments"},
+    )
+
+
+@admin_required
+def admin_payment_edit(request, payment_id):
+    payment = get_object_or_404(Payment, pk=payment_id)
+    form = PaymentRecordForm(request.POST or None, instance=payment)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Payment record updated.")
+        return redirect("memberships:admin_payment_detail", payment_id=payment.pk)
+    return render(
+        request,
+        "memberships/admin/record_form.html",
+        {
+            "form": form,
+            "page_name": "Edit Payment",
+            "record_name": payment.receipt_number,
+            "cancel_url": "memberships:admin_payment_detail",
+            "cancel_id": payment.pk,
+            "active_sidebar": "payments",
+        },
     )
 
 
