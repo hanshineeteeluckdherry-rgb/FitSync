@@ -1,0 +1,52 @@
+{% load static %}
+{# Signed-in user card shown at the bottom of every dashboard sidebar. #}
+<link rel="stylesheet" href="{% static 'css/sidebar-user.css' %}?v=1">
+
+{% with user=request.user %}
+<div class="sidebar-user dropup">
+    <ul class="dropdown-menu sidebar-user-menu" aria-labelledby="sidebarUserToggle">
+        <li>
+            <a class="dropdown-item sidebar-user-item" href="{% url 'accounts:profile_edit' %}">
+                <i class="bi bi-gear" aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+        </li>
+        <li>
+            <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item sidebar-user-item sidebar-user-signout">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                    <span>Sign Out</span>
+                </button>
+            </form>
+        </li>
+    </ul>
+
+    <button
+        id="sidebarUserToggle"
+        class="sidebar-user-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        data-bs-display="static"
+        aria-expanded="false"
+        aria-label="Open account menu"
+    >
+        {% if user.member_profile.profile_picture %}
+            <img src="{{ user.member_profile.profile_picture.url }}" alt="" class="sidebar-user-avatar">
+        {% elif user.coach_profile.photo_url %}
+            <img src="{{ user.coach_profile.photo_url }}" alt="" class="sidebar-user-avatar">
+        {% else %}
+            <span class="sidebar-user-avatar sidebar-user-initials" aria-hidden="true">
+                {% if user.first_name or user.last_name %}{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}{% else %}{{ user.username|slice:":1"|upper }}{% endif %}
+            </span>
+        {% endif %}
+
+        <span class="sidebar-user-text">
+            <span class="sidebar-user-name">{{ user.get_full_name|default:user.username }}</span>
+            <span class="sidebar-user-role">{{ user.get_role_display }}</span>
+        </span>
+
+        <i class="bi bi-chevron-up sidebar-user-chevron" aria-hidden="true"></i>
+    </button>
+</div>
+{% endwith %}

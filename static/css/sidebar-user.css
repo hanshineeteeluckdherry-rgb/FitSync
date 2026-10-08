@@ -1,0 +1,155 @@
+/* Signed-in user card at the bottom of the dashboard sidebars */
+
+/* Stack the sidebar so the user card can sit at the bottom */
+body.dashboard-body .dashboard-sidebar {
+    display: flex !important;
+    flex-direction: column;
+}
+
+.sidebar-user {
+    position: relative;
+    margin-top: auto;
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-user-toggle {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    color: var(--text-color);
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s ease;
+    cursor: pointer;
+}
+
+.sidebar-user-toggle:hover,
+.sidebar-user-toggle:focus-visible,
+.sidebar-user-toggle.show {
+    background: rgba(0, 223, 179, 0.09) !important;
+    outline: none;
+}
+
+.sidebar-user-avatar {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.sidebar-user-initials {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #080d17;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: var(--primary-color) !important;
+}
+
+.sidebar-user-text {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.sidebar-user-name {
+    overflow: hidden;
+    color: var(--text-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.sidebar-user-chevron {
+    color: var(--muted-color);
+    font-size: 0.75rem;
+    transform: rotate(180deg);
+    transition: transform 0.2s ease;
+}
+
+.sidebar-user-toggle.show .sidebar-user-chevron {
+    transform: rotate(0deg);
+}
+
+/* Dropdown menu that opens above the card */
+.sidebar-user-menu {
+    position: absolute;
+    right: 12px;
+    bottom: calc(100% + 4px);
+    left: 12px;
+    min-width: 0;
+    padding: 6px;
+    background: var(--surface-color) !important;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px var(--shadow-color);
+    display: none;
+    margin: 0;
+    list-style: none;
+    z-index: 1060;
+}
+
+.sidebar-user-menu.show {
+    display: block;
+}
+
+.sidebar-user-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    color: var(--muted-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.sidebar-user-item:hover,
+.sidebar-user-item:focus {
+    color: var(--text-color);
+    background: rgba(0, 223, 179, 0.09) !important;
+}
+
+.sidebar-user-signout,
+.sidebar-user-signout:hover,
+.sidebar-user-signout:focus {
+    color: #f0506e;
+}
+
+.sidebar-user-signout:hover,
+.sidebar-user-signout:focus {
+    background: rgba(240, 80, 110, 0.1) !important;
+}
+
+/* Dashboard pages: float flash messages so they don't push the sidebar card off-screen */
+body.dashboard-body .fitsync-messages {
+    position: fixed;
+    top: calc(var(--topbar-height, 70px) + 0.75rem);
+    right: 1rem;
+    left: auto;
+    z-index: 1080;
+    width: min(420px, calc(100vw - 2rem));
+    padding: 0;
+}
