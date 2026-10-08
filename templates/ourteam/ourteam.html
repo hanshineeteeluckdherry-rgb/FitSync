@@ -10,95 +10,273 @@
 {% block content %}
 <div class="team-page">
 
-    <section class="team-header text-center py-5">
+    <section class="team-header">
         <div class="container">
-            <span class="team-subtitle d-block mb-2">THE PEOPLE BEHIND FITSYNC</span>
+            <span class="team-subtitle">The people behind FitSync</span>
             <h1 class="team-title mb-3">Meet Our Team</h1>
-            <p class="team-description mx-auto">
+            <p class="team-description">
                 Every result you achieve is backed by a team of certified professionals who are genuinely invested in your progress. We are more than coaches — we are your training partners.
             </p>
         </div>
     </section>
 
-    <section class="featured-member-section mb-5">
-        <div class="container">
-            <div class="featured-card">
-                <div class="row g-0 align-items-center">
-                    <div class="col-lg-5 col-md-6">
-                        <div class="featured-img-wrapper">
-                            <img src="{% static 'img/ourteam/dwane.png' %}" alt="Dwayne Johnson" class="img-fluid">
-                        </div>
+    <section class="featured-member-section mb-5 px-3" id="featured-section">
+        <div class="featured-card">
+            <div class="row g-0">
+                <div class="col-lg-5 col-md-6">
+                    <div class="featured-img-wrapper">
+                        <img src="{% static 'img/ourteam/dwane.png' %}" alt="Dwayne Johnson">
                     </div>
-                    <div class="col-lg-7 col-md-6">
-                        <div class="featured-card-body p-4 p-lg-5">
-                            <span class="badge badge-founder mb-3">
-                                <i class="bi bi-person-fill me-1"></i> Founder
-                            </span>
-                            <h2 class="featured-name mb-1">Dwayne The Rock Johnson</h2>
-                            <p class="featured-role mb-3">Owner & Head of Operations</p>
-                            
-                            <p class="featured-bio mb-4">
-                                Dwayne founded FitSync in 2026 with a vision to build a gym that puts members first. With a background in sports science and business management, he has grown FitSync into one of the city's most respected fitness communities.
-                            </p>
+                </div>
+                <div class="col-lg-7 col-md-6 d-flex align-items-center">
+                    <div class="featured-card-body p-4 p-lg-5">
+                        <span class="badge-founder mb-3">
+                            <i class="bi bi-person-fill me-1"></i> Founder
+                        </span>
+                        <h2 class="featured-name mb-1">Dwayne The Rock Johnson</h2>
+                        <p class="featured-role mb-3">Owner & Head of Operations</p>
 
-                            <div class="specialty-tags d-flex flex-wrap gap-2 mb-4">
-                                <span class="tag">Strength & Conditioning</span>
-                                <span class="tag">Business Strategy</span>
-                                <span class="tag">Team Leadership</span>
-                            </div>
+                        <p class="featured-bio mb-4">
+                            Dwayne founded FitSync in 2026 with a vision to build a gym that puts members first. With a background in sports science and business management, he has grown FitSync into one of the city's most respected fitness communities.
+                        </p>
 
-                            <a href="#" class="read-profile-link">
-                                Read full profile <i class="bi bi-chevron-right ms-1"></i>
-                            </a>
+                        <div class="specialty-tags d-flex flex-wrap gap-2 mb-4">
+                            <span class="tag">Strength & Conditioning</span>
+                            <span class="tag">Business Strategy</span>
+                            <span class="tag">Team Leadership</span>
                         </div>
-                    </div>
 
+                        <a href="#" class="read-profile-link">
+                            Read full profile <i class="bi bi-chevron-right ms-1"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
- <section class="team-grid-section pb-5">
+    <section class="team-grid-section pb-5">
         <div class="container">
             <div class="filter-pills d-flex flex-wrap gap-2 mb-4">
-                <button class="btn filter-btn active">All</button>
-                <button class="btn filter-btn">Founder</button>
-                <button class="btn filter-btn">Operations</button>
-                <button class="btn filter-btn">Coaching</button>
-                <button class="btn filter-btn">Wellness</button>
-                <button class="btn filter-btn">Fitness</button>
+                <button class="btn filter-btn active" data-filter="all">All</button>
+                <button class="btn filter-btn" data-filter="founder">Founder</button>
+                <button class="btn filter-btn" data-filter="operations">Operations</button>
+                <button class="btn filter-btn" data-filter="coaching">Coaching</button>
+                <button class="btn filter-btn" data-filter="wellness">Wellness</button>
+                <button class="btn filter-btn" data-filter="fitness">Fitness</button>
             </div>
 
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
+            <div class="row g-4" id="team-grid">
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="operations">
                     <div class="team-card">
                         <div class="card-img-wrapper">
-                            <span class="badge card-badge badge-ops">Operations</span>
-                            <img src="{% static 'img/ourteam/member1.jpg' %}" alt="Team Member" class="img-fluid">
+                            <span class="badge-card badge-ops">Operations</span>
+                            <img src="{% static 'img/ourteam/julie.png' %}" alt="Julie Bowen" class="card-photo">
+                            <img src="{% static 'img/ourteam/julie.png' %}" alt="" class="card-avatar">
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="team-card">
-                        <div class="card-img-wrapper">
-                            <span class="badge card-badge badge-coach">Coaching</span>
-                            <img src="{% static 'img/ourteam/member2.jpg' %}" alt="Team Member" class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="team-card">
-                        <div class="card-img-wrapper">
-                            <span class="badge card-badge badge-coach">Coaching</span>
-                            <img src="{% static 'img/ourteam/member3.jpg' %}" alt="Team Member" class="img-fluid">
+                        <div class="card-body">
+                            <h5 class="card-name">Julie Bowen</h5>
+                            <p class="card-role">Operations Manager</p>
+                            <p class="card-bio">Over 10 years of experience managing fitness facilities and ensuring smooth operations.</p>
+                            <div class="card-tags">
+                                <span>Facility Management</span>
+                                <span>Scheduling</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">10 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="col-lg-4 col-md-6 team-item" data-category="coaching">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-coach">Coaching</span>
+                            <img src="{% static 'img/ourteam/chrisb.png' %}" alt="Chris Bumstead" class="card-photo">
+                            <img src="{% static 'img/ourteam/chrisb.png' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Chris Bumstead</h5>
+                            <p class="card-role">Head Coach</p>
+                            <p class="card-bio">Specialist in bodybuilding and strength training with 8 years of coaching experience.</p>
+                            <div class="card-tags">
+                                <span>Bodybuilding</span>
+                                <span>Strength Training</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">8 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="coaching">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-coach">Coaching</span>
+                            <img src="{% static 'img/ourteam/sarah.jpg' %}" alt="Sarah Safforti" class="card-photo">
+                            <img src="{% static 'img/ourteam/sarah.jpg' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Sarah Safforti</h5>
+                            <p class="card-role">Performance Coach</p>
+                            <p class="card-bio">Dedicated to helping athletes reach peak performance through personalized training plans.</p>
+                            <div class="card-tags">
+                                <span>HIIT</span>
+                                <span>Endurance Training</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">6 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="wellness">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-wellness">Wellness</span>
+                            <img src="{% static 'img/ourteam/emily.jpg' %}" alt="Emily Watson" class="card-photo">
+                            <img src="{% static 'img/ourteam/emily.jpg' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Emily Watson</h5>
+                            <p class="card-role">Wellness Specialist</p>
+                            <p class="card-bio">Expert in holistic health, nutrition, and mindfulness practices for overall well-being.</p>
+                            <div class="card-tags">
+                                <span>Nutrition</span>
+                                <span>Mindfulness</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">7 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="fitness">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-fitness">Fitness</span>
+                            <img src="{% static 'img/ourteam/sam.jpg' %}" alt="Sam Sulek" class="card-photo">
+                            <img src="{% static 'img/ourteam/sam.jpg' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Sam Sulek</h5>
+                            <p class="card-role">Fitness Trainer</p>
+                            <p class="card-bio">Passionate about functional training and helping clients build sustainable fitness routines.</p>
+                            <div class="card-tags">
+                                <span>Functional Training</span>
+                                <span>Hypertrophy</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">5 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="fitness">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-fitness">Fitness</span>
+                            <img src="{% static 'img/ourteam/chrish.jpg' %}" alt="Chris Heria" class="card-photo">
+                            <img src="{% static 'img/ourteam/chrish.jpg' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Chris Heria</h5>
+                            <p class="card-role">Calisthenics Expert</p>
+                            <p class="card-bio">Renowned for bodyweight training techniques and innovative fitness programs.</p>
+                            <div class="card-tags">
+                                <span>Calisthenics</span>
+                                <span>Mobility</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">9 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="fitness">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-fitness">Fitness</span>
+                            <img src="{% static 'img/ourteam/chloe.jpg' %}" alt="Chloe Ting" class="card-photo">
+                            <img src="{% static 'img/ourteam/chloe.jpg' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Chloe Ting</h5>
+                            <p class="card-role">Fitness Instructor</p>
+                            <p class="card-bio">Creator of viral workout programs, inspiring millions to stay active and healthy.</p>
+                            <div class="card-tags">
+                                <span>Home Workouts</span>
+                                <span>Pilates</span>
+                            </div>
+                            <div class="card-footer-row">
+                                <span class="card-exp">7 yrs experience</span>
+                                <a href="#" class="view-profile-link">View profile <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="join-team-section pb-5">
+        <div class="container">
+            <div class="join-box text-center">
+                <h2 class="join-title mb-2">Want to Join Our Team?</h2>
+                <p class="join-description mb-4">
+                    We are always looking for passionate, qualified fitness professionals to grow the FitSync family.
+                </p>
+                <a href="mailto:careers@fitsync.com" class="join-email-btn">
+                    <i class="bi bi-envelope me-1"></i> careers@fitsync.com
+                </a>
             </div>
         </div>
     </section>
 </div>
+
+<script>
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const teamItems = document.querySelectorAll(".team-item");
+    const featured = document.getElementById("featured-section");
+
+    filterButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            filterButtons.forEach(function (b) {
+                b.classList.remove("active");
+            });
+            btn.classList.add("active");
+
+            const filter = btn.dataset.filter;
+
+            if (filter === "all" || filter === "founder") {
+                featured.style.display = "";
+            } else {
+                featured.style.display = "none";
+            }
+
+            teamItems.forEach(function (item) {
+                if (filter === "all" || item.dataset.category === filter) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
-            
             
