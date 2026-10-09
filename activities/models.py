@@ -20,7 +20,7 @@ class OutdoorActivity(models.Model):
     distance_km = models.DecimalField(max_digits=6, decimal_places=2)
     duration_minutes = models.PositiveIntegerField()
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.member} - {self.activity_type} ({self.date})"
 
     class Meta:

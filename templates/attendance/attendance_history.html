@@ -1,0 +1,17 @@
+{% extends base_template %}
+{% block page_title %}Attendance History{% endblock %}
+{% block dashboard_heading %}Attendance{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading"><h1>Attendance History</h1><p>Search, filter and correct attendance records.</p></div>
+<form method="get" class="row g-2 mb-4">
+    <div class="col-lg-3"><input class="form-control" name="q" value="{{ query }}" placeholder="Member name or email"></div>
+    <div class="col-lg-2"><select class="form-select" name="status"><option value="">All statuses</option><option value="INSIDE" {% if status_filter == 'INSIDE' %}selected{% endif %}>Inside</option><option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Checked out</option></select></div>
+    <div class="col-lg-2"><input class="form-control" type="date" name="date_from" value="{{ date_from|date:'Y-m-d' }}" title="From date"></div>
+    <div class="col-lg-2"><input class="form-control" type="date" name="date_to" value="{{ date_to|date:'Y-m-d' }}" title="To date"></div>
+    <div class="col-lg-auto"><button class="btn btn-secondary-fitsync">Filter</button></div>
+</form>
+<div class="card p-3"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Member</th><th>Check-in</th><th>Check-out</th><th>Correction</th><th></th></tr></thead><tbody>
+{% for record in records %}<tr><td>{{ record.member.get_full_name|default:record.member.email }}</td><td>{{ record.check_in_time|date:"d M Y, H:i" }}</td><td>{% if record.check_out_time %}{{ record.check_out_time|date:"d M Y, H:i" }}{% else %}<span class="badge text-bg-success">Inside</span>{% endif %}</td><td>{% if record.correction_note %}{{ record.correction_note }}{% else %}-{% endif %}</td><td><a href="{% url 'attendance:correct_attendance' record.id %}">Correct</a></td></tr>
+{% empty %}<tr><td colspan="5" class="text-center text-body-secondary py-4">No matching attendance records.</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

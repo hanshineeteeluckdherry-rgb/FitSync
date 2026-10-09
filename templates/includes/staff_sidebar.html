@@ -34,6 +34,14 @@
     </a>
 
     <a
+        class="nav-link {% if active_sidebar == 'attendance-history' %}active{% endif %}"
+        href="{% url 'attendance:attendance_history' %}"
+    >
+        <i class="bi bi-clock-history"></i>
+        <span>Attendance History</span>
+    </a>
+
+    <a
         class="nav-link {% if active_sidebar == 'members' %}active{% endif %}"
         href="{% url 'accounts:staff_member_list' %}"
     >

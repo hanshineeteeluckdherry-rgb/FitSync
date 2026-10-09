@@ -4,6 +4,18 @@ from django.db import models
 from django.conf import settings
 
 
+class GymConfiguration(models.Model):
+    max_capacity = models.PositiveIntegerField(default=50)
+
+    @classmethod
+    def get_capacity(cls):
+        configuration, _ = cls.objects.get_or_create(pk=1)
+        return configuration.max_capacity
+
+    def __str__(self):
+        return f"Maximum capacity: {self.max_capacity}"
+
+
 class MemberQRCode(models.Model):
     member = models.OneToOneField(
         settings.AUTH_USER_MODEL,

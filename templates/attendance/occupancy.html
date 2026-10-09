@@ -1,0 +1,19 @@
+{% extends "layouts/member_base.html" %}
+{% block page_title %}Gym Occupancy{% endblock %}
+{% block dashboard_heading %}Gym Occupancy{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading">
+    <h1>Current Gym Occupancy</h1>
+    <p>Check how busy the gym is before your visit.</p>
+</div>
+<div class="card p-4" style="max-width: 720px;">
+    <div class="row g-4 text-center">
+        <div class="col-md-4"><span class="text-body-secondary">Members inside</span><p class="display-5 fw-bold mb-0">{{ current_occupancy }}</p></div>
+        <div class="col-md-4"><span class="text-body-secondary">Maximum capacity</span><p class="display-5 fw-bold mb-0">{{ max_capacity }}</p></div>
+        <div class="col-md-4"><span class="text-body-secondary">Available spaces</span><p class="display-5 fw-bold mb-0">{{ available_spaces }}</p></div>
+    </div>
+    <div class="progress mt-4" role="progressbar" aria-label="Gym occupancy" aria-valuenow="{{ occupancy_percent }}" aria-valuemin="0" aria-valuemax="100" style="height: 18px;">
+        <div class="progress-bar" style="width: {{ occupancy_percent }}%;">{{ occupancy_percent }}%</div>
+    </div>
+</div>
+{% endblock %}
