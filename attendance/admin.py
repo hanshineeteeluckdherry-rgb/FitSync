@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import AttendanceRecord, GymConfiguration, MemberQRCode
+
+
+admin.site.register(MemberQRCode)
+admin.site.register(AttendanceRecord)
+admin.site.register(GymConfiguration)

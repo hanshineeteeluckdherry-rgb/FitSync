@@ -5,8 +5,10 @@ app_name = "attendance"
 
 urlpatterns = [
     path("my-qr/", views.my_qr_code, name = "my_qr_code"),
+    path("occupancy/", views.occupancy, name="occupancy"),
     path("staff/", views.staff_attendance, name = "staff_attendance"),
     path("history/", views.attendance_history, name="attendance_history"),
     path("correct/<int:pk>/", views.correct_attendance, name="correct_attendance"),
     path("report/", views.attendance_report, name="attendance_report"),
+    path("capacity/", views.capacity_settings, name="capacity_settings"),
 ]

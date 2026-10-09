@@ -1,0 +1,27 @@
+{% extends base_template %}
+{% block page_title %}Attendance{% endblock %}
+{% block dashboard_heading %}Attendance{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div class="page-heading mb-0"><h1>Member Check-in and Check-out</h1><p>Enter a membership QR token or the member's email address.</p></div>
+    <div class="summary-card"><span class="summary-label">Current occupancy</span><p class="summary-value">{{ current_occupancy }} / {{ max_capacity }}</p></div>
+</div>
+<div class="card p-4 mb-4">
+    <form method="post" class="row g-3 align-items-end">
+        {% csrf_token %}
+        <div class="col-lg-7">
+            <label class="form-label" for="member_identifier">QR token or member email</label>
+            <input class="form-control" id="member_identifier" name="member_identifier" required autocomplete="off">
+        </div>
+        <div class="col-sm-6 col-lg-auto"><button class="btn btn-primary-fitsync w-100" name="action" value="check_in">Check In</button></div>
+        <div class="col-sm-6 col-lg-auto"><button class="btn btn-secondary-fitsync w-100" name="action" value="check_out">Check Out</button></div>
+    </form>
+</div>
+<div class="card p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Today's attendance</h2><a href="{% url 'attendance:attendance_history' %}">View full history</a></div>
+    <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Member</th><th>Check-in</th><th>Check-out</th><th>Status</th></tr></thead><tbody>
+    {% for record in today_records %}<tr><td>{{ record.member.get_full_name|default:record.member.email }}</td><td>{{ record.check_in_time|date:"H:i" }}</td><td>{% if record.check_out_time %}{{ record.check_out_time|date:"H:i" }}{% else %}-{% endif %}</td><td>{% if record.check_out_time %}Checked out{% else %}<span class="badge text-bg-success">Inside</span>{% endif %}</td></tr>
+    {% empty %}<tr><td colspan="4" class="text-center text-body-secondary py-4">No attendance records today.</td></tr>{% endfor %}
+    </tbody></table></div>
+</div>
+{% endblock %}

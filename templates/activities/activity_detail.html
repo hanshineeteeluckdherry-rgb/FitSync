@@ -1,0 +1,8 @@
+{% extends "layouts/member_base.html" %}
+{% block page_title %}Activity Summary{% endblock %}
+{% block dashboard_heading %}Outdoor Activities{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div class="page-heading mb-0"><h1>Activity Summary</h1><p>{{ activity.get_activity_type_display }} on {{ activity.date|date:"d M Y" }}</p></div><a class="btn btn-outline-danger" href="{% url 'activities:delete_activity' activity.id %}">Delete</a></div>
+<div class="row g-3"><div class="col-md-4"><div class="summary-card"><span class="summary-label">Distance</span><p class="summary-value">{{ activity.distance_km }} km</p></div></div><div class="col-md-4"><div class="summary-card"><span class="summary-label">Duration</span><p class="summary-value">{{ activity.duration_minutes }} min</p></div></div><div class="col-md-4"><div class="summary-card"><span class="summary-label">Average pace</span><p class="summary-value">{% if pace %}{{ pace }} min/km{% else %}-{% endif %}</p></div></div></div>
+<a class="btn btn-secondary-fitsync mt-4" href="{% url 'activities:activity_list' %}">Back to History</a>
+{% endblock %}

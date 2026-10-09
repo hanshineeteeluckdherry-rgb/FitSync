@@ -1,0 +1,21 @@
+{% extends "layouts/member_base.html" %}
+{% block page_title %}My QR Code{% endblock %}
+{% block dashboard_heading %}My QR Code{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading">
+    <h1>Digital Membership QR Code</h1>
+    <p>Show this code to authorized staff when entering or leaving the gym.</p>
+</div>
+<div class="card p-4 text-center mx-auto" style="max-width: 520px;">
+    {% if qr_active %}
+        <span class="badge text-bg-success align-self-center mb-3">Active Membership</span>
+        <img class="img-fluid mx-auto" style="max-width: 280px;" src="data:image/png;base64,{{ qr_image }}" alt="Membership QR code">
+        <p class="text-body-secondary mt-3 mb-0">Your code contains only a secure membership token.</p>
+    {% else %}
+        <div class="display-4 text-body-secondary"><i class="bi bi-qr-code"></i></div>
+        <h2 class="h4 mt-3">QR code unavailable</h2>
+        <p class="text-body-secondary">An active membership is required before this code can be used.</p>
+        <a class="btn btn-primary-fitsync" href="{% url 'memberships:member_packages' %}">View Membership Plans</a>
+    {% endif %}
+</div>
+{% endblock %}

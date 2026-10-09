@@ -1,0 +1,7 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}Gym Capacity{% endblock %}
+{% block dashboard_heading %}Settings{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading"><h1>Gym Capacity</h1><p>Set the maximum number of members allowed inside the gym.</p></div>
+<div class="row g-4"><div class="col-lg-6"><div class="card p-4"><form method="post" novalidate>{% csrf_token %}<label class="form-label" for="{{ form.max_capacity.id_for_label }}">Maximum capacity</label>{{ form.max_capacity }}{% for error in form.max_capacity.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}<button class="btn btn-primary-fitsync mt-4" type="submit">Save Capacity</button></form></div></div><div class="col-lg-4"><div class="summary-card"><span class="summary-label">Members currently inside</span><p class="summary-value">{{ current_occupancy }}</p></div></div></div>
+{% endblock %}

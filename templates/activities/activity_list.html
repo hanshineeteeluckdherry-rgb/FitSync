@@ -1,0 +1,10 @@
+{% extends "layouts/member_base.html" %}
+{% block page_title %}Outdoor Activities{% endblock %}
+{% block dashboard_heading %}Outdoor Activities{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div class="page-heading mb-0"><h1>Outdoor Activity History</h1><p>Review walking, running and cycling activities.</p></div><a class="btn btn-primary-fitsync" href="{% url 'activities:add_activity' %}"><i class="bi bi-plus-circle me-1"></i>Add Activity</a></div>
+<div class="row g-3">
+{% for activity in activities %}<div class="col-md-6 col-xl-4"><div class="card p-4 h-100"><span class="badge text-bg-secondary align-self-start">{{ activity.get_activity_type_display }}</span><h2 class="h4 mt-3">{{ activity.date|date:"d M Y" }}</h2><dl class="row mb-3"><dt class="col-7">Distance</dt><dd class="col-5">{{ activity.distance_km }} km</dd><dt class="col-7">Duration</dt><dd class="col-5">{{ activity.duration_minutes }} min</dd></dl><a href="{% url 'activities:activity_detail' activity.id %}">View summary</a></div></div>
+{% empty %}<div class="col-12"><div class="card p-5 text-center"><h2 class="h4">No outdoor activities yet</h2><p class="text-body-secondary">Add your first activity to begin your history.</p></div></div>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "layouts/member_base.html" %}
+{% block page_title %}Delete Activity{% endblock %}
+{% block dashboard_heading %}Outdoor Activities{% endblock %}
+{% block dashboard_content %}
+<div class="card p-4" style="max-width: 680px;"><h1 class="h3">Delete Activity?</h1><p>You are about to delete the {{ activity.get_activity_type_display|lower }} activity recorded on {{ activity.date|date:"d M Y" }}. This cannot be undone.</p><form method="post">{% csrf_token %}<div class="d-flex gap-2"><button class="btn btn-danger" type="submit">Delete Activity</button><a class="btn btn-secondary-fitsync" href="{% url 'activities:activity_detail' activity.id %}">Cancel</a></div></form></div>
+{% endblock %}

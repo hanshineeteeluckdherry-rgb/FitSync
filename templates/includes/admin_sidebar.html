@@ -75,7 +75,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'attendance' %}active{% endif %}"
-        href="#"
+        href="{% url 'attendance:attendance_history' %}"
     >
         <i class="bi bi-qr-code-scan"></i>
         <span>Attendance</span>
@@ -91,7 +91,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'settings' %}active{% endif %}"
-        href="#"
+        href="{% url 'attendance:capacity_settings' %}"
     >
         <i class="bi bi-gear"></i>
         <span>Settings</span>
@@ -99,7 +99,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'reports' %}active{% endif %}"
-        href="#"
+        href="{% url 'attendance:attendance_report' %}"
     >
         <i class="bi bi-bar-chart"></i>
         <span>Reports</span>
