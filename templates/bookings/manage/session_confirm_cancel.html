@@ -1,0 +1,6 @@
+{% extends layout_template %}
+{% block page_title %}Cancel Session{% endblock %}
+{% block dashboard_heading %}Sessions{% endblock %}
+{% block dashboard_content %}
+<div class="card p-4" style="max-width: 680px;"><h1 class="h3">Cancel Session</h1><p>Cancel <strong>{{ session.service.name }}</strong> on {{ session.date|date:"d F Y" }}? Confirmed member bookings will also be cancelled.</p><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Cancel Session</button> <a class="btn btn-secondary-fitsync" href="{% url 'bookings:session_list' %}">Go Back</a></form></div>
+{% endblock %}

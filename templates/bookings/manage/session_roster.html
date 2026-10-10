@@ -1,0 +1,7 @@
+{% extends layout_template %}
+{% block page_title %}Session Roster{% endblock %}
+{% block dashboard_heading %}Sessions{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-end mb-4"><div class="page-heading mb-0"><h1>{{ session.service.name }} Roster</h1><p>{{ session.date|date:"d F Y" }}, {{ session.start_time|time:"H:i" }} &ndash; {{ session.end_time|time:"H:i" }}</p></div><a class="btn btn-secondary-fitsync" href="{% url 'bookings:session_list' %}">Back</a></div>
+<div class="card p-3"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Member</th><th>Email</th><th>Booked on</th></tr></thead><tbody>{% for booking in bookings %}<tr><td>{{ booking.member.get_full_name|default:booking.member.username }}</td><td>{{ booking.member.email }}</td><td>{{ booking.booked_at|date:"d M Y, H:i" }}</td></tr>{% empty %}<tr><td colspan="3">No confirmed bookings for this session.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}
