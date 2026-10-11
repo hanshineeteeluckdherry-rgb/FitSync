@@ -79,6 +79,23 @@
                 </select>
             </div>
 
+            <div class="figma-filter-field">
+                <label class="visually-hidden" for="booking-date">Session date</label>
+                <input id="booking-date" type="date" name="date" value="{{ selected_date }}" aria-label="Session date">
+            </div>
+
+            <div class="figma-filter-field">
+                <label class="visually-hidden" for="booking-instructor">Instructor</label>
+                <select id="booking-instructor" name="instructor" aria-label="Instructor" onchange="this.form.submit()">
+                    <option value="">All Instructors</option>
+                    {% for instructor in instructors %}
+                    <option value="{{ instructor.id }}" {% if selected_instructor == instructor.id|stringformat:"s" %}selected{% endif %}>
+                        {{ instructor.get_full_name|default:instructor.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
 
             <div class="figma-filter-field">
                 <label class="visually-hidden" for="booking-status">
@@ -214,6 +231,7 @@
 
 
                 <div class="figma-card-actions">
+                    <a class="figma-clear-button" href="{% url 'bookings:session_detail' session.id %}">View Details</a>
                     {% if session.confirmed_count >= session.capacity %}
 
 

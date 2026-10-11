@@ -1,0 +1,6 @@
+{% extends layout_template %}
+{% block page_title %}Remove Service{% endblock %}
+{% block dashboard_heading %}Services{% endblock %}
+{% block dashboard_content %}
+<div class="card p-4" style="max-width: 680px;"><h1 class="h3">Remove {{ service.name }}?</h1>{% if service.sessions.exists %}<p>This service has session records, so it will be deactivated instead of deleted.</p>{% else %}<p>This service has no sessions and will be deleted.</p>{% endif %}<form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Confirm</button> <a class="btn btn-secondary-fitsync" href="{% url 'bookings:service_list' %}">Cancel</a></form></div>
+{% endblock %}

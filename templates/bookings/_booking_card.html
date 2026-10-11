@@ -1,0 +1,25 @@
+<div class="col-md-6 col-xl-4">
+    <article class="session-card h-100">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+            <span class="session-type">{{ booking.session.service.get_service_type_display }}</span>
+            <span class="availability {% if booking.status == 'CANCELLED' %}cancelled{% elif previous_section %}completed{% else %}confirmed{% endif %}">
+                {% if previous_section and booking.status == "CONFIRMED" %}Previous{% else %}{{ booking.get_status_display }}{% endif %}
+            </span>
+        </div>
+        <h3 class="session-name h4">{{ booking.session.service.name }}</h3>
+        <div class="session-detail">
+            <i class="bi bi-calendar-event"></i>
+            <div><span>Date</span><strong>{{ booking.session.date|date:"l, d F Y" }}</strong></div>
+        </div>
+        <div class="session-detail">
+            <i class="bi bi-clock"></i>
+            <div><span>Time</span><strong>{{ booking.session.start_time|time:"H:i" }} &ndash; {{ booking.session.end_time|time:"H:i" }}</strong></div>
+        </div>
+        <div class="session-footer d-grid gap-2">
+            <a class="btn btn-secondary-fitsync" href="{% url 'bookings:booking_detail' booking.id %}">View Details</a>
+            {% if not previous_section and booking.status == "CONFIRMED" %}
+                <a class="btn btn-outline-danger" href="{% url 'bookings:cancel_booking' booking.id %}">Cancel Booking</a>
+            {% endif %}
+        </div>
+    </article>
+</div>

@@ -5,9 +5,9 @@
 html[data-theme="light"] {
     --booking-page-bg: linear-gradient(
         180deg,
-        #ffffff 0%,
-        #f7fbfd 40%,
-        #dff7f1 72%,
+        #eefbf8 0%,
+        #d1f5ed 40%,
+        #9ae8d7 72%,
         #b9efe5 100%
     );
     --booking-card-bg: #ffffff;
@@ -479,7 +479,8 @@ html[data-theme="dark"] {
     margin-bottom: 0.55rem;
 }
 
-.figma-filter-field select {
+.figma-filter-field select,
+.figma-filter-field input {
     width: 100%;
     height: 34px;
     padding: 0 0.75rem;
@@ -499,7 +500,8 @@ html[data-theme="dark"] {
 
 
 .figma-search-field input:focus,
-.figma-filter-field select:focus {
+.figma-filter-field select:focus,
+.figma-filter-field input:focus {
     border-color: var(--figma-booking-accent);
     box-shadow: 0 0 0 0.18rem rgba(0, 220, 174, 0.16);
 }

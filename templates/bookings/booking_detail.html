@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Booking Details | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/bookings.css' %}">{% endblock %}
+{% block content %}
+<section class="booking-page"><div class="container py-5">
+    <a class="btn btn-sm btn-secondary-fitsync mb-4" href="{% url 'bookings:my_bookings' %}">&larr; My Bookings</a>
+    <article class="session-card mx-auto" style="max-width: 760px;">
+        <h1 class="session-name">{{ booking.session.service.name }}</h1>
+        <dl class="row">
+            <dt class="col-sm-4">Status</dt><dd class="col-sm-8">{{ booking.get_status_display }}</dd>
+            <dt class="col-sm-4">Date</dt><dd class="col-sm-8">{{ booking.session.date|date:"l, d F Y" }}</dd>
+            <dt class="col-sm-4">Time</dt><dd class="col-sm-8">{{ booking.session.start_time|time:"H:i" }} &ndash; {{ booking.session.end_time|time:"H:i" }}</dd>
+            <dt class="col-sm-4">Instructor</dt><dd class="col-sm-8">{{ booking.session.instructor.get_full_name|default:"To be confirmed" }}</dd>
+            <dt class="col-sm-4">Booked on</dt><dd class="col-sm-8">{{ booking.booked_at|date:"d F Y, H:i" }}</dd>
+        </dl>
+        {% if can_cancel %}<a class="btn btn-outline-danger" href="{% url 'bookings:cancel_booking' booking.id %}">Cancel Booking</a>{% endif %}
+    </article>
+</div></section>
+{% endblock %}

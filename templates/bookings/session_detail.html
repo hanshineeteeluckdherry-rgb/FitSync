@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ session.service.name }} | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/bookings.css' %}">{% endblock %}
+{% block content %}
+<section class="booking-page"><div class="container py-5">
+    <a class="btn btn-sm btn-secondary-fitsync mb-4" href="{% url 'bookings:schedule' %}">&larr; Back to Schedule</a>
+    <article class="session-card mx-auto" style="max-width: 760px;">
+        <span class="session-type">{{ session.service.get_service_type_display }}</span>
+        <h1 class="session-name">{{ session.service.name }}</h1>
+        <p class="session-description">{{ session.service.description }}</p>
+        <dl class="row">
+            <dt class="col-sm-4">Date</dt><dd class="col-sm-8">{{ session.date|date:"l, d F Y" }}</dd>
+            <dt class="col-sm-4">Time</dt><dd class="col-sm-8">{{ session.start_time|time:"H:i" }} &ndash; {{ session.end_time|time:"H:i" }}</dd>
+            <dt class="col-sm-4">Instructor</dt><dd class="col-sm-8">{{ session.instructor.get_full_name|default:"To be confirmed" }}</dd>
+            <dt class="col-sm-4">Price</dt><dd class="col-sm-8">Rs {{ session.service.price|floatformat:2 }}</dd>
+            <dt class="col-sm-4">Available spaces</dt><dd class="col-sm-8">{{ remaining_spaces }} of {{ session.capacity }}</dd>
+        </dl>
+        {% if request.user.is_authenticated and request.user.role == "MEMBER" and not already_booked and remaining_spaces > 0 and not has_started and session.status == "SCHEDULED" %}
+            <form method="post" action="{% url 'bookings:book_session' session.id %}">{% csrf_token %}<button class="btn btn-primary-fitsync" type="submit">Book Session</button></form>
+        {% elif already_booked %}
+            <p class="availability confirmed">You already booked this session.</p>
+        {% elif not request.user.is_authenticated %}
+            <a class="btn btn-primary-fitsync" href="{% url 'accounts:login' %}?next={{ request.path }}">Log In to Book</a>
+        {% else %}
+            <p class="availability cancelled">This session cannot be booked.</p>
+        {% endif %}
+    </article>
+</div></section>
+{% endblock %}

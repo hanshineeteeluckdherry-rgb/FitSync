@@ -59,7 +59,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'sessions' %}active{% endif %}"
-        href="#"
+        href="{% url 'bookings:session_list' %}"
     >
         <i class="bi bi-calendar3"></i>
         <span>Sessions</span>
@@ -67,7 +67,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}"
-        href="#"
+        href="{% url 'bookings:booking_report' %}"
     >
         <i class="bi bi-calendar-check"></i>
         <span>Bookings</span>
