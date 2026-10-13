@@ -294,6 +294,14 @@ def cancel_booking(request, booking_id):
         booking.status = Booking.Status.CANCELLED
         booking.cancelled_at = timezone.now()
         booking.save(update_fields=["status", "cancelled_at"])
+        create_notification(
+            recipient=request.user,
+            notification_type=Notification.Type.BOOKING,
+            title="Booking Cancelled",
+            message=f"Your booking for {booking.session.service.name} on {booking.session.date:%d %B %Y} was cancelled.",
+            link=reverse("bookings:my_bookings"),
+            reference_key=f"booking-cancelled-{booking.id}",
+        )
         messages.success(request, f"Your booking for {booking.session.service.name} was cancelled.")
         return redirect("bookings:my_bookings")
     return render(request, "bookings/booking_confirm_cancel.html", {"booking": booking})
