@@ -1,0 +1,7 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}Gym Notices{% endblock %}
+{% block dashboard_heading %}Notices{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4"><div class="page-heading mb-0"><h1>Gym Notices</h1><p>Create announcements for FitSync members.</p></div><a class="btn btn-primary-fitsync" href="{% url 'notifications:notice_create' %}">Add Notice</a></div>
+<div class="card p-3"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Title</th><th>Publish date</th><th>Expires</th><th>Status</th><th></th></tr></thead><tbody>{% for notice in notices %}<tr><td>{{ notice.title }}</td><td>{{ notice.publish_date|date:"d M Y" }}</td><td>{{ notice.expires_on|date:"d M Y"|default:"No expiry" }}</td><td>{% if notice.is_current %}Published{% elif notice.is_active %}Scheduled or expired{% else %}Inactive{% endif %}</td><td class="text-end"><a href="{% url 'notifications:notice_edit' notice.id %}">Edit</a> &middot; <a class="text-danger" href="{% url 'notifications:notice_delete' notice.id %}">Delete</a></td></tr>{% empty %}<tr><td colspan="5">No notices created.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

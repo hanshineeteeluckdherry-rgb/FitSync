@@ -2,7 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .models import Notification
+from accounts.decorators import admin_required
+
+from .forms import NoticeForm
+from .models import Notice, Notification
 
 
 @login_required
@@ -52,3 +55,54 @@ def mark_as_read(request, notification_id):
 def mark_all_as_read(request):
     Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
     return redirect("notifications:list")
+
+
+@admin_required
+def notice_list(request):
+    return render(
+        request,
+        "notifications/admin/notice_list.html",
+        {"notices": Notice.objects.all(), "active_sidebar": "notices"},
+    )
+
+
+@admin_required
+def notice_create(request):
+    form = NoticeForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        notice = form.save(commit=False)
+        notice.created_by = request.user
+        notice.save()
+        return redirect("notifications:notice_list")
+    return render(
+        request,
+        "notifications/admin/notice_form.html",
+        {"form": form, "title": "Add Gym Notice", "active_sidebar": "notices"},
+    )
+
+
+@admin_required
+def notice_edit(request, notice_id):
+    notice = get_object_or_404(Notice, pk=notice_id)
+    form = NoticeForm(request.POST or None, instance=notice)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("notifications:notice_list")
+    return render(
+        request,
+        "notifications/admin/notice_form.html",
+        {"form": form, "title": "Edit Gym Notice", "active_sidebar": "notices"},
+    )
+
+
+@admin_required
+def notice_delete(request, notice_id):
+    notice = get_object_or_404(Notice, pk=notice_id)
+    if request.method == "POST":
+        notice.delete()
+        return redirect("notifications:notice_list")
+    return render(
+        request,
+        "notifications/admin/notice_confirm_delete.html",
+        {"notice": notice, "active_sidebar": "notices"},
+    )

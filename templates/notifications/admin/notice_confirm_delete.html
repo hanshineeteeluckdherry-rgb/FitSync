@@ -1,0 +1,6 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}Delete Notice{% endblock %}
+{% block dashboard_heading %}Notices{% endblock %}
+{% block dashboard_content %}
+<div class="card p-4" style="max-width: 680px;"><h1 class="h3">Delete Notice</h1><p>Delete <strong>{{ notice.title }}</strong>?</p><form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Delete</button> <a class="btn btn-secondary-fitsync" href="{% url 'notifications:notice_list' %}">Cancel</a></form></div>
+{% endblock %}
