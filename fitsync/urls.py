@@ -13,6 +13,7 @@ urlpatterns = [
     path("workouts/", include("workouts.urls")),
     path("attendance/", include("attendance.urls")),
     path("activities/", include("activities.urls")),
+    path("notifications/", include("notifications.urls")),
     path("aboutus/", include("aboutus.urls")),
     path("ourteam/", include("ourteam.urls")),
 
