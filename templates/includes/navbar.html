@@ -38,6 +38,22 @@
                 </button>
                 <!-- Account actions use the same shared Bootstrap button styles. -->
                 {% if request.user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-secondary-fitsync position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                            <i class="bi bi-bell"></i>
+                            {% if unread_notification_count %}<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">{{ unread_notification_count }}</span>{% endif %}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-2" style="width: min(22rem, 90vw);">
+                            <h2 class="h6 px-2 pt-2">Notifications</h2>
+                            {% for notification in notification_menu_items %}
+                                <a class="dropdown-item text-wrap" href="{% url 'notifications:detail' notification.id %}"><strong>{{ notification.title }}</strong><br><small>{{ notification.message|truncatechars:70 }}</small></a>
+                            {% empty %}
+                                <span class="dropdown-item-text">No unread notifications.</span>
+                            {% endfor %}
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item text-center" href="{% url 'notifications:list' %}">View All</a>
+                        </div>
+                    </div>
                     <a class="btn btn-secondary-fitsync" href="{% url 'accounts:profile' %}">Profile</a>
                     <a class="btn btn-primary-fitsync" href="{% url 'accounts:dashboard' %}">Dashboard</a>
                     <form method="post" action="{% url 'accounts:logout' %}" class="m-0">

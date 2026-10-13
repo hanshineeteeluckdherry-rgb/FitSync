@@ -1,0 +1,58 @@
+.notification-page {
+    min-height: 70vh;
+}
+
+.notification-eyebrow,
+.notification-type {
+    color: var(--accent, #12b89a);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.notification-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.notification-card,
+.notification-detail,
+.notification-empty {
+    position: relative;
+    border: 1px solid var(--border-color, #dbe5f0);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: var(--surface-color, #ffffff);
+}
+
+.notification-card.is-unread {
+    border-left: 4px solid #12b89a;
+}
+
+.notification-card p,
+.notification-detail p {
+    white-space: pre-line;
+}
+
+.unread-dot {
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: #12b89a;
+}
+
+.notification-empty {
+    text-align: center;
+}
+
+.notification-empty i {
+    color: #12b89a;
+    font-size: 2rem;
+}
+
+.notification-message {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}

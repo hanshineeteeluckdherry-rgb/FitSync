@@ -6,12 +6,15 @@ from django.db import transaction
 from django.db.models import Count, F, Q
 from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import staff_required
 from accounts.models import User
 from memberships.models import Membership
+from notifications.models import Notification
+from notifications.services import create_notification
 
 from .forms import ServiceForm, SessionForm
 from .models import Booking, Service, Session
@@ -204,10 +207,19 @@ def book_session(request, session_id):
             messages.error(request, "Sorry, this session is now full.")
             return redirect("bookings:schedule")
 
-        Booking.objects.create(
+        booking = Booking.objects.create(
             member=request.user,
             session=session,
             status=Booking.Status.CONFIRMED,
+        )
+
+        create_notification(
+            recipient=request.user,
+            notification_type=Notification.Type.BOOKING,
+            title="Booking Confirmed",
+            message=f"Your booking for {session.service.name} on {session.date:%d %B %Y} is confirmed.",
+            link=reverse("bookings:booking_detail", args=[booking.id]),
+            reference_key=f"booking-confirmed-{booking.id}",
         )
 
     messages.success(request, f"Your booking for {session.service.name} was successful.")
@@ -282,6 +294,14 @@ def cancel_booking(request, booking_id):
         booking.status = Booking.Status.CANCELLED
         booking.cancelled_at = timezone.now()
         booking.save(update_fields=["status", "cancelled_at"])
+        create_notification(
+            recipient=request.user,
+            notification_type=Notification.Type.BOOKING,
+            title="Booking Cancelled",
+            message=f"Your booking for {booking.session.service.name} on {booking.session.date:%d %B %Y} was cancelled.",
+            link=reverse("bookings:my_bookings"),
+            reference_key=f"booking-cancelled-{booking.id}",
+        )
         messages.success(request, f"Your booking for {booking.session.service.name} was cancelled.")
         return redirect("bookings:my_bookings")
     return render(request, "bookings/booking_confirm_cancel.html", {"booking": booking})
@@ -419,12 +439,24 @@ def session_cancel(request, session_id):
     """Cancel a session and its confirmed member bookings."""
     session = get_object_or_404(Session.objects.select_related("service"), pk=session_id)
     if request.method == "POST":
+        affected_members = list(
+            session.bookings.filter(status=Booking.Status.CONFIRMED).select_related("member")
+        )
         session.status = Session.Status.CANCELLED
         session.save(update_fields=["status"])
         session.bookings.filter(status=Booking.Status.CONFIRMED).update(
             status=Booking.Status.CANCELLED,
             cancelled_at=timezone.now(),
         )
+        for booking in affected_members:
+            create_notification(
+                recipient=booking.member,
+                notification_type=Notification.Type.BOOKING,
+                title="Session Cancelled",
+                message=f"The {session.service.name} session on {session.date:%d %B %Y} was cancelled.",
+                link=reverse("bookings:my_bookings"),
+                reference_key=f"session-cancelled-{session.id}",
+            )
         messages.success(request, "Session and its active bookings were cancelled.")
         return redirect("bookings:session_list")
     return render(

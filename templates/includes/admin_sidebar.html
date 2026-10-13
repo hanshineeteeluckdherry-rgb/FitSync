@@ -98,6 +98,14 @@
     </a>
 
     <a
+        class="nav-link {% if active_sidebar == 'notices' %}active{% endif %}"
+        href="{% url 'notifications:notice_list' %}"
+    >
+        <i class="bi bi-megaphone"></i>
+        <span>Notices</span>
+    </a>
+
+    <a
         class="nav-link {% if active_sidebar == 'reports' %}active{% endif %}"
         href="{% url 'attendance:attendance_report' %}"
     >
