@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ notification.title }} | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/notifications.css' %}">{% endblock %}
+{% block content %}
+<main class="notification-page"><div class="container py-5">
+    <a class="btn btn-secondary-fitsync mb-4" href="{% url 'notifications:list' %}">&larr; All Notifications</a>
+    <article class="notification-detail">
+        <span class="notification-type">{{ notification.get_notification_type_display }}</span>
+        <h1>{{ notification.title }}</h1>
+        <p class="notification-message">{{ notification.message }}</p>
+        <p class="text-body-secondary">{{ notification.created_at|date:"d F Y, H:i" }}</p>
+        {% if notification.link %}<a class="btn btn-primary-fitsync" href="{{ notification.link }}">View Related Page</a>{% endif %}
+    </article>
+</div></main>
+{% endblock %}
