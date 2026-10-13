@@ -439,12 +439,24 @@ def session_cancel(request, session_id):
     """Cancel a session and its confirmed member bookings."""
     session = get_object_or_404(Session.objects.select_related("service"), pk=session_id)
     if request.method == "POST":
+        affected_members = list(
+            session.bookings.filter(status=Booking.Status.CONFIRMED).select_related("member")
+        )
         session.status = Session.Status.CANCELLED
         session.save(update_fields=["status"])
         session.bookings.filter(status=Booking.Status.CONFIRMED).update(
             status=Booking.Status.CANCELLED,
             cancelled_at=timezone.now(),
         )
+        for booking in affected_members:
+            create_notification(
+                recipient=booking.member,
+                notification_type=Notification.Type.BOOKING,
+                title="Session Cancelled",
+                message=f"The {session.service.name} session on {session.date:%d %B %Y} was cancelled.",
+                link=reverse("bookings:my_bookings"),
+                reference_key=f"session-cancelled-{session.id}",
+            )
         messages.success(request, "Session and its active bookings were cancelled.")
         return redirect("bookings:session_list")
     return render(
