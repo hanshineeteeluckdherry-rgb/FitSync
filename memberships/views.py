@@ -8,6 +8,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from accounts.decorators import admin_required, member_required
+from notifications.models import Notification
+from notifications.services import create_notification
 
 from .forms import (
     MembershipPackageForm,
@@ -42,7 +44,26 @@ def _current_for(user):
     if membership and membership.end_date < date.today():
         membership.status = Membership.Status.EXPIRED
         membership.save(update_fields=["status"])
+        create_notification(
+            recipient=user,
+            notification_type=Notification.Type.MEMBERSHIP,
+            title="Membership Expired",
+            message=f"Your {membership.package.name} membership has expired.",
+            link=reverse("memberships:member_packages"),
+            reference_key=f"membership-expired-{membership.id}",
+        )
         return None
+    if membership:
+        days_remaining = (membership.end_date - date.today()).days
+        if days_remaining <= 7:
+            create_notification(
+                recipient=user,
+                notification_type=Notification.Type.MEMBERSHIP,
+                title="Membership Expiry Reminder",
+                message=f"Your {membership.package.name} membership expires in {days_remaining} day(s).",
+                link=reverse("memberships:current_membership"),
+                reference_key=f"membership-reminder-{membership.id}",
+            )
     return membership
 
 
