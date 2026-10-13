@@ -10,6 +10,7 @@ from .models import Notice, Notification
 
 @login_required
 def notification_list(request):
+    # Show only the notifications that belong to the signed-in member.
     notifications = Notification.objects.filter(recipient=request.user)
     return render(
         request,
@@ -20,13 +21,16 @@ def notification_list(request):
 
 @login_required
 def notification_detail(request, notification_id):
+    # Members can only open their own notifications (anything else gives a 404).
     notification = get_object_or_404(
         Notification,
         pk=notification_id,
         recipient=request.user,
     )
+    # Opening a notification marks it as read.
     if not notification.is_read:
         notification.is_read = True
+        # Only update the is_read column instead of saving the whole row.
         notification.save(update_fields=["is_read"])
     return render(
         request,
@@ -68,6 +72,7 @@ def notice_list(request):
 
 @admin_required
 def notice_create(request):
+    # The form is empty on a normal visit and filled with data on a POST.
     form = NoticeForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         notice = form.save(commit=False)
@@ -98,6 +103,7 @@ def notice_edit(request, notice_id):
 @admin_required
 def notice_delete(request, notice_id):
     notice = get_object_or_404(Notice, pk=notice_id)
+    # Only delete after the admin confirms by submitting the confirmation form.
     if request.method == "POST":
         notice.delete()
         return redirect("notifications:notice_list")

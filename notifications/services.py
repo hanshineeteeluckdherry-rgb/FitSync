@@ -9,6 +9,12 @@ def create_notification(
     link="",
     reference_key="",
 ):
+    # Helper used by other apps (bookings, memberships) to create a notification
+    # in one line. It returns the notification and True if a new one was created.
+
+    # With a reference_key, look for an existing notification for the same event
+    # first, so repeating the action never sends the same notification twice.
+
     if reference_key:
         notification, created = Notification.objects.get_or_create(
             recipient=recipient,

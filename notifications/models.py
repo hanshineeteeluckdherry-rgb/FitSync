@@ -4,10 +4,16 @@ from django.utils import timezone
 
 
 class Notification(models.Model):
+    # A personal message for one member (booking updates, membership reminders, etc.).
+
+    # The different kinds of notification, used to label and filter them.
     class Type(models.TextChoices):
         BOOKING = "BOOKING", "Booking"
         MEMBERSHIP = "MEMBERSHIP", "Membership"
         NOTICE = "NOTICE", "Gym Notice"
+
+    # The member who receives the notification.
+    # If the user account is deleted, their notifications are deleted too.
 
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -30,11 +36,15 @@ class Notification(models.Model):
 
 
 class Notice(models.Model):
+    # A general gym announcement written by an administrator.
+    # It is shown to every signed-in user while it is current.
     title = models.CharField(max_length=120)
     message = models.TextField()
     publish_date = models.DateField(default=timezone.localdate)
     expires_on = models.DateField(blank=True, null=True)
+    # Lets an administrator hide a notice without deleting it.
     is_active = models.BooleanField(default=True)
+     # The administrator who wrote it. The notice is kept even if that account is deleted.
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -49,6 +59,7 @@ class Notice(models.Model):
 
     @property
     def is_current(self):
+        # True only if the notice is switched on, already published and not expired.
         today = timezone.localdate()
         return self.is_active and self.publish_date <= today and (
             self.expires_on is None or self.expires_on >= today
