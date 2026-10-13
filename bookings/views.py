@@ -6,12 +6,15 @@ from django.db import transaction
 from django.db.models import Count, F, Q
 from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import staff_required
 from accounts.models import User
 from memberships.models import Membership
+from notifications.models import Notification
+from notifications.services import create_notification
 
 from .forms import ServiceForm, SessionForm
 from .models import Booking, Service, Session
@@ -204,10 +207,19 @@ def book_session(request, session_id):
             messages.error(request, "Sorry, this session is now full.")
             return redirect("bookings:schedule")
 
-        Booking.objects.create(
+        booking = Booking.objects.create(
             member=request.user,
             session=session,
             status=Booking.Status.CONFIRMED,
+        )
+
+        create_notification(
+            recipient=request.user,
+            notification_type=Notification.Type.BOOKING,
+            title="Booking Confirmed",
+            message=f"Your booking for {session.service.name} on {session.date:%d %B %Y} is confirmed.",
+            link=reverse("bookings:booking_detail", args=[booking.id]),
+            reference_key=f"booking-confirmed-{booking.id}",
         )
 
     messages.success(request, f"Your booking for {session.service.name} was successful.")
