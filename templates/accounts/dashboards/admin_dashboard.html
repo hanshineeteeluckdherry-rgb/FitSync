@@ -58,5 +58,45 @@
         {% endfor %}
     </div>
 </div>
-<div class="row g-4 mt-1"><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">User management</h2><p class="text-body-secondary">Review accounts, update roles and activate or deactivate users.</p><a class="btn btn-primary-fitsync" href="{% url 'accounts:admin_user_list' %}">Manage users</a></div></div><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">Coach assignments</h2><p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p><a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a></div></div></div>
+<section class="mt-4" aria-labelledby="adminQuickLinksHeading">
+    <h2 class="h5" id="adminQuickLinksHeading">Quick links</h2>
+    <div class="row g-3">
+        <div class="col-sm-6 col-xl-3">
+            <a class="admin-quick-link" href="{% url 'accounts:admin_user_list' %}">
+                <i class="bi bi-people"></i><span>Manage users</span>
+            </a>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <a class="admin-quick-link" href="{% url 'memberships:admin_membership_report' %}">
+                <i class="bi bi-card-checklist"></i><span>Membership report</span>
+            </a>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <a class="admin-quick-link" href="{% url 'attendance:attendance_report' %}">
+                <i class="bi bi-qr-code-scan"></i><span>Attendance report</span>
+            </a>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <a class="admin-quick-link" href="{% url 'bookings:booking_report' %}">
+                <i class="bi bi-calendar-check"></i><span>Booking report</span>
+            </a>
+        </div>
+    </div>
+</section>
+<div class="row g-4 mt-1">
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h2 class="h5">Payments</h2>
+            <p class="text-body-secondary">Review successful and failed membership payments.</p>
+            <a class="btn btn-primary-fitsync" href="{% url 'memberships:admin_payment_list' %}">Manage payments</a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h2 class="h5">Coach assignments</h2>
+            <p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p>
+            <a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
