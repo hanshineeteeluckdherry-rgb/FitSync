@@ -1,6 +1,13 @@
+from datetime import date, timedelta
+from decimal import Decimal
+
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
+
+from attendance.models import AttendanceRecord
+from bookings.models import Booking, Service, Session
+from memberships.models import Membership, MembershipPackage, Payment
 
 from .models import CoachAssignment, MemberProfile, User
 
@@ -158,6 +165,18 @@ class RegistrationLoginTests(AccountTestMixin, TestCase):
         post_response = self.client.post(reverse("accounts:logout"))
         self.assertRedirects(post_response, reverse("core:home"))
         self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_member_dashboard_uses_figma_sidebar_navigation(self):
+        user = self.make_user("sidebar@example.com")
+        MemberProfile.objects.create(user=user)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("accounts:member_dashboard"))
+
+        self.assertContains(response, "member-dashboard-sidebar")
+        self.assertContains(response, "Classes &amp; Services")
+        self.assertContains(response, "Our Team")
+        self.assertContains(response, "My Membership")
 
 
 class RolePermissionTests(AccountTestMixin, TestCase):
@@ -319,6 +338,83 @@ class AdminUserManagementTests(AccountTestMixin, TestCase):
         self.assertEqual(response.context["member_count"], 1)
         self.assertEqual(response.context["coach_count"], 1)
         self.assertEqual(response.context["admin_count"], 1)
+
+
+class AdminDashboardTests(AccountTestMixin, TestCase):
+    def setUp(self):
+        self.admin = self.make_user("admin.dashboard@example.com", role=User.Role.ADMIN)
+        self.member = self.make_user("dashboard.member@example.com")
+        self.package = MembershipPackage.objects.create(
+            name="Monthly Fitness",
+            slug="monthly-fitness-dashboard",
+            price=Decimal("850.00"),
+            duration_months=1,
+            features="Gym access",
+        )
+        self.membership = Membership.objects.create(
+            member=self.member,
+            package=self.package,
+            start_date=date.today(),
+            end_date=date.today() + timedelta(days=30),
+            status=Membership.Status.ACTIVE,
+        )
+        Payment.objects.create(
+            member=self.member,
+            package=self.package,
+            membership=self.membership,
+            amount=Decimal("850.00"),
+            payment_method=Payment.Method.CARD,
+            status=Payment.Status.SUCCESS,
+        )
+        self.service = Service.objects.create(
+            name="Morning Yoga",
+            service_type=Service.Type.YOGA,
+        )
+        self.session = Session.objects.create(
+            service=self.service,
+            date=date.today() + timedelta(days=1),
+            start_time="09:00",
+            end_time="10:00",
+            capacity=12,
+            status=Session.Status.SCHEDULED,
+        )
+        Booking.objects.create(
+            member=self.member,
+            session=self.session,
+            status=Booking.Status.CONFIRMED,
+        )
+        AttendanceRecord.objects.create(member=self.member)
+
+    def test_admin_dashboard_uses_current_gym_data(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("accounts:admin_dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_membership_count"], 1)
+        self.assertEqual(response.context["today_attendance_count"], 1)
+        self.assertEqual(response.context["current_occupancy"], 1)
+        self.assertEqual(response.context["upcoming_session_count"], 1)
+        self.assertEqual(response.context["confirmed_booking_count"], 1)
+        self.assertEqual(response.context["successful_payment_count"], 1)
+        self.assertEqual(response.context["total_revenue"], Decimal("850.00"))
+        self.assertGreaterEqual(len(response.context["recent_activity"]), 4)
+
+    def test_admin_dashboard_contains_report_links(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("accounts:admin_dashboard"))
+
+        self.assertContains(response, reverse("memberships:admin_membership_report"))
+        self.assertContains(response, reverse("attendance:attendance_report"))
+        self.assertContains(response, reverse("bookings:booking_report"))
+
+    def test_member_cannot_view_admin_dashboard(self):
+        self.client.force_login(self.member)
+
+        response = self.client.get(reverse("accounts:admin_dashboard"))
+
+        self.assertEqual(response.status_code, 403)
 
 
 class CoachAssignmentTests(AccountTestMixin, TestCase):

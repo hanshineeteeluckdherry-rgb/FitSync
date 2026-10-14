@@ -1,13 +1,196 @@
 {% extends "layouts/admin_base.html" %}
+{% load static %}
+
 {% block page_title %}Admin Dashboard{% endblock %}
 {% block dashboard_heading %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin-dashboard.css' %}?v=1">
+{% endblock %}
+
 {% block dashboard_content %}
-<div class="page-heading"><h1>Admin Dashboard</h1><p>Account, role and coach assignment summary.</p></div>
-<div class="row g-3">
-<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Total users</span><p class="summary-value">{{ total_users }}</p></div></div>
-<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Active users</span><p class="summary-value">{{ active_users }}</p></div></div>
-<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Members</span><p class="summary-value">{{ member_count }}</p></div></div>
-<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Coaches</span><p class="summary-value">{{ coach_count }}</p></div></div>
+<div class="admin-dashboard">
+    <div class="page-heading admin-dashboard-heading">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>Monitor memberships, attendance, bookings and payments.</p>
+        </div>
+        <span class="admin-dashboard-date">{% now "l, d F Y" %}</span>
+    </div>
+
+    <section aria-labelledby="adminOverviewHeading">
+        <h2 class="visually-hidden" id="adminOverviewHeading">Gym overview</h2>
+        <div class="row g-3">
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-people"></i></span>
+                    <span class="summary-label">Total users</span>
+                    <p class="summary-value">{{ total_users }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-person-check"></i></span>
+                    <span class="summary-label">Active users</span>
+                    <p class="summary-value">{{ active_users }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-person"></i></span>
+                    <span class="summary-label">Members</span>
+                    <p class="summary-value">{{ member_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-person-badge"></i></span>
+                    <span class="summary-label">Coaches</span>
+                    <p class="summary-value">{{ coach_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-card-checklist"></i></span>
+                    <span class="summary-label">Active memberships</span>
+                    <p class="summary-value">{{ active_membership_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-qr-code-scan"></i></span>
+                    <span class="summary-label">Today's check-ins</span>
+                    <p class="summary-value">{{ today_attendance_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-building"></i></span>
+                    <span class="summary-label">Current occupancy</span>
+                    <p class="summary-value">{{ current_occupancy }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-calendar3"></i></span>
+                    <span class="summary-label">Upcoming sessions</span>
+                    <p class="summary-value">{{ upcoming_session_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-calendar-check"></i></span>
+                    <span class="summary-label">Confirmed bookings</span>
+                    <p class="summary-value">{{ confirmed_booking_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-wallet2"></i></span>
+                    <span class="summary-label">Successful payments</span>
+                    <p class="summary-value">{{ successful_payment_count }}</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="summary-card admin-stat-card h-100">
+                    <span class="admin-stat-icon"><i class="bi bi-cash-stack"></i></span>
+                    <span class="summary-label">Total revenue</span>
+                    <p class="summary-value">Rs {{ total_revenue|floatformat:2 }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 mt-1">
+        <div class="col-xl-7">
+            <section class="card admin-panel h-100" aria-labelledby="upcomingSessionsHeading">
+                <div class="admin-panel-heading">
+                    <h2 class="h5 mb-0" id="upcomingSessionsHeading">Upcoming sessions</h2>
+                    <a class="small" href="{% url 'bookings:session_list' %}">View all</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Service</th><th>Date</th><th>Time</th><th>Coach</th></tr></thead>
+                        <tbody>
+                            {% for session in upcoming_sessions %}
+                                <tr>
+                                    <td>{{ session.service.name }}</td>
+                                    <td>{{ session.date|date:"d M Y" }}</td>
+                                    <td>{{ session.start_time|time:"H:i" }}</td>
+                                    <td>{{ session.instructor.get_full_name|default:"Not assigned" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="4">No upcoming sessions.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        <div class="col-xl-5">
+            <section class="card admin-panel h-100" aria-labelledby="recentActivityHeading">
+                <h2 class="h5 mb-3" id="recentActivityHeading">Recent activity</h2>
+                <div class="admin-activity-list">
+                    {% for activity in recent_activity %}
+                        <div class="admin-activity-item">
+                            <span class="admin-activity-icon"><i class="bi {{ activity.icon }}"></i></span>
+                            <div class="admin-activity-text">
+                                <p class="mb-1 fw-semibold">{{ activity.title }}</p>
+                                <p class="small text-body-secondary mb-0">{{ activity.detail }}</p>
+                            </div>
+                            <time class="small text-body-secondary" datetime="{{ activity.time|date:'c' }}">
+                                {{ activity.time|date:"d M, H:i" }}
+                            </time>
+                        </div>
+                    {% empty %}
+                        <p class="text-body-secondary mb-0">No recent activity.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <section class="mt-4" aria-labelledby="adminQuickLinksHeading">
+        <h2 class="h5" id="adminQuickLinksHeading">Quick links</h2>
+        <div class="row g-3">
+            <div class="col-sm-6 col-xl-3">
+                <a class="admin-quick-link" href="{% url 'accounts:admin_user_list' %}">
+                    <i class="bi bi-people"></i><span>Manage users</span>
+                </a>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <a class="admin-quick-link" href="{% url 'memberships:admin_membership_report' %}">
+                    <i class="bi bi-card-checklist"></i><span>Membership report</span>
+                </a>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <a class="admin-quick-link" href="{% url 'attendance:attendance_report' %}">
+                    <i class="bi bi-qr-code-scan"></i><span>Attendance report</span>
+                </a>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <a class="admin-quick-link" href="{% url 'bookings:booking_report' %}">
+                    <i class="bi bi-calendar-check"></i><span>Booking report</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="card admin-panel h-100">
+                <h2 class="h5">Payments</h2>
+                <p class="text-body-secondary">Review successful and failed membership payments.</p>
+                <a class="btn btn-primary-fitsync align-self-start" href="{% url 'memberships:admin_payment_list' %}">Manage payments</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card admin-panel h-100">
+                <h2 class="h5">Coach assignments</h2>
+                <p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p>
+                <a class="btn btn-secondary-fitsync align-self-start" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row g-4 mt-1"><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">User management</h2><p class="text-body-secondary">Review accounts, update roles and activate or deactivate users.</p><a class="btn btn-primary-fitsync" href="{% url 'accounts:admin_user_list' %}">Manage users</a></div></div><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">Coach assignments</h2><p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p><a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a></div></div></div>
 {% endblock %}

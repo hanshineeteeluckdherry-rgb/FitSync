@@ -1,7 +1,9 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
@@ -16,7 +18,10 @@ from .forms import (
     UserProfileForm,
 )
 from .models import CoachAssignment, CoachProfile, MemberProfile, User
+from attendance.models import AttendanceRecord
+from bookings.models import Booking, Session
 from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
+from memberships.models import Membership, Payment
 
 
 def register(request):
@@ -168,6 +173,57 @@ def coach_dashboard(request):
 
 @admin_required
 def admin_dashboard(request):
+    today = date.today()
+    scheduled_sessions = Session.objects.filter(
+        date__gte=today,
+        status=Session.Status.SCHEDULED,
+    ).select_related("service", "instructor")
+    successful_payments = Payment.objects.filter(status=Payment.Status.SUCCESS)
+
+    recent_activity = []
+
+    for payment in Payment.objects.select_related("member")[:4]:
+        recent_activity.append(
+            {
+                "time": payment.created_at,
+                "icon": "bi-wallet2",
+                "title": "Payment recorded",
+                "detail": f"{payment.member} - Rs {payment.amount}",
+            }
+        )
+
+    for attendance in AttendanceRecord.objects.select_related("member")[:4]:
+        recent_activity.append(
+            {
+                "time": attendance.check_in_time,
+                "icon": "bi-qr-code-scan",
+                "title": "Member checked in",
+                "detail": str(attendance.member),
+            }
+        )
+
+    for booking in Booking.objects.select_related("member", "session__service")[:4]:
+        recent_activity.append(
+            {
+                "time": booking.booked_at,
+                "icon": "bi-calendar-check",
+                "title": "Booking created",
+                "detail": f"{booking.member} - {booking.session.service.name}",
+            }
+        )
+
+    for membership in Membership.objects.select_related("member", "package")[:4]:
+        recent_activity.append(
+            {
+                "time": membership.created_at,
+                "icon": "bi-card-checklist",
+                "title": "Membership added",
+                "detail": f"{membership.member} - {membership.package.name}",
+            }
+        )
+
+    recent_activity.sort(key=lambda item: item["time"], reverse=True)
+
     context = {
         "total_users": User.objects.count(),
         "active_users": User.objects.filter(is_active=True).count(),
@@ -176,6 +232,25 @@ def admin_dashboard(request):
         "coach_count": User.objects.filter(role=User.Role.COACH).count(),
         "admin_count": User.objects.filter(role=User.Role.ADMIN).count(),
         "assignment_count": CoachAssignment.objects.filter(active=True).count(),
+        "active_membership_count": Membership.objects.filter(
+            status=Membership.Status.ACTIVE,
+            start_date__lte=today,
+            end_date__gte=today,
+        ).count(),
+        "today_attendance_count": AttendanceRecord.objects.filter(
+            check_in_time__date=today,
+        ).count(),
+        "current_occupancy": AttendanceRecord.objects.filter(
+            check_out_time__isnull=True,
+        ).count(),
+        "upcoming_session_count": scheduled_sessions.count(),
+        "upcoming_sessions": scheduled_sessions[:5],
+        "confirmed_booking_count": Booking.objects.filter(
+            status=Booking.Status.CONFIRMED,
+        ).count(),
+        "successful_payment_count": successful_payments.count(),
+        "total_revenue": successful_payments.aggregate(total=Sum("amount"))["total"] or 0,
+        "recent_activity": recent_activity[:6],
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/admin_dashboard.html", context)
