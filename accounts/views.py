@@ -180,6 +180,50 @@ def admin_dashboard(request):
     ).select_related("service", "instructor")
     successful_payments = Payment.objects.filter(status=Payment.Status.SUCCESS)
 
+    recent_activity = []
+
+    for payment in Payment.objects.select_related("member")[:4]:
+        recent_activity.append(
+            {
+                "time": payment.created_at,
+                "icon": "bi-wallet2",
+                "title": "Payment recorded",
+                "detail": f"{payment.member} - Rs {payment.amount}",
+            }
+        )
+
+    for attendance in AttendanceRecord.objects.select_related("member")[:4]:
+        recent_activity.append(
+            {
+                "time": attendance.check_in_time,
+                "icon": "bi-qr-code-scan",
+                "title": "Member checked in",
+                "detail": str(attendance.member),
+            }
+        )
+
+    for booking in Booking.objects.select_related("member", "session__service")[:4]:
+        recent_activity.append(
+            {
+                "time": booking.booked_at,
+                "icon": "bi-calendar-check",
+                "title": "Booking created",
+                "detail": f"{booking.member} - {booking.session.service.name}",
+            }
+        )
+
+    for membership in Membership.objects.select_related("member", "package")[:4]:
+        recent_activity.append(
+            {
+                "time": membership.created_at,
+                "icon": "bi-card-checklist",
+                "title": "Membership added",
+                "detail": f"{membership.member} - {membership.package.name}",
+            }
+        )
+
+    recent_activity.sort(key=lambda item: item["time"], reverse=True)
+
     context = {
         "total_users": User.objects.count(),
         "active_users": User.objects.filter(is_active=True).count(),
@@ -206,6 +250,7 @@ def admin_dashboard(request):
         ).count(),
         "successful_payment_count": successful_payments.count(),
         "total_revenue": successful_payments.aggregate(total=Sum("amount"))["total"] or 0,
+        "recent_activity": recent_activity[:6],
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/admin_dashboard.html", context)

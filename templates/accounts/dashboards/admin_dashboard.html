@@ -39,5 +39,24 @@
         </table>
     </div>
 </div>
+<div class="card p-4 mt-4">
+    <h2 class="h5 mb-3">Recent activity</h2>
+    <div class="admin-activity-list">
+        {% for activity in recent_activity %}
+            <div class="admin-activity-item">
+                <span class="admin-activity-icon"><i class="bi {{ activity.icon }}"></i></span>
+                <div>
+                    <p class="mb-1 fw-semibold">{{ activity.title }}</p>
+                    <p class="small text-body-secondary mb-0">{{ activity.detail }}</p>
+                </div>
+                <time class="small text-body-secondary ms-auto" datetime="{{ activity.time|date:'c' }}">
+                    {{ activity.time|date:"d M, H:i" }}
+                </time>
+            </div>
+        {% empty %}
+            <p class="text-body-secondary mb-0">No recent activity.</p>
+        {% endfor %}
+    </div>
+</div>
 <div class="row g-4 mt-1"><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">User management</h2><p class="text-body-secondary">Review accounts, update roles and activate or deactivate users.</p><a class="btn btn-primary-fitsync" href="{% url 'accounts:admin_user_list' %}">Manage users</a></div></div><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">Coach assignments</h2><p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p><a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a></div></div></div>
 {% endblock %}
