@@ -9,6 +9,8 @@
 <div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Members</span><p class="summary-value">{{ member_count }}</p></div></div>
 <div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Coaches</span><p class="summary-value">{{ coach_count }}</p></div></div>
 <div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Active memberships</span><p class="summary-value">{{ active_membership_count }}</p></div></div>
+<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Today's check-ins</span><p class="summary-value">{{ today_attendance_count }}</p></div></div>
+<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Current occupancy</span><p class="summary-value">{{ current_occupancy }}</p></div></div>
 </div>
 <div class="row g-4 mt-1"><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">User management</h2><p class="text-body-secondary">Review accounts, update roles and activate or deactivate users.</p><a class="btn btn-primary-fitsync" href="{% url 'accounts:admin_user_list' %}">Manage users</a></div></div><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">Coach assignments</h2><p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p><a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a></div></div></div>
 {% endblock %}

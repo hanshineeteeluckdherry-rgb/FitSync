@@ -18,6 +18,7 @@ from .forms import (
     UserProfileForm,
 )
 from .models import CoachAssignment, CoachProfile, MemberProfile, User
+from attendance.models import AttendanceRecord
 from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
 from memberships.models import Membership
 
@@ -185,6 +186,12 @@ def admin_dashboard(request):
             status=Membership.Status.ACTIVE,
             start_date__lte=today,
             end_date__gte=today,
+        ).count(),
+        "today_attendance_count": AttendanceRecord.objects.filter(
+            check_in_time__date=today,
+        ).count(),
+        "current_occupancy": AttendanceRecord.objects.filter(
+            check_out_time__isnull=True,
         ).count(),
         "active_sidebar": "dashboard",
     }
