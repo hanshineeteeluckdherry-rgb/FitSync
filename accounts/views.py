@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -17,6 +19,7 @@ from .forms import (
 )
 from .models import CoachAssignment, CoachProfile, MemberProfile, User
 from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
+from memberships.models import Membership
 
 
 def register(request):
@@ -168,6 +171,8 @@ def coach_dashboard(request):
 
 @admin_required
 def admin_dashboard(request):
+    today = date.today()
+
     context = {
         "total_users": User.objects.count(),
         "active_users": User.objects.filter(is_active=True).count(),
@@ -176,6 +181,11 @@ def admin_dashboard(request):
         "coach_count": User.objects.filter(role=User.Role.COACH).count(),
         "admin_count": User.objects.filter(role=User.Role.ADMIN).count(),
         "assignment_count": CoachAssignment.objects.filter(active=True).count(),
+        "active_membership_count": Membership.objects.filter(
+            status=Membership.Status.ACTIVE,
+            start_date__lte=today,
+            end_date__gte=today,
+        ).count(),
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/admin_dashboard.html", context)
