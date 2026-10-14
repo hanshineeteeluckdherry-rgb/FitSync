@@ -11,6 +11,31 @@
 <div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Active memberships</span><p class="summary-value">{{ active_membership_count }}</p></div></div>
 <div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Today's check-ins</span><p class="summary-value">{{ today_attendance_count }}</p></div></div>
 <div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Current occupancy</span><p class="summary-value">{{ current_occupancy }}</p></div></div>
+<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Upcoming sessions</span><p class="summary-value">{{ upcoming_session_count }}</p></div></div>
+<div class="col-sm-6 col-xl-3"><div class="summary-card"><span class="summary-label">Confirmed bookings</span><p class="summary-value">{{ confirmed_booking_count }}</p></div></div>
+</div>
+<div class="card p-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+        <h2 class="h5 mb-0">Upcoming sessions</h2>
+        <a class="small" href="{% url 'bookings:session_list' %}">View all sessions</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Service</th><th>Date</th><th>Time</th><th>Coach</th></tr></thead>
+            <tbody>
+                {% for session in upcoming_sessions %}
+                    <tr>
+                        <td>{{ session.service.name }}</td>
+                        <td>{{ session.date|date:"d M Y" }}</td>
+                        <td>{{ session.start_time|time:"H:i" }}</td>
+                        <td>{{ session.instructor.get_full_name|default:"Not assigned" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4">No upcoming sessions.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 <div class="row g-4 mt-1"><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">User management</h2><p class="text-body-secondary">Review accounts, update roles and activate or deactivate users.</p><a class="btn btn-primary-fitsync" href="{% url 'accounts:admin_user_list' %}">Manage users</a></div></div><div class="col-lg-6"><div class="card p-4 h-100"><h2 class="h5">Coach assignments</h2><p class="text-body-secondary">{{ assignment_count }} active assignment{{ assignment_count|pluralize }}.</p><a class="btn btn-secondary-fitsync" href="{% url 'accounts:coach_assignment_list' %}">Manage assignments</a></div></div></div>
 {% endblock %}

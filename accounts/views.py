@@ -19,6 +19,7 @@ from .forms import (
 )
 from .models import CoachAssignment, CoachProfile, MemberProfile, User
 from attendance.models import AttendanceRecord
+from bookings.models import Booking, Session
 from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
 from memberships.models import Membership
 
@@ -173,6 +174,10 @@ def coach_dashboard(request):
 @admin_required
 def admin_dashboard(request):
     today = date.today()
+    scheduled_sessions = Session.objects.filter(
+        date__gte=today,
+        status=Session.Status.SCHEDULED,
+    ).select_related("service", "instructor")
 
     context = {
         "total_users": User.objects.count(),
@@ -192,6 +197,11 @@ def admin_dashboard(request):
         ).count(),
         "current_occupancy": AttendanceRecord.objects.filter(
             check_out_time__isnull=True,
+        ).count(),
+        "upcoming_session_count": scheduled_sessions.count(),
+        "upcoming_sessions": scheduled_sessions[:5],
+        "confirmed_booking_count": Booking.objects.filter(
+            status=Booking.Status.CONFIRMED,
         ).count(),
         "active_sidebar": "dashboard",
     }
