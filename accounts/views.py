@@ -3,7 +3,7 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
@@ -21,7 +21,7 @@ from .models import CoachAssignment, CoachProfile, MemberProfile, User
 from attendance.models import AttendanceRecord
 from bookings.models import Booking, Session
 from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
-from memberships.models import Membership
+from memberships.models import Membership, Payment
 
 
 def register(request):
@@ -178,6 +178,7 @@ def admin_dashboard(request):
         date__gte=today,
         status=Session.Status.SCHEDULED,
     ).select_related("service", "instructor")
+    successful_payments = Payment.objects.filter(status=Payment.Status.SUCCESS)
 
     context = {
         "total_users": User.objects.count(),
@@ -203,6 +204,8 @@ def admin_dashboard(request):
         "confirmed_booking_count": Booking.objects.filter(
             status=Booking.Status.CONFIRMED,
         ).count(),
+        "successful_payment_count": successful_payments.count(),
+        "total_revenue": successful_payments.aggregate(total=Sum("amount"))["total"] or 0,
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/admin_dashboard.html", context)
