@@ -2,104 +2,64 @@
 
 <div class="sidebar-brand">
     <a class="fitsync-brand" href="{% url 'core:home' %}">
-        <img
-            src="{% static 'img/fitsync-logo.png' %}"
-            class="fitsync-logo"
-            alt="FitSync Logo"
-        >
-
-        <span class="fitsync-brand-name">
-            Fit<span class="brand-accent">Sync</span>
-        </span>
+        <img src="{% static 'img/fitsync-logo.png' %}" class="fitsync-logo" alt="FitSync Logo">
+        <span class="fitsync-brand-name">Fit<span class="brand-accent">Sync</span></span>
     </a>
 </div>
 
-<nav
-    class="nav flex-column sidebar-nav"
-    aria-label="Member menu"
->
-    <p class="sidebar-label">
-        Member Menu
-    </p>
+<nav class="nav flex-column sidebar-nav" aria-label="Member menu">
+    <p class="sidebar-label">Member Menu</p>
 
-    <a
-        class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}"
-        href="{% url 'accounts:member_dashboard' %}"
-    >
+    <a class="nav-link {% if active_sidebar == 'dashboard' %}active{% endif %}" href="{% url 'accounts:member_dashboard' %}">
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
     </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'membership' %}active{% endif %}"
-        href="{% url 'memberships:member_packages' %}"
-    >
-        <i class="bi bi-credit-card"></i>
-        <span>Membership</span>
-    </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'payments' %}active{% endif %}"
-        href="{% url 'memberships:payment_history' %}"
-    >
-        <i class="bi bi-wallet2"></i>
-        <span>Payments</span>
-    </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'qr' %}active{% endif %}"
-        href="{% url 'attendance:my_qr_code' %}"
-    >
-        <i class="bi bi-qr-code"></i>
-        <span>My QR Code</span>
-    </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'occupancy' %}active{% endif %}"
-        href="{% url 'attendance:occupancy' %}"
-    >
-        <i class="bi bi-people"></i>
-        <span>Gym Occupancy</span>
-    </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}"
-        href="{% url 'bookings:my_bookings' %}"
-    >
-        <i class="bi bi-calendar-check"></i>
-        <span>Bookings</span>
-    </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'plans' or active_sidebar == 'history' %}active{% endif %}"
-        href="{% url 'workouts:plans' %}"
-    >
+    <a class="nav-link {% if active_sidebar == 'plans' or active_sidebar == 'history' %}active{% endif %}" href="{% url 'workouts:plans' %}">
         <i class="bi bi-clipboard2-pulse"></i>
         <span>Workout Plans</span>
     </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'progress' %}active{% endif %}"
-        href="{% url 'workouts:progress' %}"
-    >
+    <a class="nav-link {% if active_sidebar == 'progress' %}active{% endif %}" href="{% url 'workouts:progress' %}">
         <i class="bi bi-graph-up-arrow"></i>
         <span>Progress</span>
     </a>
-
-    <a
-        class="nav-link {% if active_sidebar == 'activities' %}active{% endif %}"
-        href="{% url 'activities:activity_list' %}"
-    >
-        <i class="bi bi-geo-alt"></i>
-        <span>Outdoor Activities</span>
+    <a class="nav-link {% if active_sidebar == 'bookings' %}active{% endif %}" href="{% url 'bookings:schedule' %}">
+        <i class="bi bi-calendar3"></i>
+        <span>Classes &amp; Services</span>
+    </a>
+    <a class="nav-link" href="{% url 'ourteam:index' %}">
+        <i class="bi bi-shield"></i>
+        <span>Our Team</span>
+    </a>
+    <a class="nav-link {% if active_sidebar == 'membership' %}active{% endif %}" href="{% url 'memberships:current_membership' %}">
+        <i class="bi bi-credit-card"></i>
+        <span>My Membership</span>
     </a>
 
-    <a
-        class="nav-link {% if active_sidebar == 'profile' %}active{% endif %}"
-        href="{% url 'accounts:profile' %}"
-    >
-        <i class="bi bi-person"></i>
-        <span>Profile</span>
-    </a>
-
+    <details class="member-sidebar-more" {% if active_sidebar == 'payments' or active_sidebar == 'qr' or active_sidebar == 'occupancy' or active_sidebar == 'activities' or active_sidebar == 'profile' %}open{% endif %}>
+        <summary class="nav-link">
+            <i class="bi bi-three-dots"></i>
+            <span>More</span>
+            <i class="bi bi-chevron-down member-more-chevron"></i>
+        </summary>
+        <div class="member-more-links">
+            <a class="nav-link {% if active_sidebar == 'payments' %}active{% endif %}" href="{% url 'memberships:payment_history' %}">
+                <i class="bi bi-wallet2"></i><span>Payments</span>
+            </a>
+            <a class="nav-link {% if active_sidebar == 'qr' %}active{% endif %}" href="{% url 'attendance:my_qr_code' %}">
+                <i class="bi bi-qr-code"></i><span>My QR Code</span>
+            </a>
+            <a class="nav-link {% if active_sidebar == 'occupancy' %}active{% endif %}" href="{% url 'attendance:occupancy' %}">
+                <i class="bi bi-people"></i><span>Gym Occupancy</span>
+            </a>
+            <a class="nav-link" href="{% url 'bookings:my_bookings' %}">
+                <i class="bi bi-calendar-check"></i><span>My Bookings</span>
+            </a>
+            <a class="nav-link {% if active_sidebar == 'activities' %}active{% endif %}" href="{% url 'activities:activity_list' %}">
+                <i class="bi bi-geo-alt"></i><span>Outdoor Activities</span>
+            </a>
+            <a class="nav-link {% if active_sidebar == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">
+                <i class="bi bi-person"></i><span>Profile</span>
+            </a>
+        </div>
+    </details>
 </nav>

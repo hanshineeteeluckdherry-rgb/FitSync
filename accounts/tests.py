@@ -166,6 +166,18 @@ class RegistrationLoginTests(AccountTestMixin, TestCase):
         self.assertRedirects(post_response, reverse("core:home"))
         self.assertNotIn("_auth_user_id", self.client.session)
 
+    def test_member_dashboard_uses_figma_sidebar_navigation(self):
+        user = self.make_user("sidebar@example.com")
+        MemberProfile.objects.create(user=user)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("accounts:member_dashboard"))
+
+        self.assertContains(response, "member-dashboard-sidebar")
+        self.assertContains(response, "Classes &amp; Services")
+        self.assertContains(response, "Our Team")
+        self.assertContains(response, "My Membership")
+
 
 class RolePermissionTests(AccountTestMixin, TestCase):
     def test_anonymous_user_is_sent_to_login(self):
