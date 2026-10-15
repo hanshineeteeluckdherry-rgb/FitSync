@@ -37,6 +37,32 @@
     letter-spacing: -0.03em;
 }
 
+.auth-brand-center {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+
+
+.brand-fit {
+    font-size: 36px;
+    color: var(#FFFFFF);
+}
+
+.brand-sync {
+    color: #00D4AA; /* Teal brand accent */
+}
+
+html[data-theme="light"] .brand-fit {
+    color: #061826 !important; 
+}
+
+html[data-theme="light"] .brand-sync {
+    color: #00967A !important; 
+}
+
 .auth-brand span span {
     color: var(--auth-green);
 }
