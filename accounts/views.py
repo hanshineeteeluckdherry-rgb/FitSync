@@ -10,6 +10,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from .decorators import admin_required, coach_required, member_required, role_required, staff_required
 from .forms import (
     AdminRoleForm,
+    AdminUserCreationForm,
     CoachAssignmentForm,
     EmailLoginForm,
     MemberProfileForm,
@@ -339,6 +340,21 @@ def admin_user_list(request):
         "active_sidebar": "users",
     }
     return render(request, "accounts/admin/user_list.html", context)
+
+
+@admin_required
+def admin_user_create(request):
+    form = AdminUserCreationForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        new_user = form.save()
+        messages.success(request, "User account created successfully.")
+        return redirect("accounts:admin_user_detail", user_id=new_user.id)
+
+    return render(
+        request,
+        "accounts/admin/user_form.html",
+        {"form": form, "active_sidebar": "users"},
+    )
 
 
 @admin_required

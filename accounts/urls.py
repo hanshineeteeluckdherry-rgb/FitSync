@@ -54,6 +54,7 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("manage/users/", views.admin_user_list, name="admin_user_list"),
+    path("manage/users/add/", views.admin_user_create, name="admin_user_create"),
     path("manage/users/<int:user_id>/", views.admin_user_detail, name="admin_user_detail"),
     path("manage/users/<int:user_id>/role/", views.admin_user_role, name="admin_user_role"),
     path("manage/users/<int:user_id>/status/", views.admin_user_status, name="admin_user_status"),
