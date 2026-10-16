@@ -9,7 +9,7 @@ from attendance.models import AttendanceRecord
 from bookings.models import Booking, Service, Session
 from memberships.models import Membership, MembershipPackage, Payment
 
-from .models import CoachAssignment, MemberProfile, User
+from .models import CoachAssignment, CoachProfile, MemberProfile, User
 
 
 class AccountTestMixin:
@@ -301,6 +301,68 @@ class AdminUserManagementTests(AccountTestMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "member@example.com")
         self.assertNotContains(response, "admin@example.com")
+
+    def test_admin_can_create_member_account(self):
+        response = self.client.post(
+            reverse("accounts:admin_user_create"),
+            {
+                "first_name": "New",
+                "last_name": "Member",
+                "email": "new.member@example.com",
+                "role": User.Role.MEMBER,
+                "password1": self.password,
+                "password2": self.password,
+                "is_active": "on",
+            },
+        )
+
+        user = User.objects.get(email="new.member@example.com")
+        self.assertRedirects(
+            response, reverse("accounts:admin_user_detail", args=[user.id])
+        )
+        self.assertTrue(MemberProfile.objects.filter(user=user).exists())
+
+    def test_admin_can_create_coach_account(self):
+        self.client.post(
+            reverse("accounts:admin_user_create"),
+            {
+                "first_name": "New",
+                "last_name": "Coach",
+                "email": "new.coach@example.com",
+                "role": User.Role.COACH,
+                "password1": self.password,
+                "password2": self.password,
+                "is_active": "on",
+            },
+        )
+
+        coach = User.objects.get(email="new.coach@example.com")
+        self.assertTrue(CoachProfile.objects.filter(user=coach).exists())
+
+    def test_admin_user_creation_rejects_duplicate_email(self):
+        response = self.client.post(
+            reverse("accounts:admin_user_create"),
+            {
+                "first_name": "Duplicate",
+                "last_name": "Member",
+                "email": self.member.email,
+                "role": User.Role.MEMBER,
+                "password1": self.password,
+                "password2": self.password,
+                "is_active": "on",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "An account with this email already exists.")
+        self.assertEqual(User.objects.filter(email=self.member.email).count(), 1)
+
+    def test_member_cannot_open_admin_user_creation(self):
+        self.client.force_login(self.member)
+
+        response = self.client.get(reverse("accounts:admin_user_create"))
+
+        self.assertEqual(response.status_code, 403)
 
     def test_admin_can_change_user_role(self):
         response = self.client.post(
