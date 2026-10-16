@@ -9,7 +9,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from .models import CoachAssignment, MemberProfile, User
+from .models import CoachAssignment, CoachProfile, MemberProfile, User
 
 
 class BootstrapFormMixin:
@@ -216,6 +216,66 @@ class AdminRoleForm(BootstrapFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.add_bootstrap_classes()
+
+
+class AdminUserCreationForm(BootstrapFormMixin, forms.Form):
+    first_name = forms.CharField(max_length=150)
+    last_name = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    role = forms.ChoiceField(choices=User.Role.choices)
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput)
+    is_active = forms.BooleanField(label="Active account", required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_bootstrap_classes()
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise ValidationError("An account with this email already exists.")
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+
+        if password1 and password2 and password1 != password2:
+            self.add_error("password2", "The two passwords do not match.")
+
+        if password1:
+            temp_user = User(
+                email=cleaned_data.get("email", ""),
+                first_name=cleaned_data.get("first_name", ""),
+                last_name=cleaned_data.get("last_name", ""),
+            )
+            try:
+                validate_password(password1, user=temp_user)
+            except ValidationError as error:
+                self.add_error("password1", error)
+        return cleaned_data
+
+    @transaction.atomic
+    def save(self):
+        email = self.cleaned_data["email"]
+        role = self.cleaned_data["role"]
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            first_name=self.cleaned_data["first_name"].strip(),
+            last_name=self.cleaned_data["last_name"].strip(),
+            password=self.cleaned_data["password1"],
+            role=role,
+            is_active=self.cleaned_data["is_active"],
+        )
+
+        if role == User.Role.MEMBER:
+            MemberProfile.objects.create(user=user)
+        elif role == User.Role.COACH:
+            CoachProfile.objects.create(user=user)
+        return user
 
 
 class CoachAssignmentForm(BootstrapFormMixin, forms.ModelForm):
