@@ -1,0 +1,71 @@
+{% extends "layouts/coach_base.html" %}
+{% load static %}
+{% block page_title %}Workout Plans{% endblock %}
+{% block dashboard_heading %}Workout Plans{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3"><link rel="stylesheet" href="{% static 'css/coach-plans.css' %}?v=1">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-page coach-plans-page">
+    <div class="coach-plans-heading">
+        <div class="page-heading mb-0"><h1>Workout Plans</h1><p>Build and manage your members' training.</p></div>
+        {% if members %}
+            {% if selected_member %}
+            <a class="btn btn-primary-fitsync" href="{% url 'workouts:coach_plan_create' selected_member %}"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Create Plan</a>
+            {% elif members|length == 1 %}
+                {% for member in members %}<a class="btn btn-primary-fitsync" href="{% url 'workouts:coach_plan_create' member.pk %}"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Create Plan</a>{% endfor %}
+            {% else %}
+            <div class="dropdown">
+                <button class="btn btn-primary-fitsync dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Create Plan</button>
+                <ul class="dropdown-menu dropdown-menu-end"><li><h2 class="dropdown-header h6">Choose a member</h2></li>
+                    {% for member in members %}<li><a class="dropdown-item" href="{% url 'workouts:coach_plan_create' member.pk %}">{{ member.get_full_name|default:member.username }}</a></li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <section class="workout-panel coach-plans-panel" aria-label="Assigned workout plans">
+        <div class="coach-plans-toolbar">
+            <span class="coach-plans-count">{{ plan_count }} plan{{ plan_count|pluralize }}</span>
+            <form method="get" class="coach-plans-filter">
+                <label class="visually-hidden" for="plan-member">Filter by member</label>
+                <select id="plan-member" class="form-select" name="member">
+                    <option value="">All assigned members</option>
+                    {% for member in members %}<option value="{{ member.pk }}" {% if selected_member == member.pk|stringformat:'s' %}selected{% endif %}>{{ member.get_full_name|default:member.username }}</option>{% endfor %}
+                </select>
+                <button class="btn btn-secondary-fitsync" type="submit">Filter</button>
+                {% if selected_member %}<a class="coach-plans-reset" href="{% url 'workouts:coach_plans' %}">Clear</a>{% endif %}
+            </form>
+        </div>
+        {% if plans %}
+        <div class="table-responsive">
+            <table class="table coach-plans-table align-middle mb-0">
+                <thead><tr><th scope="col">Member</th><th scope="col">Plan</th><th scope="col">Exercises</th><th scope="col">Schedule</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th></tr></thead>
+                <tbody>{% for plan in plans %}<tr>
+                    <td><strong>{{ plan.member.get_full_name|default:plan.member.username }}</strong></td>
+                    <td><a class="coach-plan-name" href="{% url 'workouts:plan_detail' plan.pk %}">{{ plan.name }}</a><small class="d-block coach-plan-goal">{{ plan.goal|default:"General fitness" }}</small></td>
+                    <td>{{ plan.exercise_count }}</td>
+                    <td>{{ plan.workout_days|default:"Not scheduled" }}</td>
+                    <td><span class="badge {% if plan.is_active %}badge-fitsync{% else %}text-bg-secondary{% endif %}">{% if plan.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+                    <td><div class="coach-plan-actions">
+                        <a class="btn btn-sm btn-secondary-fitsync" href="{% url 'workouts:plan_detail' plan.pk %}" aria-label="View {{ plan.name }}">View Plan</a>
+                        <a class="btn btn-sm btn-secondary-fitsync" href="{% url 'workouts:plan_edit' plan.pk %}" aria-label="Edit {{ plan.name }}">Edit</a>
+                        <a class="coach-plan-add" href="{% url 'workouts:plan_add_exercises' plan.pk %}" aria-label="Add exercises to {{ plan.name }}"><i class="bi bi-plus-lg" aria-hidden="true"></i> Exercises</a>
+                    </div></td>
+                </tr>{% endfor %}</tbody>
+            </table>
+        </div>
+        {% if page_obj.has_other_pages %}
+        <nav class="coach-plans-toolbar" aria-label="Workout plan pages">
+            <span class="small">Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ plan_count }} plans</span>
+            <div class="d-flex gap-2 align-items-center">
+                {% if page_obj.has_previous %}<a class="btn btn-sm btn-secondary-fitsync" href="?page={{ page_obj.previous_page_number }}{% if selected_member %}&amp;member={{ selected_member }}{% endif %}">Previous</a>{% endif %}
+                <span class="small">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}<a class="btn btn-sm btn-secondary-fitsync" href="?page={{ page_obj.next_page_number }}{% if selected_member %}&amp;member={{ selected_member }}{% endif %}">Next</a>{% endif %}
+            </div>
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="workout-empty-state"><i class="bi bi-journal-plus fs-2" aria-hidden="true"></i><h2 class="h5 mt-3">No workout plans yet</h2><p>{% if members %}Use Create Plan above to start a member's training plan.{% else %}An administrator needs to assign members to you first.{% endif %}</p></div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

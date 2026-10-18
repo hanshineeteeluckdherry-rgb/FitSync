@@ -29,6 +29,8 @@ urlpatterns = [
     path("progress/<int:record_id>/edit/", views.weight_edit, name="weight_edit"),
     path("progress/<int:record_id>/delete/", views.weight_delete, name="weight_delete"),
     path("coach/members/", views.coach_members, name="coach_members"),
+    path("coach/plans/", views.coach_plans, name="coach_plans"),
+    path("coach/progress/", views.coach_progress, name="coach_progress"),
     path("coach/members/<int:member_id>/plan/create/", views.coach_plan_create, name="coach_plan_create"),
     path("coach/members/<int:member_id>/progress/", views.coach_member_progress, name="coach_member_progress"),
 ]

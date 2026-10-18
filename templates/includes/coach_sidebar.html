@@ -35,7 +35,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'plans' %}active{% endif %}"
-        href="{% url 'workouts:coach_members' %}"
+        href="{% url 'workouts:coach_plans' %}"
     >
         <i class="bi bi-clipboard2-pulse"></i>
         <span>Workout Plans</span>
@@ -43,7 +43,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'progress' %}active{% endif %}"
-        href="{% url 'workouts:coach_members' %}"
+        href="{% url 'workouts:coach_progress' %}"
     >
         <i class="bi bi-graph-up-arrow"></i>
         <span>Progress</span>
@@ -51,7 +51,7 @@
 
     <a
         class="nav-link {% if active_sidebar == 'sessions' %}active{% endif %}"
-        href="{% url 'bookings:schedule' %}"
+        href="{% url 'bookings:session_list' %}"
     >
         <i class="bi bi-calendar3"></i>
         <span>Sessions</span>

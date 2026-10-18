@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from accounts.decorators import staff_required
+from accounts.decorators import role_required, staff_required
 from accounts.models import User
 from memberships.models import Membership
 from notifications.models import Notification
@@ -43,7 +43,21 @@ def management_layout(user):
     """Select the correct dashboard layout for an administrator or staff member."""
     if user.is_superuser or user.role == User.Role.ADMIN:
         return "layouts/admin_base.html"
+    if user.role == User.Role.COACH:
+        return "layouts/coach_base.html"
     return "layouts/staff_base.html"
+
+
+def managed_sessions(user):
+    """Coaches may manage only the sessions they teach."""
+    sessions = Session.objects.select_related("service", "instructor")
+    if user.role == User.Role.COACH and not user.is_superuser:
+        sessions = sessions.filter(instructor=user)
+    return sessions
+
+
+def session_coach(user):
+    return user if user.role == User.Role.COACH and not user.is_superuser else None
 
 
 def upcoming_sessions():
@@ -377,10 +391,10 @@ def service_delete(request, service_id):
     )
 
 
-@staff_required
+@role_required(User.Role.STAFF, User.Role.ADMIN, User.Role.COACH)
 def session_list(request):
     """Display sessions for staff and administrator management."""
-    sessions = Session.objects.select_related("service", "instructor").annotate(
+    sessions = managed_sessions(request.user).annotate(
         booking_total=Count("bookings", filter=Q(bookings__status=Booking.Status.CONFIRMED))
     )
     status = request.GET.get("status", "")
@@ -403,10 +417,10 @@ def session_list(request):
     )
 
 
-@staff_required
+@role_required(User.Role.STAFF, User.Role.ADMIN, User.Role.COACH)
 def session_create(request):
     """Allow staff or administrators to schedule a new session."""
-    form = SessionForm(request.POST or None)
+    form = SessionForm(request.POST or None, coach=session_coach(request.user))
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Session created successfully.")
@@ -418,11 +432,11 @@ def session_create(request):
     )
 
 
-@staff_required
+@role_required(User.Role.STAFF, User.Role.ADMIN, User.Role.COACH)
 def session_edit(request, session_id):
     """Allow staff or administrators to update a scheduled session."""
-    session = get_object_or_404(Session, pk=session_id)
-    form = SessionForm(request.POST or None, instance=session)
+    session = get_object_or_404(managed_sessions(request.user), pk=session_id)
+    form = SessionForm(request.POST or None, instance=session, coach=session_coach(request.user))
     if request.method == "POST" and form.is_valid():
         form.save()
         messages.success(request, "Session updated successfully.")
@@ -434,10 +448,10 @@ def session_edit(request, session_id):
     )
 
 
-@staff_required
+@role_required(User.Role.STAFF, User.Role.ADMIN, User.Role.COACH)
 def session_cancel(request, session_id):
     """Cancel a session and its confirmed member bookings."""
-    session = get_object_or_404(Session.objects.select_related("service"), pk=session_id)
+    session = get_object_or_404(managed_sessions(request.user), pk=session_id)
     if request.method == "POST":
         affected_members = list(
             session.bookings.filter(status=Booking.Status.CONFIRMED).select_related("member")
@@ -466,10 +480,10 @@ def session_cancel(request, session_id):
     )
 
 
-@staff_required
+@role_required(User.Role.STAFF, User.Role.ADMIN, User.Role.COACH)
 def session_roster(request, session_id):
     """Display the members with confirmed bookings for a session."""
-    session = get_object_or_404(Session.objects.select_related("service", "instructor"), pk=session_id)
+    session = get_object_or_404(managed_sessions(request.user), pk=session_id)
     bookings = session.bookings.filter(status=Booking.Status.CONFIRMED).select_related("member")
     return render(
         request,

@@ -363,14 +363,15 @@ def plan_delete(request, plan_id):
         plan.delete()
         messages.success(request, "Workout plan deleted.")
         if is_coach(request.user):
-            return redirect("workouts:coach_members")
+            return redirect("workouts:coach_plans")
         return redirect("workouts:plans")
 
     return render(
         request,
         "workouts/plan_confirm_delete.html",
-        {"plan": plan, "active_sidebar": "plans"},
+        {"plan": plan, "active_sidebar": "plans", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
+
 
 
 @login_required
@@ -747,12 +748,60 @@ def coach_members(request):
     assignments = CoachAssignment.objects.filter(
         coach=request.user,
         active=True,
-    ).select_related("member")
+        member__is_active=True,
+    ).select_related("member", "member__member_profile")
     return render(
         request,
         "workouts/coach_members.html",
         {"assignments": assignments, "active_sidebar": "members"},
     )
+
+
+
+@login_required
+def coach_plans(request):
+    if not is_coach(request.user):
+        return HttpResponseForbidden("This page is for coaches.")
+    members = User.objects.filter(
+        role="MEMBER", is_active=True,
+        coach_links__coach=request.user, coach_links__active=True,
+    ).order_by("first_name", "last_name")
+    plans = WorkoutPlan.objects.filter(
+        coach=request.user, member__in=members, plan_type="COACH_ASSIGNED",
+    ).select_related("member").annotate(exercise_count=Count("plan_exercises")).order_by(
+        "member__first_name", "member__last_name", "member_id", "-updated_at", "-pk"
+    )
+    selected_member = request.GET.get("member", "")
+    if selected_member:
+        # Reject unassigned IDs rather than exposing their names or plans.
+        member = get_object_or_404(members, pk=selected_member if selected_member.isdigit() else 0)
+        plans = plans.filter(member=member)
+    page = Paginator(plans, 15).get_page(request.GET.get("page"))
+    return render(request, "workouts/coach_plans.html", {
+        "plans": page.object_list, "page_obj": page, "plan_count": page.paginator.count,
+        "members": members, "selected_member": selected_member,
+        "active_sidebar": "plans",
+    })
+
+
+@login_required
+def coach_progress(request):
+    if not is_coach(request.user):
+        return HttpResponseForbidden("This page is for coaches.")
+    weights = WeightRecord.objects.filter(member=OuterRef("pk")).order_by("-recorded_date", "-pk")
+    completed = WorkoutSession.objects.filter(member=OuterRef("pk"), completed_at__isnull=False).order_by("-completed_at")
+    members = User.objects.filter(
+        role="MEMBER", is_active=True, coach_links__coach=request.user, coach_links__active=True,
+    ).select_related("member_profile").annotate(
+        latest_weight=Subquery(weights.values("weight_kg")[:1]),
+        latest_weight_date=Subquery(weights.values("recorded_date")[:1]),
+        last_workout=Subquery(completed.values("completed_at")[:1]),
+        completed_count=Count("workout_sessions", filter=Q(workout_sessions__completed_at__isnull=False), distinct=True),
+        weekly_count=Count("workout_sessions", filter=Q(workout_sessions__completed_at__date__gte=timezone.localdate() - timedelta(days=6), workout_sessions__completed_at__isnull=False), distinct=True),
+    ).order_by("first_name", "last_name")
+    return render(request, "workouts/coach_progress.html", {
+        "members": members, "active_sidebar": "progress",
+    })
 
 
 @login_required
@@ -779,12 +828,13 @@ def coach_plan_create(request, member_id):
         "workouts/plan_form.html",
         {
             "form": form,
-            "title": f"Create Plan for {member.username}",
+            "title": f"Create Plan for {member.get_full_name() or member.username}",
             "coach_mode": True,
             "active_sidebar": "plans",
             "layout_template": "layouts/coach_base.html",
         },
     )
+
 
 
 @login_required
