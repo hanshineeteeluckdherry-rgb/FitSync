@@ -6,7 +6,7 @@
 {% block main_class %}home-main{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=4">
 {% endblock %}
 
 {% block content %}
@@ -38,11 +38,11 @@
 
         <div class="home-mini-stats" aria-label="FitSync statistics">
             <div class="home-mini-stat">
-                <strong>1,400+</strong>
+                <strong>{{ live_stats.active_members }}</strong>
                 <span>Active Members</span>
             </div>
             <div class="home-mini-stat">
-                <strong>6</strong>
+                <strong>{{ live_stats.coach_count }}</strong>
                 <span>Expert Coaches</span>
             </div>
             <div class="home-mini-stat">
@@ -56,7 +56,7 @@
         <article class="home-live-item home-live-teal">
             <div class="home-live-icon"><i class="bi bi-people" aria-hidden="true"></i></div>
             <div>
-                <div class="home-live-value">34 <span class="home-live-dot"></span></div>
+                <div class="home-live-value">{{ live_stats.members_in_gym }} <span class="home-live-dot"></span></div>
                 <p>Members in gym</p>
             </div>
         </article>
@@ -64,7 +64,7 @@
         <article class="home-live-item home-live-blue">
             <div class="home-live-icon"><i class="bi bi-activity" aria-hidden="true"></i></div>
             <div>
-                <div class="home-live-value">129 <span class="home-live-dot"></span></div>
+                <div class="home-live-value">{{ live_stats.workouts_today }} <span class="home-live-dot"></span></div>
                 <p>Workouts logged today</p>
             </div>
         </article>
@@ -72,15 +72,15 @@
         <article class="home-live-item home-live-amber">
             <div class="home-live-icon"><i class="bi bi-fire" aria-hidden="true"></i></div>
             <div>
-                <div class="home-live-value">84,470 <span class="home-live-dot"></span></div>
-                <p>Calories burned today</p>
+                <div class="home-live-value">{{ live_stats.calories_today }} <span class="home-live-dot"></span></div>
+                <p>Estimated calories today</p>
             </div>
         </article>
 
         <article class="home-live-item home-live-teal">
             <div class="home-live-icon"><i class="bi bi-graph-up" aria-hidden="true"></i></div>
             <div>
-                <div class="home-live-value">7 <span class="home-live-dot"></span></div>
+                <div class="home-live-value">{{ live_stats.classes_running }} <span class="home-live-dot"></span></div>
                 <p>Classes running now</p>
             </div>
         </article>
@@ -90,5 +90,3 @@
 <!-- Anchor used by the Figma "Explore Features" button. -->
 <div id="features" class="home-features-anchor" aria-hidden="true"></div>
 {% endblock %}
-
-{% block site_footer %}{% endblock %}
