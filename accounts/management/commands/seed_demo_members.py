@@ -36,10 +36,9 @@ EXERCISES = [
 
 
 class Command(BaseCommand):
-    help = "Create 10 fictional members with coach assignments, plans, progress and class bookings."
 
     def add_arguments(self, parser):
-        parser.add_argument("--password", required=True, help="Initial local-demo password; existing passwords are preserved.")
+        parser.add_argument("--password", required=True)
 
     @transaction.atomic
     def handle(self, *args, **options):
