@@ -28,6 +28,35 @@ def is_member(user):
     return user.is_authenticated and user.role == "MEMBER"
 
 
+@login_required
+def water_intake(request):
+    if not is_member(request.user):
+        return HttpResponseForbidden("This page is for members.")
+
+    today = timezone.localdate()
+    records = WaterIntake.objects.filter(member=request.user)
+    today_record = records.filter(recorded_date=today).first()
+    form = WaterIntakeForm(
+        request.POST or None,
+        initial={"recorded_date": today, "litres": today_record.litres if today_record else 0},
+    )
+    if request.method == "POST" and form.is_valid():
+        WaterIntake.objects.update_or_create(
+            member=request.user,
+            recorded_date=form.cleaned_data["recorded_date"],
+            defaults={"litres": form.cleaned_data["litres"]},
+        )
+        messages.success(request, "Your water intake has been saved.")
+        return redirect("workouts:water_intake")
+
+    return render(request, "workouts/water_intake.html", {
+        "form": form,
+        "records": records[:30],
+        "today_litres": today_record.litres if today_record else 0,
+        "active_sidebar": "water",
+    })
+
+
 def is_coach(user):
     return user.is_authenticated and user.role == "COACH"
 
