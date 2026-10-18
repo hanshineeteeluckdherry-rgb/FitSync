@@ -1,10 +1,15 @@
-from datetime import date
+import base64
+import io
+from datetime import date, datetime, time, timedelta
+
+import qrcode
 
 from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .decorators import admin_required, coach_required, member_required, role_required, staff_required
@@ -19,9 +24,9 @@ from .forms import (
     UserProfileForm,
 )
 from .models import CoachAssignment, CoachProfile, MemberProfile, User
-from attendance.models import AttendanceRecord
+from attendance.models import AttendanceRecord, GymConfiguration, MemberQRCode
 from bookings.models import Booking, Session
-from workouts.models import WeightRecord, WorkoutPlan, WorkoutSession
+from workouts.models import WaterIntake, WeightRecord, WorkoutPlan, WorkoutSession
 from memberships.models import Membership, Payment
 
 
@@ -96,6 +101,7 @@ def dashboard_redirect(request):
 
 @member_required
 def member_dashboard(request):
+    today = timezone.localdate()
     profile, _ = MemberProfile.objects.get_or_create(user=request.user)
     profile_fields = [
         profile.phone,
@@ -118,11 +124,108 @@ def member_dashboard(request):
         plan_type="COACH_ASSIGNED",
         is_active=True,
     ).count()
-    completed_workout_count = WorkoutSession.objects.filter(
+    completed_workouts = WorkoutSession.objects.filter(
         member=request.user,
         completed_at__isnull=False,
-    ).count()
+    )
+    completed_workout_count = completed_workouts.count()
     latest_weight = WeightRecord.objects.filter(member=request.user).first()
+    water_record = WaterIntake.objects.filter(member=request.user, recorded_date=today).first()
+
+    month_start = today.replace(day=1)
+    previous_month_end = month_start - timedelta(days=1)
+    previous_month_start = previous_month_end.replace(day=1)
+    workouts_this_month = completed_workouts.filter(
+        completed_at__date__gte=month_start,
+    ).count()
+    workouts_last_month = completed_workouts.filter(
+        completed_at__date__gte=previous_month_start,
+        completed_at__date__lte=previous_month_end,
+    ).count()
+
+    coach_assignment = CoachAssignment.objects.filter(
+        member=request.user,
+        active=True,
+    ).select_related("coach").first()
+
+    upcoming_booking = Booking.objects.filter(
+        member=request.user,
+        status=Booking.Status.CONFIRMED,
+        session__status=Session.Status.SCHEDULED,
+        session__date__gte=today,
+    ).select_related("session__service", "session__instructor").order_by(
+        "session__date", "session__start_time"
+    ).first()
+
+    current_occupancy = AttendanceRecord.objects.filter(
+        check_out_time__isnull=True,
+    ).count()
+    max_capacity = GymConfiguration.get_capacity()
+    if max_capacity:
+        occupancy_percent = min(round((current_occupancy / max_capacity) * 100), 100)
+    else:
+        occupancy_percent = 0
+    if occupancy_percent < 45:
+        occupancy_status = "Quiet"
+    elif occupancy_percent < 75:
+        occupancy_status = "Moderate"
+    else:
+        occupancy_status = "Busy"
+
+    active_membership = Membership.objects.filter(
+        member=request.user,
+        status=Membership.Status.ACTIVE,
+        start_date__lte=today,
+        end_date__gte=today,
+    ).select_related("package").first()
+
+    qr_image = None
+    if active_membership:
+        qr_code, _ = MemberQRCode.objects.get_or_create(member=request.user)
+        if qr_code.is_active:
+            image = qrcode.make(str(qr_code.qr_token))
+            buffer = io.BytesIO()
+            image.save(buffer, format="PNG")
+            qr_image = base64.b64encode(buffer.getvalue()).decode()
+
+    recent_activity = []
+    for workout in completed_workouts[:4]:
+        exercise_count = workout.exercise_records.values("exercise_id").distinct().count()
+        plan_name = workout.workout_plan.name if workout.workout_plan else "Workout"
+        recent_activity.append(
+            {
+                "time": workout.completed_at,
+                "title": f"Completed {plan_name} — {exercise_count} exercises",
+                "icon": "img/member-dashboard/activity-workout.svg",
+                "colour": "teal",
+            }
+        )
+
+    recent_bookings = Booking.objects.filter(member=request.user).select_related(
+        "session__service"
+    )[:3]
+    for booking in recent_bookings:
+        recent_activity.append(
+            {
+                "time": booking.booked_at,
+                "title": f"Booked {booking.session.service.name}",
+                "icon": "img/member-dashboard/activity-booking.svg",
+                "colour": "blue",
+            }
+        )
+
+    for weight in WeightRecord.objects.filter(member=request.user)[:3]:
+        weight_time = timezone.make_aware(datetime.combine(weight.recorded_date, time.min))
+        recent_activity.append(
+            {
+                "time": weight_time,
+                "title": f"New weight recorded: {weight.weight_kg} kg",
+                "icon": "img/member-dashboard/activity-weight.svg",
+                "colour": "amber",
+            }
+        )
+
+    recent_activity.sort(key=lambda item: item["time"], reverse=True)
 
     context = {
         "profile": profile,
@@ -130,7 +233,20 @@ def member_dashboard(request):
         "personal_plan_count": personal_plan_count,
         "coach_plan_count": coach_plan_count,
         "completed_workout_count": completed_workout_count,
+        "workouts_this_month": workouts_this_month,
+        "workout_change": workouts_this_month - workouts_last_month,
         "latest_weight": latest_weight,
+        "today_water_litres": water_record.litres if water_record else 0,
+        "coach_assignment": coach_assignment,
+        "upcoming_booking": upcoming_booking,
+        "current_occupancy": current_occupancy,
+        "max_capacity": max_capacity,
+        "occupancy_percent": occupancy_percent,
+        "occupancy_status": occupancy_status,
+        "active_membership": active_membership,
+        "qr_image": qr_image,
+        "recent_activity": recent_activity[:4],
+        "today": today,
         "active_sidebar": "dashboard",
     }
     return render(request, "accounts/dashboards/member_dashboard.html", context)
@@ -322,6 +438,7 @@ def admin_user_list(request):
     users = User.objects.all().order_by("first_name", "last_name", "email")
     query = request.GET.get("q", "").strip()
     role = request.GET.get("role", "").strip()
+    status = request.GET.get("status", "").strip()
 
     if query:
         users = users.filter(
@@ -331,11 +448,16 @@ def admin_user_list(request):
         )
     if role in User.Role.values:
         users = users.filter(role=role)
+    if status == "active":
+        users = users.filter(is_active=True)
+    elif status == "inactive":
+        users = users.filter(is_active=False)
 
     context = {
         "users": users,
         "query": query,
         "selected_role": role,
+        "selected_status": status,
         "role_choices": User.Role.choices,
         "active_sidebar": "users",
     }

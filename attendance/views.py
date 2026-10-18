@@ -296,6 +296,6 @@ def capacity_settings(request):
             "current_occupancy": AttendanceRecord.objects.filter(
                 check_out_time__isnull=True
             ).count(),
-            "active_sidebar": "settings",
+            "active_sidebar": "capacity",
         },
     )
