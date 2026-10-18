@@ -2,9 +2,12 @@
 {% load static %}
 {% block page_title %}Exercise Library{% endblock %}
 {% block dashboard_heading %}Workout{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'css/exercise-selection.css' %}">
+{% endblock %}
 {% block dashboard_content %}
-<div class="exercise-library-page">
+<div class="exercise-library-page exercise-selection-page">
     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
         <div>
             <a class="back-link" href="{% url 'workouts:plan_detail' plan.id %}">← Back to Plan</a>
@@ -37,26 +40,30 @@
 
     <form method="post">
         {% csrf_token %}
-        <div class="d-flex justify-content-end mb-3">
-            <button class="btn btn-primary-fitsync" type="submit"><i class="bi bi-check-lg me-1"></i>Add Selected</button>
+        <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
+            <span class="text-muted small" id="exerciseSelectionCount" role="status">Select exercises to add</span>
+            <button class="btn btn-primary-fitsync" type="submit" id="addSelectedExercises"><i class="bi bi-check-lg me-1"></i>Add Selected</button>
         </div>
         <div class="exercise-grid">
             {% for exercise in exercises %}
                 <label class="exercise-card {% if exercise.id in existing_ids %}exercise-added{% endif %}">
                     <div class="exercise-select">
-                        <input class="form-check-input" type="checkbox" name="exercise_ids" value="{{ exercise.id }}" {% if exercise.id in existing_ids %}disabled{% endif %}>
+                        <input class="form-check-input" type="checkbox" name="exercise_ids" value="{{ exercise.id }}" aria-label="Add {{ exercise.name }}" {% if exercise.id in existing_ids %}disabled{% endif %}>
                     </div>
+                    <span class="exercise-muscle-badge">{{ exercise.get_category_display }}</span>
+                    <div class="exercise-selection-image">
+                        <span class="exercise-image-placeholder" aria-hidden="true"><i class="bi bi-image"></i> Image unavailable</span>
                     {% if exercise.image %}
-                        <img class="exercise-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}">
+                        <img class="exercise-image" src="{{ exercise.image.url }}" alt="{{ exercise.name }}" loading="lazy" onerror="this.onerror=function(){this.hidden=true;};this.src='{% static exercise.library_image %}';">
                     {% else %}
-                        <img class="exercise-image" src="{% static exercise.fallback_image %}" alt="{{ exercise.get_category_display }} exercise">
+                        <img class="exercise-image" src="{% static exercise.library_image %}" alt="{{ exercise.name }}" loading="lazy" onerror="this.hidden=true;">
                     {% endif %}
-                    <span class="difficulty difficulty-{{ exercise.difficulty|lower }}">{{ exercise.get_difficulty_display }}</span>
+                    </div>
                     <div class="exercise-card-body">
-                        <strong>{{ exercise.name }}</strong>
+                        <strong class="exercise-card-name">{{ exercise.name }}</strong>
                         <small>{{ exercise.get_category_display }}{% if exercise.secondary_muscles %}, {{ exercise.secondary_muscles }}{% endif %}</small>
                         <p class="exercise-description">{{ exercise.description|truncatechars:110 }}</p>
-                        <div class="exercise-card-meta"><span><i class="bi bi-tools"></i>{{ exercise.get_equipment_display }}</span><span>{{ exercise.get_intensity_display }}</span></div>
+                        <div class="exercise-card-footer"><span class="exercise-equipment"><i class="bi bi-tools"></i>{{ exercise.get_equipment_display }}</span><span class="difficulty difficulty-{{ exercise.difficulty|lower }}">{{ exercise.get_difficulty_display }}</span></div>
                         {% if exercise.id in existing_ids %}<span class="already-added">Already added</span>{% endif %}
                     </div>
                 </label>
@@ -67,3 +74,5 @@
     </form>
 </div>
 {% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/exercise-selection.js' %}" defer></script>{% endblock %}

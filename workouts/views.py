@@ -168,8 +168,10 @@ def exercise_library(request):
             "equipment_choices": Exercise.EQUIPMENT_CHOICES,
             "plan": plan,
             "active_sidebar": "plans",
+            "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html",
         },
     )
+
 
 
 @login_required
@@ -178,8 +180,9 @@ def exercise_detail(request, exercise_id):
     return render(
         request,
         "workouts/exercise_detail.html",
-        {"exercise": exercise, "active_sidebar": "plans"},
+        {"exercise": exercise, "active_sidebar": "plans", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
+
 
 
 @login_required
