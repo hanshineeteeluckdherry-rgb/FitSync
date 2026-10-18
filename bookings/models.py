@@ -12,6 +12,11 @@ class Service(models.Model):
         FITNESS = "FITNESS", "Fitness"
         SAUNA = "SAUNA", "Sauna"
         PERSONAL_TRAINING = "PERSONAL_TRAINING", "Personal Training"
+        PILATES = "PILATES", "Pilates"
+        BOXING = "BOXING", "Boxing"
+        HIIT = "HIIT", "HIIT"
+        CYCLING = "CYCLING", "Cycling"
+        STRENGTH_TRAINING = "STRENGTH_TRAINING", "Strength Training"
 
     name = models.CharField(max_length=100)
     service_type = models.CharField(

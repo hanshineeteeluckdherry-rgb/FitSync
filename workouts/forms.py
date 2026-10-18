@@ -1,6 +1,25 @@
 from django import forms
 
-from .models import Exercise, WeightRecord, WorkoutPlan
+from django.utils import timezone
+
+from .models import Exercise, WaterIntake, WeightRecord, WorkoutPlan
+
+
+class WaterIntakeForm(forms.ModelForm):
+    class Meta:
+        model = WaterIntake
+        fields = ["recorded_date", "litres"]
+        labels = {"recorded_date": "Date", "litres": "Total water for this day (litres)"}
+        widgets = {
+            "recorded_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "litres": forms.NumberInput(attrs={"min": "0", "step": "0.05", "class": "form-control"}),
+        }
+
+    def clean_recorded_date(self):
+        recorded_date = self.cleaned_data["recorded_date"]
+        if recorded_date > timezone.localdate():
+            raise forms.ValidationError("Choose today or an earlier date.")
+        return recorded_date
 
 
 class ExerciseForm(forms.ModelForm):
@@ -90,6 +109,22 @@ class WorkoutPlanForm(forms.ModelForm):
         if commit:
             plan.save()
         return plan
+
+
+class WorkoutSetForm(forms.Form):
+    reps = forms.IntegerField(
+        min_value=1,
+        max_value=1000,
+        widget=forms.NumberInput(attrs={"class": "form-control", "min": "1"}),
+    )
+    weight_kg = forms.DecimalField(
+        required=False,
+        min_value=0,
+        max_digits=6,
+        decimal_places=2,
+        label="Weight (kg)",
+        widget=forms.NumberInput(attrs={"class": "form-control", "min": "0", "step": "0.01"}),
+    )
 
 
 class WeightRecordForm(forms.ModelForm):
