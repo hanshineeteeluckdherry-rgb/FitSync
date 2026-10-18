@@ -12,11 +12,12 @@
         <h1>Workout Plans</h1>
         <p>Your training plans — personal and coach-assigned</p>
       </div>
-
+      <a class="btn btn-secondary-fitsync" href="{% url 'workouts:exercise_library' %}">
+          <i class="bi bi-collection me-1" aria-hidden="true"></i>Exercise Library
+      </a>
     </div>
     <div class="workout-tabs mb-4">
         <a class="active" href="{% url 'workouts:plans' %}">Workout Plans</a>
-        <a href="{% url 'workouts:exercise_library' %}">Exercise Library</a>
         <a href="{% url 'workouts:history' %}">History</a>
     </div>
 
@@ -49,9 +50,11 @@
                 <div class="empty-state-icon"><i class="bi bi-clipboard2-pulse"></i></div>
                 <h3>No personal plans yet</h3>
                 <p>Create your first workout plan with your own exercises and schedule.</p>
-                <a class="btn btn-primary-fitsync px-4" href="{% url 'workouts:plan_create' %}"><i class="bi bi-plus-lg me-2"></i>Create New Plan</a>
             </div>
         {% endif %}
+        <a class="btn btn-primary-fitsync mt-3" href="{% url 'workouts:plan_create' %}">
+            <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Create Workout
+        </a>
     </section>
 
     <section>

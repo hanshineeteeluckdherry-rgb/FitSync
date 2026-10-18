@@ -465,13 +465,30 @@ def start_workout(request, plan_id):
     return redirect("workouts:active_workout", session_id=session.id)
 
 
+def workout_set_entries(session, data=None):
+    if not session.workout_plan:
+        return []
+    entries = list(session.workout_plan.plan_exercises.select_related("exercise"))
+    for entry in entries:
+        selected = data.getlist(f"completed_sets_{entry.id}") if data is not None else []
+        entry.set_rows = []
+        for number in range(1, entry.sets + 1):
+            form = WorkoutSetForm(
+                data,
+                prefix=f"set_{entry.id}_{number}",
+                initial={"reps": entry.reps, "weight_kg": entry.weight_kg},
+            )
+            entry.set_rows.append({"number": number, "form": form, "completed": str(number) in selected})
+    return entries
+
+
 @login_required
 def active_workout(request, session_id):
     session = get_object_or_404(WorkoutSession, id=session_id, member=request.user)
     if session.completed_at:
         return redirect("workouts:history_detail", session_id=session.id)
 
-    entries = session.workout_plan.plan_exercises.select_related("exercise") if session.workout_plan else []
+    entries = workout_set_entries(session)
     return render(
         request,
         "workouts/active_workout.html",
@@ -479,38 +496,52 @@ def active_workout(request, session_id):
     )
 
 
+
 @login_required
+@transaction.atomic
 def finish_workout(request, session_id):
-    session = get_object_or_404(WorkoutSession, id=session_id, member=request.user)
+    session = get_object_or_404(WorkoutSession.objects.select_for_update(), id=session_id, member=request.user)
     if request.method != "POST":
         return redirect("workouts:active_workout", session_id=session.id)
     if session.completed_at:
         return redirect("workouts:history_detail", session_id=session.id)
 
-    entries = session.workout_plan.plan_exercises.select_related("exercise") if session.workout_plan else []
-    total_duration = 0
+    entries = workout_set_entries(session, request.POST)
+    completed_sets = []
+    valid = True
     for entry in entries:
-        sets = positive_int(request.POST.get(f"sets_{entry.id}"), entry.sets) or 1
-        reps = positive_int(request.POST.get(f"reps_{entry.id}"), entry.reps) or 1
-        weight = decimal_or_none(request.POST.get(f"weight_{entry.id}"))
-        duration = positive_int(request.POST.get(f"duration_{entry.id}"), 0)
-        total_duration += duration
+        for row in entry.set_rows:
+            if row["completed"]:
+                completed_sets.append((entry, row))
+                if not row["form"].is_valid():
+                    valid = False
+    if not completed_sets:
+        messages.error(request, "Mark at least one set complete before finishing the workout.")
+    elif not valid:
+        messages.error(request, "Check the reps and weight for your completed sets.")
+    if not completed_sets or not valid:
+        return render(request, "workouts/active_workout.html", {
+            "session": session, "entries": entries, "active_sidebar": "plans",
+            "notes": request.POST.get("notes", ""),
+        })
 
+    for entry, row in completed_sets:
         WorkoutExerciseRecord.objects.create(
             workout_session=session,
             exercise=entry.exercise,
-            sets=sets,
-            reps=reps,
-            weight_kg=weight,
-            duration_minutes=duration or None,
+            set_number=row["number"],
+            sets=1,
+            reps=row["form"].cleaned_data["reps"],
+            weight_kg=row["form"].cleaned_data["weight_kg"],
         )
 
     session.completed_at = timezone.now()
-    session.duration_minutes = positive_int(request.POST.get("session_duration"), total_duration) or total_duration or None
+    session.duration_minutes = None
     session.notes = request.POST.get("notes", "").strip()
     session.save()
     messages.success(request, "Workout completed. Great work!")
     return redirect("workouts:history_detail", session_id=session.id)
+
 
 
 @login_required
@@ -521,12 +552,13 @@ def workout_history(request):
     sessions = WorkoutSession.objects.filter(
         member=request.user,
         completed_at__isnull=False,
-    ).select_related("workout_plan")
+    ).select_related("workout_plan").annotate(exercise_count=Count("exercise_records__exercise", distinct=True))
     return render(
         request,
         "workouts/workout_history.html",
         {"sessions": sessions, "active_sidebar": "history"},
     )
+
 
 
 @login_required
@@ -536,12 +568,13 @@ def workout_history_detail(request, session_id):
         if not (is_coach(request.user) and coach_is_assigned(request.user, session.member)):
             return HttpResponseForbidden("You cannot view this workout history.")
 
-    records = session.exercise_records.select_related("exercise")
+    records = session.exercise_records.select_related("exercise").order_by("exercise_id", "set_number", "id")
     return render(
         request,
         "workouts/workout_history_detail.html",
-        {"session": session, "records": records, "active_sidebar": "history", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
+        {"session": session, "records": records, "active_sidebar": "progress" if is_coach(request.user) else "history", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
+
 
 
 @login_required

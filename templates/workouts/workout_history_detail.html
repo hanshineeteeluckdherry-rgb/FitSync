@@ -1,1 +1,37 @@
-{% extends layout_template %}{% load static %}{% block page_title %}Workout Summary{% endblock %}{% block dashboard_heading %}Workout{% endblock %}{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}{% block dashboard_content %}<div class="workout-page"><a class="back-link" href="{% url 'workouts:history' %}">← Workout History</a><div class="page-heading mt-3"><h1>{{ session.workout_plan.name|default:"Workout Summary" }}</h1><p>{{ session.completed_at|date:"d M Y, H:i" }}{% if session.duration_minutes %} · {{ session.duration_minutes }} minutes{% endif %}</p></div><div class="d-grid gap-3">{% for record in records %}<article class="workout-card"><strong>{{ record.exercise.name }}</strong><div class="plan-meta mt-2"><span>{{ record.sets }} sets</span><span>{{ record.reps }} reps</span>{% if record.weight_kg %}<span>{{ record.weight_kg }} kg</span>{% endif %}{% if record.duration_minutes %}<span>{{ record.duration_minutes }} min</span>{% endif %}</div></article>{% endfor %}</div>{% if session.notes %}<div class="workout-panel p-3 mt-3"><strong>Notes</strong><p class="mb-0 mt-2">{{ session.notes }}</p></div>{% endif %}</div>{% endblock %}
+{% extends layout_template %}
+{% load static %}
+{% block page_title %}Workout Summary{% endblock %}
+{% block dashboard_heading %}Workout{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-page">
+    <a class="back-link" href="{% if request.user.role == 'COACH' %}{% url 'workouts:coach_member_progress' session.member_id %}{% else %}{% url 'workouts:history' %}{% endif %}">← Workout History</a>
+    <div class="page-heading mt-3">
+        <h1>{{ session.workout_plan.name|default:"Workout Summary" }}</h1>
+        <p>{{ session.completed_at|date:"d M Y, H:i" }}{% if session.duration_minutes %} · {{ session.duration_minutes }} minutes{% endif %}</p>
+    </div>
+    {% regroup records by exercise as exercise_groups %}
+    <div class="d-grid gap-3">
+        {% for group in exercise_groups %}
+            <article class="workout-card">
+                <h2 class="h5 mb-3">{{ group.grouper.name }}</h2>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead><tr><th scope="col">Set</th><th scope="col">Reps</th><th scope="col">Weight (kg)</th></tr></thead>
+                        <tbody>
+                            {% for record in group.list %}
+                                <tr>
+                                    <td>{% if record.set_number %}{{ record.set_number }}{% else %}{{ record.sets }} sets{% endif %}</td>
+                                    <td>{{ record.reps }}</td>
+                                    <td>{{ record.weight_kg|default_if_none:"—" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+    {% if session.notes %}<div class="workout-panel p-3 mt-3"><strong>Notes</strong><p class="mb-0 mt-2">{{ session.notes }}</p></div>{% endif %}
+</div>
+{% endblock %}
