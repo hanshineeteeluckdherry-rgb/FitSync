@@ -173,7 +173,6 @@ def exercise_library(request):
     )
 
 
-
 @login_required
 def exercise_detail(request, exercise_id):
     exercise = get_object_or_404(Exercise, id=exercise_id, is_active=True)
@@ -182,7 +181,6 @@ def exercise_detail(request, exercise_id):
         "workouts/exercise_detail.html",
         {"exercise": exercise, "active_sidebar": "plans", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
-
 
 
 @login_required
@@ -376,7 +374,6 @@ def plan_delete(request, plan_id):
     )
 
 
-
 @login_required
 def plan_add_exercises(request, plan_id):
     plan = get_object_or_404(WorkoutPlan, id=plan_id)
@@ -500,7 +497,6 @@ def active_workout(request, session_id):
     )
 
 
-
 @login_required
 @transaction.atomic
 def finish_workout(request, session_id):
@@ -547,7 +543,6 @@ def finish_workout(request, session_id):
     return redirect("workouts:history_detail", session_id=session.id)
 
 
-
 @login_required
 def workout_history(request):
     if not is_member(request.user):
@@ -564,7 +559,6 @@ def workout_history(request):
     )
 
 
-
 @login_required
 def workout_history_detail(request, session_id):
     session = get_object_or_404(WorkoutSession, id=session_id)
@@ -578,7 +572,6 @@ def workout_history_detail(request, session_id):
         "workouts/workout_history_detail.html",
         {"session": session, "records": records, "active_sidebar": "progress" if is_coach(request.user) else "history", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
-
 
 
 @login_required
@@ -691,7 +684,6 @@ def progress(request):
     )
 
 
-
 @login_required
 def weight_add(request):
     if not is_member(request.user):
@@ -758,7 +750,6 @@ def coach_members(request):
         "workouts/coach_members.html",
         {"assignments": assignments, "active_sidebar": "members"},
     )
-
 
 
 @login_required
@@ -837,7 +828,6 @@ def coach_plan_create(request, member_id):
             "layout_template": "layouts/coach_base.html",
         },
     )
-
 
 
 @login_required

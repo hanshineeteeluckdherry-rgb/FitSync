@@ -416,6 +416,10 @@ html[data-theme="light"] .brand-sync {
     color: #f3cf48;
 }
 
+.demo-accounts p:nth-of-type(4) {
+    color: #c7a6ff;
+}
+
 .demo-accounts p span {
     color: #9eb0c8;
 }
