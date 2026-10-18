@@ -4,7 +4,7 @@
 {% block title %}Our Team | FitSync{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/ourteam.css' %}">
+<link rel="stylesheet" href="{% static 'css/ourteam.css' %}?v=3">
 {% endblock %}
 
 {% block content %}
@@ -20,16 +20,16 @@
         </div>
     </section>
 
-    <section class="featured-member-section mb-5 px-3" id="featured-section">
+    <section class="featured-member-section mb-3 px-3" id="featured-section">
         <div class="featured-card">
             <div class="row g-0">
-                <div class="col-lg-5 col-md-6">
+                <div class="col-lg-4 col-md-5">
                     <div class="featured-img-wrapper">
                         <img src="{% static 'img/ourteam/dwane.png' %}" alt="Dwayne Johnson">
                     </div>
                 </div>
-                <div class="col-lg-7 col-md-6 d-flex align-items-center">
-                    <div class="featured-card-body p-4 p-lg-5">
+                <div class="col-lg-8 col-md-7 d-flex align-items-center">
+                    <div class="featured-card-body p-4">
                         <span class="badge-founder mb-3">
                             <i class="bi bi-person-fill me-1"></i> Founder
                         </span>
@@ -46,7 +46,7 @@
                             <span class="tag">Team Leadership</span>
                         </div>
 
-                        <a href="{% url 'aboutus:index' %}#contact" class="read-profile-link">
+                        <a href="{% url 'core:contact' %}" class="read-profile-link">
                             Contact team <i class="bi bi-chevron-right ms-1"></i>
                         </a>
                     </div>
@@ -57,16 +57,33 @@
 
     <section class="team-grid-section pb-5">
         <div class="container">
-            <div class="filter-pills d-flex flex-wrap gap-2 mb-4">
-                <button class="btn filter-btn active" data-filter="all">All</button>
-                <button class="btn filter-btn" data-filter="founder">Founder</button>
-                <button class="btn filter-btn" data-filter="operations">Operations</button>
-                <button class="btn filter-btn" data-filter="coaching">Coaching</button>
-                <button class="btn filter-btn" data-filter="wellness">Wellness</button>
-                <button class="btn filter-btn" data-filter="fitness">Fitness</button>
+            <div class="filter-pills d-flex flex-wrap gap-2 mb-3" role="group" aria-label="Filter team by department">
+                <button type="button" class="btn filter-btn active" data-filter="all" aria-pressed="true">All</button>
+                <button type="button" class="btn filter-btn" data-filter="founder" aria-pressed="false">Founder</button>
+                <button type="button" class="btn filter-btn" data-filter="operations" aria-pressed="false">Operations</button>
+                <button type="button" class="btn filter-btn" data-filter="coaching" aria-pressed="false">Coaching</button>
+                <button type="button" class="btn filter-btn" data-filter="wellness" aria-pressed="false">Wellness</button>
+                <button type="button" class="btn filter-btn" data-filter="fitness" aria-pressed="false">Fitness</button>
             </div>
 
             <div class="row g-4" id="team-grid">
+
+                <div class="col-lg-4 col-md-6 team-item" data-category="founder">
+                    <div class="team-card">
+                        <div class="card-img-wrapper">
+                            <span class="badge-card badge-leadership">Founder</span>
+                            <img src="{% static 'img/ourteam/dwane.png' %}" alt="Dwayne Johnson" class="card-photo">
+                            <img src="{% static 'img/ourteam/dwane.png' %}" alt="" class="card-avatar">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-name">Dwayne The Rock Johnson</h5>
+                            <p class="card-role">Owner &amp; Head of Operations</p>
+                            <p class="card-bio">Founder of FitSync, building a fitness community that puts members first.</p>
+                            <div class="card-tags"><span>Leadership</span><span>Strength &amp; Conditioning</span></div>
+                            <div class="card-footer-row"><span class="card-exp">FitSync founder</span><a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a></div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="col-lg-4 col-md-6 team-item" data-category="operations">
                     <div class="team-card">
@@ -85,7 +102,7 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">10 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -108,7 +125,7 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">8 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -131,7 +148,7 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">6 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -154,7 +171,7 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">7 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -177,16 +194,16 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">5 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6 team-item" data-category="fitness">
+                <div class="col-lg-4 col-md-6 team-item" data-category="coaching">
                     <div class="team-card">
                         <div class="card-img-wrapper">
-                            <span class="badge-card badge-fitness">Fitness</span>
+                            <span class="badge-card badge-coach">Coaching</span>
                             <img src="{% static 'img/ourteam/chrish.jpg' %}" alt="Chris Heria" class="card-photo">
                             <img src="{% static 'img/ourteam/chrish.jpg' %}" alt="" class="card-avatar">
                         </div>
@@ -200,7 +217,7 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">9 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -223,7 +240,7 @@
                             </div>
                             <div class="card-footer-row">
                                 <span class="card-exp">7 yrs experience</span>
-                                <a href="{% url 'aboutus:index' %}#contact" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
+                                <a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -248,34 +265,6 @@
     </section>
 </div>
 
-<script>
-    const filterButtons = document.querySelectorAll(".filter-btn");
-    const teamItems = document.querySelectorAll(".team-item");
-    const featured = document.getElementById("featured-section");
-
-    filterButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            filterButtons.forEach(function (b) {
-                b.classList.remove("active");
-            });
-            btn.classList.add("active");
-
-            const filter = btn.dataset.filter;
-
-            if (filter === "all" || filter === "founder") {
-                featured.style.display = "";
-            } else {
-                featured.style.display = "none";
-            }
-
-            teamItems.forEach(function (item) {
-                if (filter === "all" || item.dataset.category === filter) {
-                    item.style.display = "";
-                } else {
-                    item.style.display = "none";
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/ourteam.js' %}" defer></script>{% endblock %}
