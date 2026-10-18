@@ -1,0 +1,54 @@
+.coach-plans-heading,
+.coach-plans-toolbar,
+.coach-plans-filter,
+.coach-plan-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.coach-plans-heading {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+.coach-plans-heading > .btn,
+.coach-plans-heading .dropdown-toggle {
+    white-space: nowrap;
+}
+.coach-plans-toolbar {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border-color);
+}
+.coach-plans-count { font-weight: 600; }
+.coach-plans-filter { flex-wrap: wrap; }
+.coach-plans-filter .form-select { width: 250px; max-width: 100%; }
+.coach-plans-table { min-width: 850px; }
+.coach-plans-table > :not(caption) > * > * {
+    padding: 20px 22px;
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+.coach-plans-table thead th {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted-color, #9fb5cd);
+}
+.coach-plans-table tbody tr:last-child td { border-bottom: 0; }
+.coach-plan-name { color: var(--text-color); font-weight: 600; text-decoration: none; }
+.coach-plan-name:hover { color: #00c9a7; text-decoration: underline; }
+.coach-plan-goal { margin-top: 6px; color: var(--muted-color, #9fb5cd); }
+.coach-plan-actions { justify-content: flex-end; white-space: nowrap; }
+.coach-plan-add, .coach-plans-reset { color: #00c9a7; text-underline-offset: 4px; }
+.coach-plan-add { text-decoration: none; font-size: 13px; font-weight: 600; }
+.coach-plan-add:hover { text-decoration: underline; }
+.coach-plans-heading .dropdown-menu { max-height: 300px; overflow-y: auto; }
+@media (max-width: 575px) {
+    .coach-plans-toolbar { padding: 16px; }
+    .coach-plans-filter { width: 100%; }
+    .coach-plans-filter .form-select { flex: 1; min-width: 150px; }
+}

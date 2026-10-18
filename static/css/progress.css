@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap');
+
+.fitness-progress {
+    max-width: 1024px;
+    margin: 0 auto;
+    color: var(--text-color);
+}
+
+.fitness-progress h1,
+.fitness-progress h2,
+.progress-stat-value,
+.progress-weight-values strong {
+    font-family: "Outfit", "Inter", sans-serif;
+}
+
+.progress-page-heading,
+.progress-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.progress-page-heading { margin-bottom: 1.5rem; }
+.progress-page-heading h1 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.fitness-progress h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+.progress-page-heading p,
+.progress-panel-heading p { margin: 0.25rem 0 0; color: var(--muted-color); font-size: 0.85rem; }
+
+.progress-periods { display: flex; gap: 0.5rem; }
+.progress-periods a {
+    padding: 0.55rem 1rem;
+    color: var(--muted-color);
+    background: var(--surface-soft);
+    border: 1px solid var(--border-color);
+    border-radius: 28px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.progress-periods a.active,
+.progress-periods a:hover { color: var(--primary-color); border-color: rgba(0,212,170,.3); background: rgba(0,212,170,.12); }
+.progress-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1.5rem; }
+.progress-panel { position: relative; padding: 1.25rem; margin-bottom: 1.5rem; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; transition: border-color 150ms ease, box-shadow 150ms ease; }
+.progress-stat { position: relative; min-height: 130px; margin: 0; overflow: hidden; }
+.progress-stat::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,212,170,.4), transparent); }
+.progress-stat-label { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; color: var(--muted-color); font-size: 0.75rem; }
+.progress-icon { display: grid; place-items: center; flex: 0 0 28px; height: 28px; border-radius: 50%; background: rgba(0,212,170,.1); }
+.blue .progress-icon { background: rgba(68,136,255,.1); }
+.amber .progress-icon { background: rgba(245,158,11,.1); }
+.purple .progress-icon { background: rgba(168,85,247,.1); }
+.progress-stat-value { margin: 0.65rem 0 0.1rem; font-size: 1.5rem; font-weight: 700; }
+.progress-stat-value small { font-family: "Inter", sans-serif; font-size: 0.75rem; color: var(--muted-color); font-weight: 400; }
+.progress-caption { margin: 0; color: var(--muted-color); font-size: 0.75rem; }
+.fitness-progress .teal { color: var(--primary-color); }
+.fitness-progress .blue { color: #4488ff; }
+.fitness-progress .amber { color: #f59e0b; }
+.fitness-progress .purple { color: #a855f7; }
+.progress-link { display: block; color: inherit; text-decoration: none; }
+.progress-link:hover { color: inherit; }
+.progress-panel:hover,
+.progress-panel:focus-within { border-color: var(--primary-color); box-shadow: 0 8px 24px rgba(0,212,170,.12); }
+.progress-panel-primary::after,
+.progress-panel:not(:has(details[open])) > .progress-data-details > summary::after { content: ""; position: absolute; inset: 0; border-radius: 16px; }
+.progress-panel a:not(.progress-panel-primary),
+.progress-panel details[open] { position: relative; z-index: 1; }
+.progress-title-link { color: inherit; text-decoration: none; }
+#calorieOverview { scroll-margin-top: 1.5rem; }
+.progress-weight-values { display: flex; gap: 1.25rem; text-align: right; }
+.progress-weight-values a { text-decoration: none; }
+.progress-weight-values span { display: block; color: var(--muted-color); font-size: 0.75rem; }
+.progress-weight-values strong { font-size: 1.2rem; white-space: nowrap; }
+.progress-goal-label { display: flex; justify-content: space-between; gap: 1rem; margin: 0.4rem 0; font-size: 0.75rem; color: var(--muted-color); }
+.progress-panel-heading + .progress-goal-label { margin-top: 1.4rem; }
+.progress-track { height: 12px; background: var(--surface-soft); border-radius: 999px; overflow: hidden; }
+.progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--primary-color); }
+.progress-chart { position: relative; height: 210px; margin-top: 1rem; }
+.progress-chart canvas { display: block; width: 100%; height: 100%; }
+.progress-chart-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; font-size: 0.75rem; }
+.progress-chart-legend span { display: flex; align-items: center; gap: 0.35rem; }
+.progress-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.progress-breakdown-row { display: flex; justify-content: space-between; margin: 1rem 0 0.4rem; color: var(--muted-color); font-size: 0.85rem; }
+.progress-breakdown-row strong { color: var(--text-color); font-weight: 600; }
+.small-track { height: 8px; }
+.small-track.blue span { background: #4488ff; }
+.small-track.amber span { background: #f59e0b; }
+.small-track.purple span { background: #a855f7; }
+.progress-record-row { display: flex; gap: 0.75rem; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; text-decoration: none; }
+.progress-record-row > span { flex: 1; }
+.progress-record-row strong { white-space: nowrap; }
+.progress-record-row small { color: var(--muted-color); white-space: nowrap; }
+.progress-photo-button { display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem; }
+.progress-photo-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+.progress-photo-grid a { color: var(--muted-color); text-align: center; font-size: 0.75rem; text-decoration: none; }
+.progress-photo-grid a > img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 24px; margin-bottom: 0.35rem; }
+.progress-empty { grid-column: 1 / -1; color: var(--muted-color); font-size: 0.85rem; margin: 1rem 0; }
+.progress-small-link { display: inline-block; margin-top: 0.75rem; color: var(--primary-color); font-size: 0.8rem; text-decoration: none; }
+.progress-data-details { margin-top: 0.75rem; color: var(--muted-color); font-size: 0.8rem; }
+.progress-data-details summary { cursor: pointer; }
+.fitness-progress a:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 3px; }
+@media (max-width: 767.98px) {
+    .progress-page-heading, .progress-panel-heading { align-items: flex-start; flex-direction: column; }
+    .progress-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .progress-detail-grid { grid-template-columns: 1fr; gap: 0; }
+    .progress-photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .progress-weight-values { text-align: left; }
+    .progress-panel { padding: 1rem; }
+}

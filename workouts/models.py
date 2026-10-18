@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
@@ -179,6 +180,7 @@ class WorkoutExerciseRecord(models.Model):
         on_delete=models.PROTECT,
         related_name="workout_records",
     )
+    set_number = models.PositiveIntegerField(null=True, blank=True)
     sets = models.PositiveIntegerField(default=1)
     reps = models.PositiveIntegerField(default=1)
     weight_kg = models.DecimalField(
@@ -214,3 +216,28 @@ class WeightRecord(models.Model):
 
     def __str__(self):
         return f"{self.member.username} - {self.weight_kg} kg"
+
+
+class WaterIntake(models.Model):
+    member = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="water_records",
+    )
+    recorded_date = models.DateField(default=timezone.localdate)
+    litres = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+    )
+
+    class Meta:
+        ordering = ["-recorded_date"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["member", "recorded_date"], name="unique_member_water_date"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.member} - {self.recorded_date}: {self.litres} L"

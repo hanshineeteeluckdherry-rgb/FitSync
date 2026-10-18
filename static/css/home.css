@@ -23,8 +23,8 @@ body.home-page .fitsync-messages {
 
 .home-hero {
     position: relative;
-    height: 100%;
-    min-height: 0;
+    min-height: calc(100vh - 76px);
+    min-height: calc(100dvh - 76px);
     overflow: hidden;
     color: #f7f9fc;
     background: #020403 url('../img/home-hero.png') center 32% / cover no-repeat;
@@ -61,11 +61,11 @@ html[data-theme="light"] .home-hero-shade {
 }
 
 html[data-theme="light"] .home-mini-stat strong {
-    color: #061826 !important;
+    color: #ffffff !important;
 }
 
 html[data-theme="light"] .home-mini-stat span {
-    color: #4A5D70 !important;
+    color: #ffffff !important;
 }
 
 .home-hero-copy {
@@ -310,21 +310,15 @@ html[data-theme="light"] .home-mini-stat span {
 
 @media (min-width: 1200px) {
     body.home-page {
-        display: flex;
-        height: 100vh;
-        height: 100dvh;
-        min-height: 0;
-        flex-direction: column;
-    }
-
-    body.home-page > .fitsync-navbar {
-        flex: 0 0 auto;
+        display: block;
+        height: auto;
+        min-height: 100vh;
     }
 
     .home-main {
         height: auto;
-        min-height: 0;
-        flex: 1 1 auto;
+        min-height: calc(100vh - 76px);
+        min-height: calc(100dvh - 76px);
     }
 }
 

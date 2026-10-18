@@ -171,6 +171,14 @@ class AttendanceTests(TestCase):
         self.assertRedirects(response, reverse("attendance:capacity_settings"))
         self.assertEqual(GymConfiguration.get_capacity(), 75)
 
+    def test_capacity_page_uses_capacity_navigation_label(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("attendance:capacity_settings"))
+
+        self.assertContains(response, "Capacity Management")
+        self.assertContains(response, "Gym Capacity")
+
     def test_staff_can_view_attendance_report(self):
         AttendanceRecord.objects.create(member=self.member)
         self.client.force_login(self.staff)

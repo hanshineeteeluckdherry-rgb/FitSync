@@ -1,0 +1,55 @@
+{% load static %}
+<div class="dashboard-topbar-actions d-flex align-items-center gap-2">
+    <button class="btn theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Switch theme">
+        <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i>
+    </button>
+
+    <div class="dropdown">
+        <button class="btn notification-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+            {% if request.user.role == "MEMBER" %}
+                <img src="{% static 'img/member-dashboard/bell.svg' %}" alt="">
+            {% else %}
+                <i class="bi bi-bell" aria-hidden="true"></i>
+            {% endif %}
+            {% if unread_notification_count %}<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">{{ unread_notification_count }}</span>{% endif %}
+        </button>
+        <div class="dropdown-menu dropdown-menu-end p-2" style="width: min(22rem, 90vw);">
+            <h2 class="h6 px-2 pt-2">Notifications</h2>
+            {% for notification in notification_menu_items %}
+                <a class="dropdown-item text-wrap" href="{% url 'notifications:detail' notification.id %}"><strong>{{ notification.title }}</strong><br><small>{{ notification.message|truncatechars:70 }}</small></a>
+            {% empty %}
+                <span class="dropdown-item-text">No unread notifications.</span>
+            {% endfor %}
+            <hr class="dropdown-divider">
+            <a class="dropdown-item text-center" href="{% url 'notifications:list' %}">View All</a>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <button class="navbar-account-toggle dashboard-account-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="navbar-account-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+            {% if request.user.member_profile.profile_picture %}
+                <img class="navbar-account-avatar" src="{{ request.user.member_profile.profile_picture.url }}" alt="">
+            {% elif request.user.coach_profile.photo_url %}
+                <img class="navbar-account-avatar" src="{{ request.user.coach_profile.photo_url }}" alt="">
+            {% elif request.user.email == "member@fitsync.com" %}
+                <img class="navbar-account-avatar" src="{% static 'img/member-dashboard/lionel.png' %}" alt="">
+            {% else %}
+                <span class="navbar-account-avatar navbar-account-initials" aria-hidden="true">
+                    {% if request.user.first_name or request.user.last_name %}{{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}
+                </span>
+            {% endif %}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end navbar-account-menu">
+            <li><a class="dropdown-item" href="{% url 'accounts:dashboard' %}"><i class="bi bi-grid me-2"></i>Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button class="dropdown-item text-danger" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>

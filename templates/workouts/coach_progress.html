@@ -1,0 +1,27 @@
+{% extends "layouts/coach_base.html" %}
+{% load static %}
+{% block page_title %}Member Progress{% endblock %}
+{% block dashboard_heading %}Progress{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}
+{% block dashboard_content %}
+<div class="workout-page">
+    <div class="page-heading"><h1>Member Progress</h1><p>Review training activity and the latest weight records for your assigned members.</p></div>
+    <div class="row g-3">
+        {% for member in members %}
+        <div class="col-lg-6"><article class="workout-card h-100">
+            <h2 class="h5">{{ member.get_full_name|default:member.username }}</h2>
+            <p>{{ member.member_profile.fitness_goal|default:"No fitness goal set" }}</p>
+            <dl class="row mb-3">
+                <dt class="col-7">Latest weight</dt><dd class="col-5">{% if member.latest_weight != None %}{{ member.latest_weight|floatformat:1 }} kg{% else %}Not recorded{% endif %}</dd>
+                <dt class="col-7">Weight recorded</dt><dd class="col-5">{{ member.latest_weight_date|date:"d M Y"|default:"—" }}</dd>
+                <dt class="col-7">Target weight</dt><dd class="col-5">{% if member.member_profile.target_weight_kg %}{{ member.member_profile.target_weight_kg }} kg{% else %}Not set{% endif %}</dd>
+                <dt class="col-7">Completed workouts</dt><dd class="col-5">{{ member.completed_count }}</dd>
+                <dt class="col-7">Workouts in last 7 days</dt><dd class="col-5">{{ member.weekly_count }}</dd>
+                <dt class="col-7">Latest workout</dt><dd class="col-5">{{ member.last_workout|date:"d M Y"|default:"Not recorded" }}</dd>
+            </dl>
+            <a class="btn btn-primary-fitsync" href="{% url 'workouts:coach_member_progress' member.pk %}">View Progress &amp; History</a>
+        </article></div>
+        {% empty %}<div class="col-12"><div class="workout-empty-state"><h2 class="h5">No assigned members</h2><p>Your members' progress summaries will appear here once they are assigned.</p></div></div>{% endfor %}
+    </div>
+</div>
+{% endblock %}

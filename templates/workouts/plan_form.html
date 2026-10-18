@@ -7,7 +7,7 @@
 <div class="workout-form-wrap">
     <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
         <div>
-            <a class="back-link" href="{% if plan %}{% url 'workouts:plan_detail' plan.id %}{% elif coach_mode %}{% url 'workouts:coach_members' %}{% else %}{% url 'workouts:plans' %}{% endif %}">← Back</a>
+            <a class="back-link" href="{% if plan %}{% url 'workouts:plan_detail' plan.id %}{% elif coach_mode %}{% url 'workouts:coach_plans' %}{% else %}{% url 'workouts:plans' %}{% endif %}">← Back</a>
             <h1 class="h3 mt-2 mb-1">{{ title }}</h1>
             <p class="text-muted mb-0">Build a personalised plan with exercises, sets and schedule.</p>
         </div>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-4">
-            <a class="btn btn-secondary-fitsync" href="{% if plan %}{% url 'workouts:plan_detail' plan.id %}{% elif coach_mode %}{% url 'workouts:coach_members' %}{% else %}{% url 'workouts:plans' %}{% endif %}">Cancel</a>
+            <a class="btn btn-secondary-fitsync" href="{% if plan %}{% url 'workouts:plan_detail' plan.id %}{% elif coach_mode %}{% url 'workouts:coach_plans' %}{% else %}{% url 'workouts:plans' %}{% endif %}">Cancel</a>
             <button class="btn btn-primary-fitsync px-4" type="submit"><i class="bi bi-check-lg me-1"></i>Save Plan</button>
         </div>
     </form>

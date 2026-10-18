@@ -1,17 +1,21 @@
 from decimal import Decimal, InvalidOperation
+from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db import transaction
+from django.db.models import Count, Q, OuterRef, Subquery
+from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from accounts.models import CoachAssignment, User
 
-from .forms import ExerciseForm, WeightRecordForm, WorkoutPlanForm
+from .forms import ExerciseForm, WaterIntakeForm, WeightRecordForm, WorkoutPlanForm, WorkoutSetForm
 from .models import (
     Exercise,
+    WaterIntake,
     WeightRecord,
     WorkoutExerciseRecord,
     WorkoutPlan,
@@ -22,6 +26,35 @@ from .models import (
 
 def is_member(user):
     return user.is_authenticated and user.role == "MEMBER"
+
+
+@login_required
+def water_intake(request):
+    if not is_member(request.user):
+        return HttpResponseForbidden("This page is for members.")
+
+    today = timezone.localdate()
+    records = WaterIntake.objects.filter(member=request.user)
+    today_record = records.filter(recorded_date=today).first()
+    form = WaterIntakeForm(
+        request.POST or None,
+        initial={"recorded_date": today, "litres": today_record.litres if today_record else 0},
+    )
+    if request.method == "POST" and form.is_valid():
+        WaterIntake.objects.update_or_create(
+            member=request.user,
+            recorded_date=form.cleaned_data["recorded_date"],
+            defaults={"litres": form.cleaned_data["litres"]},
+        )
+        messages.success(request, "Your water intake has been saved.")
+        return redirect("workouts:water_intake")
+
+    return render(request, "workouts/water_intake.html", {
+        "form": form,
+        "records": records[:30],
+        "today_litres": today_record.litres if today_record else 0,
+        "active_sidebar": "water",
+    })
 
 
 def is_coach(user):
@@ -135,6 +168,7 @@ def exercise_library(request):
             "equipment_choices": Exercise.EQUIPMENT_CHOICES,
             "plan": plan,
             "active_sidebar": "plans",
+            "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html",
         },
     )
 
@@ -145,7 +179,7 @@ def exercise_detail(request, exercise_id):
     return render(
         request,
         "workouts/exercise_detail.html",
-        {"exercise": exercise, "active_sidebar": "plans"},
+        {"exercise": exercise, "active_sidebar": "plans", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
 
 
@@ -330,13 +364,13 @@ def plan_delete(request, plan_id):
         plan.delete()
         messages.success(request, "Workout plan deleted.")
         if is_coach(request.user):
-            return redirect("workouts:coach_members")
+            return redirect("workouts:coach_plans")
         return redirect("workouts:plans")
 
     return render(
         request,
         "workouts/plan_confirm_delete.html",
-        {"plan": plan, "active_sidebar": "plans"},
+        {"plan": plan, "active_sidebar": "plans", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
 
 
@@ -432,13 +466,30 @@ def start_workout(request, plan_id):
     return redirect("workouts:active_workout", session_id=session.id)
 
 
+def workout_set_entries(session, data=None):
+    if not session.workout_plan:
+        return []
+    entries = list(session.workout_plan.plan_exercises.select_related("exercise"))
+    for entry in entries:
+        selected = data.getlist(f"completed_sets_{entry.id}") if data is not None else []
+        entry.set_rows = []
+        for number in range(1, entry.sets + 1):
+            form = WorkoutSetForm(
+                data,
+                prefix=f"set_{entry.id}_{number}",
+                initial={"reps": entry.reps, "weight_kg": entry.weight_kg},
+            )
+            entry.set_rows.append({"number": number, "form": form, "completed": str(number) in selected})
+    return entries
+
+
 @login_required
 def active_workout(request, session_id):
     session = get_object_or_404(WorkoutSession, id=session_id, member=request.user)
     if session.completed_at:
         return redirect("workouts:history_detail", session_id=session.id)
 
-    entries = session.workout_plan.plan_exercises.select_related("exercise") if session.workout_plan else []
+    entries = workout_set_entries(session)
     return render(
         request,
         "workouts/active_workout.html",
@@ -447,33 +498,45 @@ def active_workout(request, session_id):
 
 
 @login_required
+@transaction.atomic
 def finish_workout(request, session_id):
-    session = get_object_or_404(WorkoutSession, id=session_id, member=request.user)
+    session = get_object_or_404(WorkoutSession.objects.select_for_update(), id=session_id, member=request.user)
     if request.method != "POST":
         return redirect("workouts:active_workout", session_id=session.id)
     if session.completed_at:
         return redirect("workouts:history_detail", session_id=session.id)
 
-    entries = session.workout_plan.plan_exercises.select_related("exercise") if session.workout_plan else []
-    total_duration = 0
+    entries = workout_set_entries(session, request.POST)
+    completed_sets = []
+    valid = True
     for entry in entries:
-        sets = positive_int(request.POST.get(f"sets_{entry.id}"), entry.sets) or 1
-        reps = positive_int(request.POST.get(f"reps_{entry.id}"), entry.reps) or 1
-        weight = decimal_or_none(request.POST.get(f"weight_{entry.id}"))
-        duration = positive_int(request.POST.get(f"duration_{entry.id}"), 0)
-        total_duration += duration
+        for row in entry.set_rows:
+            if row["completed"]:
+                completed_sets.append((entry, row))
+                if not row["form"].is_valid():
+                    valid = False
+    if not completed_sets:
+        messages.error(request, "Mark at least one set complete before finishing the workout.")
+    elif not valid:
+        messages.error(request, "Check the reps and weight for your completed sets.")
+    if not completed_sets or not valid:
+        return render(request, "workouts/active_workout.html", {
+            "session": session, "entries": entries, "active_sidebar": "plans",
+            "notes": request.POST.get("notes", ""),
+        })
 
+    for entry, row in completed_sets:
         WorkoutExerciseRecord.objects.create(
             workout_session=session,
             exercise=entry.exercise,
-            sets=sets,
-            reps=reps,
-            weight_kg=weight,
-            duration_minutes=duration or None,
+            set_number=row["number"],
+            sets=1,
+            reps=row["form"].cleaned_data["reps"],
+            weight_kg=row["form"].cleaned_data["weight_kg"],
         )
 
     session.completed_at = timezone.now()
-    session.duration_minutes = positive_int(request.POST.get("session_duration"), total_duration) or total_duration or None
+    session.duration_minutes = None
     session.notes = request.POST.get("notes", "").strip()
     session.save()
     messages.success(request, "Workout completed. Great work!")
@@ -488,7 +551,7 @@ def workout_history(request):
     sessions = WorkoutSession.objects.filter(
         member=request.user,
         completed_at__isnull=False,
-    ).select_related("workout_plan")
+    ).select_related("workout_plan").annotate(exercise_count=Count("exercise_records__exercise", distinct=True))
     return render(
         request,
         "workouts/workout_history.html",
@@ -503,11 +566,11 @@ def workout_history_detail(request, session_id):
         if not (is_coach(request.user) and coach_is_assigned(request.user, session.member)):
             return HttpResponseForbidden("You cannot view this workout history.")
 
-    records = session.exercise_records.select_related("exercise")
+    records = session.exercise_records.select_related("exercise").order_by("exercise_id", "set_number", "id")
     return render(
         request,
         "workouts/workout_history_detail.html",
-        {"session": session, "records": records, "active_sidebar": "history", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
+        {"session": session, "records": records, "active_sidebar": "progress" if is_coach(request.user) else "history", "layout_template": "layouts/coach_base.html" if is_coach(request.user) else "layouts/member_base.html"},
     )
 
 
@@ -516,14 +579,85 @@ def progress(request):
     if not is_member(request.user):
         return HttpResponseForbidden("This page is for members.")
 
-    records = WeightRecord.objects.filter(member=request.user)
-    target_weight = None
-    try:
-        target_weight = request.user.member_profile.target_weight_kg
-    except Exception:
-        pass
+    today = timezone.localdate()
+    period = request.GET.get("period", "weekly")
+    if period not in ["weekly", "monthly", "all"]:
+        period = "weekly"
+    start_date = None
+    if period == "weekly":
+        start_date = today - timedelta(days=6)
+    elif period == "monthly":
+        start_date = today - timedelta(days=29)
 
-    chart_records = list(records.order_by("recorded_date"))
+    all_records = WeightRecord.objects.filter(member=request.user, recorded_date__lte=today)
+    records = all_records
+    sessions = WorkoutSession.objects.filter(member=request.user, completed_at__isnull=False, completed_at__date__lte=today).select_related("workout_plan")
+    if start_date:
+        records = records.filter(recorded_date__gte=start_date)
+        sessions = sessions.filter(completed_at__date__gte=start_date)
+
+    profile = getattr(request.user, "member_profile", None)
+    target_weight = profile.target_weight_kg if profile else None
+    latest = all_records.first()
+    first = all_records.order_by("recorded_date", "id").first()
+    current_weight = latest.weight_kg if latest else (profile.current_weight_kg if profile else None)
+    initial_weight = first.weight_kg if first else current_weight
+    goal_percent = 0
+    remaining_weight = None
+    if current_weight is not None and target_weight is not None:
+        if initial_weight >= target_weight:
+            remaining_weight = max(0, current_weight - target_weight)
+        else:
+            remaining_weight = max(0, target_weight - current_weight)
+        goal_distance = initial_weight - target_weight
+        if goal_distance:
+            goal_percent = max(0, min(100, round(float((initial_weight - current_weight) / goal_distance) * 100)))
+        elif current_weight == target_weight:
+            goal_percent = 100
+
+    chart_records = list(records.order_by("recorded_date", "id"))
+    weight_change = None
+    if len(chart_records) >= 2:
+        weight_change = chart_records[-1].weight_kg - chart_records[0].weight_kg
+    session_list = list(sessions)
+    durations = [item.duration_minutes for item in session_list if item.duration_minutes is not None]
+    average_minutes = round(sum(durations) / len(durations)) if durations else None
+    estimated_calories = sum(durations) * 7 if durations else None
+
+    breakdown_counts = {"Strength": 0, "Cardio": 0, "HIIT": 0, "Other": 0}
+    for item in session_list:
+        description = f"{item.workout_plan.goal} {item.workout_plan.name}".lower() if item.workout_plan else ""
+        if "hiit" in description:
+            category = "HIIT"
+        elif "cardio" in description or "endurance" in description:
+            category = "Cardio"
+        elif "strength" in description or "muscle" in description:
+            category = "Strength"
+        else:
+            category = "Other"
+        breakdown_counts[category] += 1
+    breakdown = [
+        {"name": name, "count": count, "percent": round(count / len(session_list) * 100) if session_list else 0, "colour": colour}
+        for (name, count), colour in zip(breakdown_counts.items(), ["teal", "blue", "amber", "purple"])
+    ]
+
+    personal_records = []
+    seen_exercises = set()
+    exercise_records = WorkoutExerciseRecord.objects.filter(workout_session__in=sessions, weight_kg__isnull=False).select_related("exercise", "workout_session").order_by("-weight_kg", "-workout_session__completed_at")
+    for record in exercise_records:
+        if record.exercise_id not in seen_exercises:
+            personal_records.append(record)
+            seen_exercises.add(record.exercise_id)
+        if len(personal_records) == 4:
+            break
+
+    calorie_days = []
+    recent_sessions = WorkoutSession.objects.filter(member=request.user, completed_at__date__gte=today - timedelta(days=6), completed_at__date__lte=today)
+    for offset in range(6, -1, -1):
+        day = today - timedelta(days=offset)
+        minutes = sum(item.duration_minutes or 0 for item in recent_sessions if timezone.localdate(item.completed_at) == day)
+        calorie_days.append({"label": day.strftime("%a"), "value": minutes * 7})
+
     return render(
         request,
         "workouts/progress.html",
@@ -531,6 +665,20 @@ def progress(request):
             "records": records,
             "chart_records": chart_records,
             "target_weight": target_weight,
+            "period": period,
+            "current_weight": current_weight,
+            "initial_weight": initial_weight,
+            "remaining_weight": remaining_weight,
+            "goal_percent": goal_percent,
+            "weight_change": weight_change,
+            "workout_count": len(session_list),
+            "average_minutes": average_minutes,
+            "estimated_calories": estimated_calories,
+            "breakdown": breakdown,
+            "personal_records": personal_records,
+            "photos": records.exclude(progress_photo="").exclude(progress_photo__isnull=True)[:10],
+            "weight_chart": [{"label": item.recorded_date.strftime("%d %b"), "value": float(item.weight_kg)} for item in chart_records],
+            "calorie_chart": calorie_days,
             "active_sidebar": "progress",
         },
     )
@@ -595,12 +743,59 @@ def coach_members(request):
     assignments = CoachAssignment.objects.filter(
         coach=request.user,
         active=True,
-    ).select_related("member")
+        member__is_active=True,
+    ).select_related("member", "member__member_profile")
     return render(
         request,
         "workouts/coach_members.html",
         {"assignments": assignments, "active_sidebar": "members"},
     )
+
+
+@login_required
+def coach_plans(request):
+    if not is_coach(request.user):
+        return HttpResponseForbidden("This page is for coaches.")
+    members = User.objects.filter(
+        role="MEMBER", is_active=True,
+        coach_links__coach=request.user, coach_links__active=True,
+    ).order_by("first_name", "last_name")
+    plans = WorkoutPlan.objects.filter(
+        coach=request.user, member__in=members, plan_type="COACH_ASSIGNED",
+    ).select_related("member").annotate(exercise_count=Count("plan_exercises")).order_by(
+        "member__first_name", "member__last_name", "member_id", "-updated_at", "-pk"
+    )
+    selected_member = request.GET.get("member", "")
+    if selected_member:
+        # Reject unassigned IDs rather than exposing their names or plans.
+        member = get_object_or_404(members, pk=selected_member if selected_member.isdigit() else 0)
+        plans = plans.filter(member=member)
+    page = Paginator(plans, 15).get_page(request.GET.get("page"))
+    return render(request, "workouts/coach_plans.html", {
+        "plans": page.object_list, "page_obj": page, "plan_count": page.paginator.count,
+        "members": members, "selected_member": selected_member,
+        "active_sidebar": "plans",
+    })
+
+
+@login_required
+def coach_progress(request):
+    if not is_coach(request.user):
+        return HttpResponseForbidden("This page is for coaches.")
+    weights = WeightRecord.objects.filter(member=OuterRef("pk")).order_by("-recorded_date", "-pk")
+    completed = WorkoutSession.objects.filter(member=OuterRef("pk"), completed_at__isnull=False).order_by("-completed_at")
+    members = User.objects.filter(
+        role="MEMBER", is_active=True, coach_links__coach=request.user, coach_links__active=True,
+    ).select_related("member_profile").annotate(
+        latest_weight=Subquery(weights.values("weight_kg")[:1]),
+        latest_weight_date=Subquery(weights.values("recorded_date")[:1]),
+        last_workout=Subquery(completed.values("completed_at")[:1]),
+        completed_count=Count("workout_sessions", filter=Q(workout_sessions__completed_at__isnull=False), distinct=True),
+        weekly_count=Count("workout_sessions", filter=Q(workout_sessions__completed_at__date__gte=timezone.localdate() - timedelta(days=6), workout_sessions__completed_at__isnull=False), distinct=True),
+    ).order_by("first_name", "last_name")
+    return render(request, "workouts/coach_progress.html", {
+        "members": members, "active_sidebar": "progress",
+    })
 
 
 @login_required
@@ -627,7 +822,7 @@ def coach_plan_create(request, member_id):
         "workouts/plan_form.html",
         {
             "form": form,
-            "title": f"Create Plan for {member.username}",
+            "title": f"Create Plan for {member.get_full_name() or member.username}",
             "coach_mode": True,
             "active_sidebar": "plans",
             "layout_template": "layouts/coach_base.html",

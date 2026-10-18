@@ -75,11 +75,8 @@ Workout
 
                             ·
 
-                            {{ session.duration_minutes|default:"—" }} min
-
-                            ·
-
-                            {{ session.exercise_records.count }} exercises
+                            {% if session.duration_minutes %}{{ session.duration_minutes }} min ·{% endif %}
+                            {{ session.exercise_count }} exercises
 
                         </div>
 

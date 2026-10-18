@@ -16,9 +16,9 @@
 
         <div class="collapse navbar-collapse" id="fitsyncPublicNav">
             <ul class="navbar-nav mx-auto align-items-xl-center">
-                <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'aboutus:index' %}">About Us</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'memberships' and not request.user.is_authenticated %}active{% endif %}" href="{% url 'memberships:public_packages' %}">Memberships</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'aboutus' %}active{% endif %}" href="{% url 'aboutus:index' %}">About Us</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'memberships' %}active{% endif %}" href="{% url 'memberships:public_packages' %}">Memberships</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'features' %}active{% endif %}" href="{% url 'core:features' %}">Features</a></li>
                 <!-- Opens the public bookings schedule and highlights this link on booking pages. -->
                 <li class="nav-item">
@@ -27,8 +27,8 @@
                         Bookings
                     </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'ourteam:index' %}">Our Team</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'aboutus:index' %}#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'ourteam' %}active{% endif %}" href="{% url 'ourteam:index' %}">Our Team</a></li>
+                <li class="nav-item"><a class="nav-link {% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'core:contact' %}">Contact</a></li>
             </ul>
 
             <div class="navbar-actions d-flex align-items-center gap-2 pt-3 pt-xl-0">
@@ -39,7 +39,7 @@
                 <!-- Account actions use the same shared Bootstrap button styles. -->
                 {% if request.user.is_authenticated %}
                     <div class="dropdown">
-                        <button class="btn btn-secondary-fitsync position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                        <button class="btn notification-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
                             <i class="bi bi-bell"></i>
                             {% if unread_notification_count %}<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger">{{ unread_notification_count }}</span>{% endif %}
                         </button>
@@ -54,12 +54,33 @@
                             <a class="dropdown-item text-center" href="{% url 'notifications:list' %}">View All</a>
                         </div>
                     </div>
-                    <a class="btn btn-secondary-fitsync" href="{% url 'accounts:profile' %}">Profile</a>
-                    <a class="btn btn-primary-fitsync" href="{% url 'accounts:dashboard' %}">Dashboard</a>
-                    <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
-                        {% csrf_token %}
-                        <button class="btn btn-secondary-fitsync" type="submit">Logout</button>
-                    </form>
+                    <div class="dropdown">
+                        <button class="navbar-account-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="navbar-account-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+                            {% if request.user.member_profile.profile_picture %}
+                                <img class="navbar-account-avatar" src="{{ request.user.member_profile.profile_picture.url }}" alt="">
+                            {% elif request.user.coach_profile.photo_url %}
+                                <img class="navbar-account-avatar" src="{{ request.user.coach_profile.photo_url }}" alt="">
+                            {% elif request.user.email == "member@fitsync.com" %}
+                                <img class="navbar-account-avatar" src="{% static 'img/member-dashboard/lionel.png' %}" alt="">
+                            {% else %}
+                                <span class="navbar-account-avatar navbar-account-initials" aria-hidden="true">
+                                    {% if request.user.first_name or request.user.last_name %}{{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}
+                                </span>
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end navbar-account-menu">
+                            <li><a class="dropdown-item" href="{% url 'accounts:dashboard' %}"><i class="bi bi-grid me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'accounts:logout' %}">
+                                    {% csrf_token %}
+                                    <button class="dropdown-item text-danger" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 {% else %}
                     <a class="btn btn-secondary-fitsync" href="{% url 'accounts:login' %}">Login</a>
                     <a class="btn btn-primary-fitsync" href="{% url 'accounts:register' %}">Get Started</a>

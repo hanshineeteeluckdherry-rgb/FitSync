@@ -172,6 +172,38 @@ class WorkoutFeatureTests(TestCase):
             self.member.username,
         )
 
+    def test_coach_can_select_exercises_for_assigned_members_plan(self):
+        CoachAssignment.objects.create(coach=self.coach, member=self.member, active=True)
+        plan = self.create_plan(plan_type="COACH_ASSIGNED", coach=self.coach)
+        additional = Exercise.objects.create(name="Additional Press", category="CHEST", is_active=True)
+        self.client.force_login(self.coach)
+        url = reverse("workouts:plan_add_exercises", args=[plan.id])
+        response = self.client.get(url)
+        self.assertContains(response, "Coach Menu")
+        self.assertContains(response, "exercise-selection-image")
+        self.assertContains(response, additional.library_image)
+        self.assertNotContains(response, "img/exercises/chest.jpg")
+        response = self.client.post(url, {"exercise_ids": [self.exercise.id, additional.id]})
+        self.assertRedirects(response, reverse("workouts:plan_detail", args=[plan.id]))
+        self.assertEqual(plan.plan_exercises.count(), 2)
+        self.client.post(url, {"exercise_ids": [additional.id]})
+        self.assertEqual(plan.plan_exercises.count(), 2)
+
+    def test_unassigned_coach_cannot_add_exercises(self):
+        plan = self.create_plan(plan_type="COACH_ASSIGNED", coach=self.coach)
+        self.client.force_login(self.coach)
+        url = reverse("workouts:plan_add_exercises", args=[plan.id])
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.post(url, {"exercise_ids": [self.exercise.id]}).status_code, 403)
+
+    def test_coach_library_and_exercise_detail_keep_coach_layout(self):
+        self.client.force_login(self.coach)
+        response = self.client.get(reverse("workouts:exercise_library"))
+        self.assertContains(response, "Coach Menu")
+        self.assertNotContains(response, "Member Menu")
+        response = self.client.get(reverse("workouts:exercise_detail", args=[self.exercise.id]))
+        self.assertContains(response, "Coach Menu")
+
     def test_staff_can_manage_exercises(self):
         self.client.force_login(self.staff)
 
@@ -292,11 +324,11 @@ class WorkoutFeatureTests(TestCase):
         finish_response = self.client.post(
             reverse("workouts:finish_workout", args=[session.id]),
             {
-                f"sets_{entry.id}": "4",
-                f"reps_{entry.id}": "8",
-                f"weight_{entry.id}": "45.5",
-                f"duration_{entry.id}": "12",
-                "session_duration": "35",
+                f"completed_sets_{entry.id}": ["1", "2"],
+                f"set_{entry.id}_1-reps": "8",
+                f"set_{entry.id}_1-weight_kg": "45.5",
+                f"set_{entry.id}_2-reps": "6",
+                f"set_{entry.id}_2-weight_kg": "50",
                 "notes": "Good session",
             },
         )
@@ -307,13 +339,93 @@ class WorkoutFeatureTests(TestCase):
         )
         session.refresh_from_db()
         self.assertIsNotNone(session.completed_at)
-        self.assertEqual(session.duration_minutes, 35)
+        self.assertIsNone(session.duration_minutes)
         self.assertEqual(session.notes, "Good session")
 
-        record = WorkoutExerciseRecord.objects.get(workout_session=session)
-        self.assertEqual(record.sets, 4)
+        self.assertEqual(session.exercise_records.count(), 2)
+        record = session.exercise_records.get(set_number=1)
+        self.assertEqual(record.sets, 1)
         self.assertEqual(record.reps, 8)
         self.assertEqual(str(record.weight_kg), "45.50")
+        second = session.exercise_records.get(set_number=2)
+        self.assertEqual(second.reps, 6)
+        self.assertEqual(str(second.weight_kg), "50.00")
+
+    def test_completed_sets_ignore_duplicates_and_invalid_numbers(self):
+        plan = self.create_plan()
+        entry = plan.plan_exercises.first()
+        skipped = WorkoutPlanExercise.objects.create(
+            workout_plan=plan, exercise=self.exercise, sets=3, reps=10, order=2,
+        )
+        session = WorkoutSession.objects.create(member=self.member, workout_plan=plan)
+        self.client.force_login(self.member)
+
+        self.client.post(reverse("workouts:finish_workout", args=[session.id]), {
+            f"completed_sets_{entry.id}": ["1", "1", "3", "0", "999", "abc"],
+            f"set_{entry.id}_1-reps": "10",
+            f"set_{entry.id}_3-reps": "8",
+            f"sets_{skipped.id}": "3",
+            "session_duration": "500",
+        })
+
+        self.assertEqual(session.exercise_records.count(), 2)
+        self.assertEqual(list(session.exercise_records.values_list("set_number", flat=True)), [1, 3])
+        session.refresh_from_db()
+        self.assertIsNone(session.duration_minutes)
+
+    def test_workout_cannot_finish_without_completed_sets(self):
+        plan = self.create_plan()
+        session = WorkoutSession.objects.create(member=self.member, workout_plan=plan)
+        self.client.force_login(self.member)
+
+        response = self.client.post(reverse("workouts:finish_workout", args=[session.id]), {})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Mark at least one set complete")
+        session.refresh_from_db()
+        self.assertIsNone(session.completed_at)
+        self.assertFalse(session.exercise_records.exists())
+
+    def test_invalid_set_values_keep_workout_open_without_partial_records(self):
+        plan = self.create_plan()
+        entry = plan.plan_exercises.first()
+        session = WorkoutSession.objects.create(member=self.member, workout_plan=plan)
+        self.client.force_login(self.member)
+        response = self.client.post(reverse("workouts:finish_workout", args=[session.id]), {
+            f"completed_sets_{entry.id}": ["1", "2"],
+            f"set_{entry.id}_1-reps": "10",
+            f"set_{entry.id}_1-weight_kg": "20",
+            f"set_{entry.id}_2-reps": "0",
+            f"set_{entry.id}_2-weight_kg": "-5",
+            "notes": "Keep my notes",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Keep my notes")
+        self.assertContains(response, 'value="20"')
+        session.refresh_from_db()
+        self.assertIsNone(session.completed_at)
+        self.assertFalse(session.exercise_records.exists())
+
+    def test_set_history_preserves_weights_and_counts_one_exercise(self):
+        plan = self.create_plan()
+        entry = plan.plan_exercises.first()
+        session = WorkoutSession.objects.create(member=self.member, workout_plan=plan)
+        self.client.force_login(self.member)
+        data = {
+            f"completed_sets_{entry.id}": ["1", "3"],
+            f"set_{entry.id}_1-reps": "10",
+            f"set_{entry.id}_1-weight_kg": "20",
+            f"set_{entry.id}_3-reps": "8",
+            f"set_{entry.id}_3-weight_kg": "25",
+        }
+        self.client.post(reverse("workouts:finish_workout", args=[session.id]), data)
+        self.client.post(reverse("workouts:finish_workout", args=[session.id]), data)
+        self.assertEqual(session.exercise_records.count(), 2)
+        response = self.client.get(reverse("workouts:history_detail", args=[session.id]))
+        self.assertContains(response, "20.00")
+        self.assertContains(response, "25.00")
+        response = self.client.get(reverse("workouts:history"))
+        self.assertEqual(response.context["sessions"].get(id=session.id).exercise_count, 1)
 
     def test_workout_history_only_shows_completed_sessions(self):
         plan = self.create_plan()

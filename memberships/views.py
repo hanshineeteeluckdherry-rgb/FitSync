@@ -67,6 +67,15 @@ def _current_for(user):
     return membership
 
 
+def _report_date(value):
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
 def public_packages(request):
     return render(request, "memberships/public_packages.html", {"packages": _active_packages()})
 
@@ -465,12 +474,24 @@ def admin_payment_edit(request, payment_id):
 
 @admin_required
 def admin_membership_report(request):
-    active_count = Membership.objects.filter(status=Membership.Status.ACTIVE).count()
-    expired_count = Membership.objects.filter(status=Membership.Status.EXPIRED).count()
-    cancelled_count = Membership.objects.filter(status=Membership.Status.CANCELLED).count()
-    successful = Payment.objects.filter(status=Payment.Status.SUCCESS)
+    date_from = _report_date(request.GET.get("date_from", ""))
+    date_to = _report_date(request.GET.get("date_to", ""))
+    memberships = Membership.objects.all()
+    payments = Payment.objects.all()
+
+    if date_from:
+        memberships = memberships.filter(created_at__date__gte=date_from)
+        payments = payments.filter(created_at__date__gte=date_from)
+    if date_to:
+        memberships = memberships.filter(created_at__date__lte=date_to)
+        payments = payments.filter(created_at__date__lte=date_to)
+
+    active_count = memberships.filter(status=Membership.Status.ACTIVE).count()
+    expired_count = memberships.filter(status=Membership.Status.EXPIRED).count()
+    cancelled_count = memberships.filter(status=Membership.Status.CANCELLED).count()
+    successful = payments.filter(status=Payment.Status.SUCCESS)
     package_counts = (
-        Membership.objects.values("package__name")
+        memberships.values("package__name")
         .annotate(total=Count("id"))
         .order_by("-total")
     )
@@ -481,6 +502,8 @@ def admin_membership_report(request):
         "successful_payments": successful.count(),
         "payment_total": successful.aggregate(total=Sum("amount"))["total"] or 0,
         "package_counts": package_counts,
+        "date_from": date_from,
+        "date_to": date_to,
         "active_sidebar": "reports",
     }
     return render(request, "memberships/admin/report.html", context)

@@ -12,6 +12,11 @@ class MembershipPackage(models.Model):
         ("FITNESS", "Fitness"),
         ("SAUNA", "Sauna"),
         ("PERSONAL_TRAINING", "Personal Training"),
+        ("PILATES", "Pilates"),
+        ("BOXING", "Boxing"),
+        ("HIIT", "HIIT"),
+        ("CYCLING", "Cycling"),
+        ("STRENGTH_TRAINING", "Strength Training"),
     ]
 
     name = models.CharField(max_length=80)

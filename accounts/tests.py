@@ -5,11 +5,11 @@ from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
-from attendance.models import AttendanceRecord
+from attendance.models import AttendanceRecord, GymConfiguration
 from bookings.models import Booking, Service, Session
 from memberships.models import Membership, MembershipPackage, Payment
 
-from .models import CoachAssignment, MemberProfile, User
+from .models import CoachAssignment, CoachProfile, MemberProfile, User
 
 
 class AccountTestMixin:
@@ -114,10 +114,11 @@ class RegistrationLoginTests(AccountTestMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Welcome back")
         self.assertContains(response, "login-hero.jpeg")
-        self.assertContains(response, "lionel-messi.png")
+        self.assertContains(response, "member-dashboard/lionel.png")
         self.assertContains(response, "fitsync-logo.png")
         self.assertContains(response, "data-theme-toggle")
         self.assertContains(response, "Demo Accounts")
+        self.assertContains(response, "admin@fitsync.com")
         self.assertNotContains(response, "fitsync-navbar")
 
     def test_registration_page_uses_two_step_figma_layout(self):
@@ -177,6 +178,31 @@ class RegistrationLoginTests(AccountTestMixin, TestCase):
         self.assertContains(response, "Classes &amp; Services")
         self.assertContains(response, "Our Team")
         self.assertContains(response, "My Membership")
+        self.assertContains(response, "dashboard-topbar-actions")
+        self.assertContains(response, user.get_full_name())
+        self.assertContains(response, reverse("accounts:profile"))
+
+    def test_member_dashboard_shows_live_overview_data(self):
+        user = self.make_user("overview@example.com", first_name="Asha")
+        MemberProfile.objects.create(
+            user=user,
+            current_weight_kg=Decimal("64.5"),
+            fitness_goal="Build Strength",
+        )
+        GymConfiguration.objects.create(pk=1, max_capacity=20)
+        AttendanceRecord.objects.create(member=user)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("accounts:member_dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Welcome back, Asha")
+        self.assertContains(response, "Build Strength")
+        self.assertContains(response, "64.5")
+        self.assertContains(response, "1 <small>/ 20 members</small>", html=True)
+        self.assertContains(response, "Start Workout")
+        self.assertContains(response, "Book Class")
+        self.assertContains(response, "View Progress")
 
 
 class RolePermissionTests(AccountTestMixin, TestCase):
@@ -302,6 +328,79 @@ class AdminUserManagementTests(AccountTestMixin, TestCase):
         self.assertContains(response, "member@example.com")
         self.assertNotContains(response, "admin@example.com")
 
+    def test_admin_user_list_filters_active_accounts(self):
+        self.member.is_active = False
+        self.member.save(update_fields=["is_active"])
+
+        response = self.client.get(
+            reverse("accounts:admin_user_list"), {"status": "active"}
+        )
+
+        self.assertContains(response, "admin@example.com")
+        self.assertNotContains(response, "member@example.com")
+
+    def test_admin_can_create_member_account(self):
+        response = self.client.post(
+            reverse("accounts:admin_user_create"),
+            {
+                "first_name": "New",
+                "last_name": "Member",
+                "email": "new.member@example.com",
+                "role": User.Role.MEMBER,
+                "password1": self.password,
+                "password2": self.password,
+                "is_active": "on",
+            },
+        )
+
+        user = User.objects.get(email="new.member@example.com")
+        self.assertRedirects(
+            response, reverse("accounts:admin_user_detail", args=[user.id])
+        )
+        self.assertTrue(MemberProfile.objects.filter(user=user).exists())
+
+    def test_admin_can_create_coach_account(self):
+        self.client.post(
+            reverse("accounts:admin_user_create"),
+            {
+                "first_name": "New",
+                "last_name": "Coach",
+                "email": "new.coach@example.com",
+                "role": User.Role.COACH,
+                "password1": self.password,
+                "password2": self.password,
+                "is_active": "on",
+            },
+        )
+
+        coach = User.objects.get(email="new.coach@example.com")
+        self.assertTrue(CoachProfile.objects.filter(user=coach).exists())
+
+    def test_admin_user_creation_rejects_duplicate_email(self):
+        response = self.client.post(
+            reverse("accounts:admin_user_create"),
+            {
+                "first_name": "Duplicate",
+                "last_name": "Member",
+                "email": self.member.email,
+                "role": User.Role.MEMBER,
+                "password1": self.password,
+                "password2": self.password,
+                "is_active": "on",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "An account with this email already exists.")
+        self.assertEqual(User.objects.filter(email=self.member.email).count(), 1)
+
+    def test_member_cannot_open_admin_user_creation(self):
+        self.client.force_login(self.member)
+
+        response = self.client.get(reverse("accounts:admin_user_create"))
+
+        self.assertEqual(response.status_code, 403)
+
     def test_admin_can_change_user_role(self):
         response = self.client.post(
             reverse("accounts:admin_user_role", args=[self.member.id]),
@@ -408,6 +507,24 @@ class AdminDashboardTests(AccountTestMixin, TestCase):
         self.assertContains(response, reverse("memberships:admin_membership_report"))
         self.assertContains(response, reverse("attendance:attendance_report"))
         self.assertContains(response, reverse("bookings:booking_report"))
+
+    def test_admin_dashboard_stat_cards_link_to_management_pages(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("accounts:admin_dashboard"))
+
+        expected_urls = [
+            reverse("accounts:admin_user_list"),
+            reverse("memberships:admin_membership_list"),
+            reverse("attendance:attendance_history"),
+            reverse("attendance:capacity_settings"),
+            reverse("bookings:session_list"),
+            reverse("bookings:booking_report"),
+            reverse("memberships:admin_payment_list"),
+            reverse("memberships:admin_membership_report"),
+        ]
+        for url in expected_urls:
+            self.assertContains(response, f'href="{url}')
 
     def test_member_cannot_view_admin_dashboard(self):
         self.client.force_login(self.member)

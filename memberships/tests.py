@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from accounts.models import User
 
@@ -219,6 +220,47 @@ class MembershipAdminTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.payment.receipt_number)
+
+    def test_membership_report_filters_statistics_by_date(self):
+        older_member = User.objects.create_user(
+            username="older-member@example.com",
+            email="older-member@example.com",
+            password="TestPass123!",
+            role=User.Role.MEMBER,
+        )
+        older_membership = Membership.objects.create(
+            member=older_member,
+            package=self.package,
+            start_date=date.today() - timedelta(days=60),
+            end_date=date.today() - timedelta(days=30),
+            status=Membership.Status.EXPIRED,
+        )
+        older_payment = Payment.objects.create(
+            member=older_member,
+            package=self.package,
+            membership=older_membership,
+            amount="500.00",
+            payment_method=Payment.Method.CASH,
+            status=Payment.Status.SUCCESS,
+        )
+        older_time = timezone.now() - timedelta(days=60)
+        Membership.objects.filter(pk=older_membership.pk).update(created_at=older_time)
+        Payment.objects.filter(pk=older_payment.pk).update(created_at=older_time)
+
+        today = date.today().isoformat()
+        response = self.client.get(
+            reverse("memberships:admin_membership_report"),
+            {"date_from": today, "date_to": today},
+        )
+        self.payment.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["active_count"], 1)
+        self.assertEqual(response.context["expired_count"], 0)
+        self.assertEqual(response.context["successful_payments"], 1)
+        self.assertEqual(response.context["payment_total"], self.payment.amount)
+        self.assertContains(response, 'name="date_from"')
+        self.assertContains(response, 'name="date_to"')
 
     def test_admin_can_correct_membership_record(self):
         new_end_date = date.today() + timedelta(days=60)

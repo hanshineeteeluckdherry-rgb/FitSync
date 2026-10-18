@@ -507,31 +507,43 @@
 }
 
 /* Figma membership plan screen */
+html[data-theme="light"] {
+    --member-plan-background: linear-gradient(180deg, #f7fbff 0%, #eef8f5 58%, #bceee2 100%);
+    --member-plan-card: var(--surface-color);
+    --member-plan-text: var(--text-color);
+    --member-plan-muted: var(--muted-color);
+    --member-plan-border: var(--border-color);
+}
+
+html[data-theme="dark"] {
+    --member-plan-background: linear-gradient(180deg, #0a1834 0%, #0a1834 39.9%, #102d3b 70%, #1f4b42 100%);
+    --member-plan-card: var(--surface-color);
+    --member-plan-text: var(--text-color);
+    --member-plan-muted: var(--muted-color);
+    --member-plan-border: var(--border-color);
+}
+
 .membership-plan-screen {
     min-height: calc(100vh - var(--topbar-height));
     margin: -2rem;
     padding: 2rem 2rem 4rem;
-    background: linear-gradient(
-        180deg,
-        #0a1834 0%,
-        #0a1834 39.9%,
-        #102d3b 70%,
-        #1f4b42 100%
-    );
+    color: var(--member-plan-text);
+    background: var(--member-plan-background);
+    transition: background 160ms ease, color 160ms ease;
 }
 
 .membership-plan-screen .membership-page-head h1,
 .membership-plan-screen .membership-plan-intro h2 {
-    color: #ffffff;
+    color: var(--member-plan-text);
 }
 
 .membership-plan-screen .membership-page-head p,
 .membership-plan-screen .membership-plan-intro p {
-    color: #a8bfdb;
+    color: var(--member-plan-muted);
 }
 
 .membership-plan-screen .membership-tabs {
-    border-bottom-color: #1c2d45;
+    border-bottom-color: var(--member-plan-border);
 }
 
 .membership-plan-intro {
@@ -559,9 +571,9 @@
     width: 100%;
     min-height: 378px;
     padding: 28px;
-    color: #ffffff;
-    background: #0d1525;
-    border: 1px solid #1c2d45;
+    color: var(--member-plan-text);
+    background: var(--member-plan-card);
+    border: 1px solid var(--member-plan-border);
     border-radius: 16px;
     box-shadow: none;
 }
@@ -573,7 +585,7 @@
 
 .membership-plan-card h2,
 .membership-plan-card h3 {
-    color: #ffffff;
+    color: var(--member-plan-text);
     font-size: 1.45rem;
     line-height: 1.25;
 }
@@ -586,14 +598,14 @@
 }
 
 .membership-price span {
-    color: #5b748f;
+    color: var(--member-plan-muted);
     font-size: 2.25rem;
     font-weight: 700;
     line-height: 1.1;
 }
 
 .membership-price small {
-    color: #5b748f;
+    color: var(--member-plan-muted);
     font-size: .78rem;
 }
 
@@ -613,7 +625,7 @@
     flex: 1 1 auto;
     gap: .72rem;
     margin: .2rem 0 1.35rem;
-    color: #a8bfdb;
+    color: var(--member-plan-muted);
     font-size: .88rem;
 }
 
@@ -623,7 +635,7 @@
 
 .plan-feature-list i {
     margin-top: .12rem;
-    color: #5b748f;
+    color: var(--member-plan-muted);
 }
 
 .membership-plan-card.plan-premium .plan-feature-list i {
@@ -1137,7 +1149,7 @@ html[data-theme="dark"] {
 
 /* Signed-in membership plan screen follows the global theme. */
 .membership-plan-screen {
-    background: var(--membership-page-bg);
+    background: var(--page-gradient);
 }
 
 .membership-plan-screen .membership-page-head h1,
@@ -1168,6 +1180,12 @@ html[data-theme="dark"] {
 .membership-plan-card:not(.featured) .membership-price span,
 .membership-plan-card:not(.featured) .plan-feature-list i {
     color: var(--membership-muted-text);
+}
+
+.membership-plan-screen .membership-plan-card .membership-price span {
+    color: var(--primary-color);
+    font-size: clamp(1.5rem, 2.3vw, 2.25rem);
+    white-space: nowrap;
 }
 
 .membership-plan-card .btn-secondary-fitsync,

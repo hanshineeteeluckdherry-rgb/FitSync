@@ -24,6 +24,22 @@
     min-height: 132px;
 }
 
+.admin-stat-link {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-stat-link:hover,
+.admin-stat-link:focus-visible {
+    color: var(--text-color);
+    border-color: rgba(0, 212, 170, 0.6);
+    box-shadow: 0 10px 24px rgba(0, 212, 170, 0.12);
+    outline: none;
+    transform: translateY(-2px);
+}
+
 .admin-stat-icon,
 .admin-activity-icon {
     display: inline-grid;

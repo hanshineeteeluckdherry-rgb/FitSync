@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from bookings.models import Service, Session
+from accounts.demo_team import existing_team_user
 
 
 User = get_user_model()
@@ -17,6 +18,10 @@ class Command(BaseCommand):
     """Create the coaches, services and sessions shown in Figma."""
 
     help = "Create reusable sample data for testing the booking page."
+
+    def add_arguments(self, parser):
+        parser.add_argument("--services-only", action="store_true",
+                            help="Create missing service types without adding coaches or scheduled classes.")
 
     def handle(self, *args, **options):
         """Create coaches and six future sessions without duplicates."""
@@ -35,47 +40,50 @@ class Command(BaseCommand):
                 "username": "chloe_ting",
                 "first_name": "Chloe",
                 "last_name": "Ting",
-                "email": "chloe.ting@fitsync.local",
+                "email": "chloe.ting@fitsync.com",
             },
             {
-                "username": "sarah_saffari",
+                "username": "sarah_safforti",
                 "first_name": "Sarah",
-                "last_name": "Saffari",
-                "email": "sarah.saffari@fitsync.local",
+                "last_name": "Safforti",
+                "email": "sarah.safforti@fitsync.com",
             },
             {
                 "username": "chris_heria",
                 "first_name": "Chris",
                 "last_name": "Heria",
-                "email": "chris.heria@fitsync.local",
+                "email": "chris.heria@fitsync.com",
             },
             {
-                "username": "julie_bowen",
-                "first_name": "Julie",
-                "last_name": "Bowen",
-                "email": "julie.bowen@fitsync.local",
+                "username": "emily_watson",
+                "first_name": "Emily",
+                "last_name": "Watson",
+                "email": "emily.watson@fitsync.com",
             },
             {
                 "username": "sam_sulek",
                 "first_name": "Sam",
                 "last_name": "Sulek",
-                "email": "sam.sulek@fitsync.local",
+                "email": "sam.sulek@fitsync.com",
             },
             {
                 "username": "chris_bumstead",
                 "first_name": "Chris",
                 "last_name": "Bumstead",
-                "email": "chris.bumstead@fitsync.local",
+                "email": "chris.bumstead@fitsync.com",
             },
         ]
 
         coaches = {}
 
         for item in coach_data:
+            if options["services_only"]:
+                continue
+            existing_team_user(item["email"].split("@")[0])
             coach, created = User.objects.get_or_create(
-                username=item["username"],
+                email=item["email"],
                 defaults={
-                    "email": item["email"],
+                    "username": item["username"],
                     "first_name": item["first_name"],
                     "last_name": item["last_name"],
                     "role": User.Role.COACH,
@@ -83,15 +91,9 @@ class Command(BaseCommand):
                 },
             )
 
-            coach.first_name = item["first_name"]
-            coach.last_name = item["last_name"]
-            coach.role = User.Role.COACH
-            coach.is_active = True
-
             if created:
                 coach.set_unusable_password()
-
-            coach.save()
+                coach.save(update_fields=["password"])
 
             coaches[item["username"]] = coach
 
@@ -118,7 +120,7 @@ class Command(BaseCommand):
                     "and build endurance."
                 ),
                 "price": Decimal("150.00"),
-                "coach": "sarah_saffari",
+                "coach": "sarah_safforti",
                 "day_offset": 0,
                 "start_time": time(9, 0),
                 "end_time": time(10, 0),
@@ -145,7 +147,7 @@ class Command(BaseCommand):
                     "Relaxing sauna session for recovery and wellness."
                 ),
                 "price": Decimal("50.00"),
-                "coach": "julie_bowen",
+                "coach": "emily_watson",
                 "day_offset": 1,
                 "start_time": time(16, 0),
                 "end_time": time(17, 0),
@@ -184,7 +186,9 @@ class Command(BaseCommand):
         updated_count = 0
 
         for item in sessions:
-            service, unused_created = Service.objects.update_or_create(
+            # The catalogue-only option must not overwrite edited service prices.
+            save_service = Service.objects.get_or_create if options["services_only"] else Service.objects.update_or_create
+            service, unused_created = save_service(
                 name=item["name"],
                 defaults={
                     "service_type": item["service_type"],
@@ -193,6 +197,9 @@ class Command(BaseCommand):
                     "is_active": True,
                 },
             )
+
+            if options["services_only"]:
+                continue
 
             session_date = next_monday + timedelta(
                 days=item["day_offset"]
@@ -214,6 +221,19 @@ class Command(BaseCommand):
                 created_count += 1
             else:
                 updated_count += 1
+
+        extra_services = [
+            ("Pilates", Service.Type.PILATES, "Core strength, balance and controlled movement."),
+            ("Boxing Fundamentals", Service.Type.BOXING, "Boxing technique, footwork and conditioning."),
+            ("HIIT Training", Service.Type.HIIT, "High-intensity interval training."),
+            ("Indoor Cycling", Service.Type.CYCLING, "Instructor-led indoor cycling."),
+            ("Strength Training", Service.Type.STRENGTH_TRAINING, "Resistance training and lifting technique."),
+        ]
+        for name, service_type, description in extra_services:
+            Service.objects.get_or_create(name=name, defaults={
+                "service_type": service_type, "description": description,
+                "price": Decimal("0.00"), "is_active": True,
+            })
 
         self.stdout.write(
             self.style.SUCCESS(

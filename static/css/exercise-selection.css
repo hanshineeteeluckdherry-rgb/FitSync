@@ -1,0 +1,56 @@
+.exercise-selection-page .exercise-card {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.exercise-selection-image {
+    display: grid;
+    height: clamp(130px, 14vw, 180px);
+    overflow: hidden;
+    background: var(--surface-soft);
+}
+
+.exercise-selection-image > * {
+    grid-area: 1 / 1;
+}
+
+.exercise-selection-page .exercise-selection-image .exercise-image {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.exercise-image-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--muted-color);
+    font-size: 0.75rem;
+}
+
+.exercise-selection-page .exercise-image[hidden] {
+    display: none;
+}
+
+.exercise-selection-page .exercise-card-body {
+    flex: 1;
+}
+
+.exercise-selection-page .exercise-card:has(input:checked) {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0,212,170,.2);
+}
+
+.exercise-selection-page .exercise-card:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
+}
+
+.exercise-selection-page .exercise-added {
+    opacity: 0.6;
+    cursor: default;
+}
