@@ -582,14 +582,85 @@ def progress(request):
     if not is_member(request.user):
         return HttpResponseForbidden("This page is for members.")
 
-    records = WeightRecord.objects.filter(member=request.user)
-    target_weight = None
-    try:
-        target_weight = request.user.member_profile.target_weight_kg
-    except Exception:
-        pass
+    today = timezone.localdate()
+    period = request.GET.get("period", "weekly")
+    if period not in ["weekly", "monthly", "all"]:
+        period = "weekly"
+    start_date = None
+    if period == "weekly":
+        start_date = today - timedelta(days=6)
+    elif period == "monthly":
+        start_date = today - timedelta(days=29)
 
-    chart_records = list(records.order_by("recorded_date"))
+    all_records = WeightRecord.objects.filter(member=request.user, recorded_date__lte=today)
+    records = all_records
+    sessions = WorkoutSession.objects.filter(member=request.user, completed_at__isnull=False, completed_at__date__lte=today).select_related("workout_plan")
+    if start_date:
+        records = records.filter(recorded_date__gte=start_date)
+        sessions = sessions.filter(completed_at__date__gte=start_date)
+
+    profile = getattr(request.user, "member_profile", None)
+    target_weight = profile.target_weight_kg if profile else None
+    latest = all_records.first()
+    first = all_records.order_by("recorded_date", "id").first()
+    current_weight = latest.weight_kg if latest else (profile.current_weight_kg if profile else None)
+    initial_weight = first.weight_kg if first else current_weight
+    goal_percent = 0
+    remaining_weight = None
+    if current_weight is not None and target_weight is not None:
+        if initial_weight >= target_weight:
+            remaining_weight = max(0, current_weight - target_weight)
+        else:
+            remaining_weight = max(0, target_weight - current_weight)
+        goal_distance = initial_weight - target_weight
+        if goal_distance:
+            goal_percent = max(0, min(100, round(float((initial_weight - current_weight) / goal_distance) * 100)))
+        elif current_weight == target_weight:
+            goal_percent = 100
+
+    chart_records = list(records.order_by("recorded_date", "id"))
+    weight_change = None
+    if len(chart_records) >= 2:
+        weight_change = chart_records[-1].weight_kg - chart_records[0].weight_kg
+    session_list = list(sessions)
+    durations = [item.duration_minutes for item in session_list if item.duration_minutes is not None]
+    average_minutes = round(sum(durations) / len(durations)) if durations else None
+    estimated_calories = sum(durations) * 7 if durations else None
+
+    breakdown_counts = {"Strength": 0, "Cardio": 0, "HIIT": 0, "Other": 0}
+    for item in session_list:
+        description = f"{item.workout_plan.goal} {item.workout_plan.name}".lower() if item.workout_plan else ""
+        if "hiit" in description:
+            category = "HIIT"
+        elif "cardio" in description or "endurance" in description:
+            category = "Cardio"
+        elif "strength" in description or "muscle" in description:
+            category = "Strength"
+        else:
+            category = "Other"
+        breakdown_counts[category] += 1
+    breakdown = [
+        {"name": name, "count": count, "percent": round(count / len(session_list) * 100) if session_list else 0, "colour": colour}
+        for (name, count), colour in zip(breakdown_counts.items(), ["teal", "blue", "amber", "purple"])
+    ]
+
+    personal_records = []
+    seen_exercises = set()
+    exercise_records = WorkoutExerciseRecord.objects.filter(workout_session__in=sessions, weight_kg__isnull=False).select_related("exercise", "workout_session").order_by("-weight_kg", "-workout_session__completed_at")
+    for record in exercise_records:
+        if record.exercise_id not in seen_exercises:
+            personal_records.append(record)
+            seen_exercises.add(record.exercise_id)
+        if len(personal_records) == 4:
+            break
+
+    calorie_days = []
+    recent_sessions = WorkoutSession.objects.filter(member=request.user, completed_at__date__gte=today - timedelta(days=6), completed_at__date__lte=today)
+    for offset in range(6, -1, -1):
+        day = today - timedelta(days=offset)
+        minutes = sum(item.duration_minutes or 0 for item in recent_sessions if timezone.localdate(item.completed_at) == day)
+        calorie_days.append({"label": day.strftime("%a"), "value": minutes * 7})
+
     return render(
         request,
         "workouts/progress.html",
@@ -597,9 +668,24 @@ def progress(request):
             "records": records,
             "chart_records": chart_records,
             "target_weight": target_weight,
+            "period": period,
+            "current_weight": current_weight,
+            "initial_weight": initial_weight,
+            "remaining_weight": remaining_weight,
+            "goal_percent": goal_percent,
+            "weight_change": weight_change,
+            "workout_count": len(session_list),
+            "average_minutes": average_minutes,
+            "estimated_calories": estimated_calories,
+            "breakdown": breakdown,
+            "personal_records": personal_records,
+            "photos": records.exclude(progress_photo="").exclude(progress_photo__isnull=True)[:10],
+            "weight_chart": [{"label": item.recorded_date.strftime("%d %b"), "value": float(item.weight_kg)} for item in chart_records],
+            "calorie_chart": calorie_days,
             "active_sidebar": "progress",
         },
     )
+
 
 
 @login_required

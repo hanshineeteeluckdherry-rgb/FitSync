@@ -1,1 +1,99 @@
-{% extends "layouts/member_base.html" %}{% load static %}{% block page_title %}Progress{% endblock %}{% block dashboard_heading %}Progress{% endblock %}{% block extra_css %}<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">{% endblock %}{% block dashboard_content %}<div class="workout-page"><div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4"><div class="page-heading mb-0"><h1>Weight Progress</h1><p>Track your weight and optional progress photos.</p></div><a class="btn btn-primary-fitsync align-self-md-start" href="{% url 'workouts:weight_add' %}"><i class="bi bi-plus-lg me-1"></i>Add Weight Record</a></div>{% if target_weight %}<div class="summary-card mb-4"><span class="summary-label">Target Weight</span><div class="summary-value">{{ target_weight }} kg</div></div>{% endif %}{% if chart_records %}<div class="workout-panel p-4 mb-4"><h2 class="h6">Progress Chart</h2><div class="simple-chart">{% for record in chart_records %}<div class="chart-column"><div class="chart-value">{{ record.weight_kg }}</div><div class="chart-bar" style="height: {{ record.weight_kg }}px"></div><small>{{ record.recorded_date|date:"d M" }}</small></div>{% endfor %}</div><p class="small text-muted mt-3 mb-0">Bar height represents each recorded weight. This chart uses simple HTML/CSS only.</p></div>{% endif %}{% if records %}<div class="row g-3">{% for record in records %}<div class="col-md-6 col-xl-4"><article class="workout-card h-100">{% if record.progress_photo %}<img class="progress-photo" src="{{ record.progress_photo.url }}" alt="Progress photo for {{ record.recorded_date }}">{% endif %}<h2 class="h4 mb-1">{{ record.weight_kg }} kg</h2><p class="text-muted small">{{ record.recorded_date|date:"d M Y" }}</p>{% if record.note %}<p>{{ record.note }}</p>{% endif %}<div class="d-flex gap-2"><a class="btn btn-sm btn-secondary-fitsync" href="{% url 'workouts:weight_edit' record.id %}">Edit</a><a class="btn btn-sm btn-outline-danger" href="{% url 'workouts:weight_delete' record.id %}">Delete</a></div></article></div>{% endfor %}</div>{% else %}<div class="workout-empty-state"><div class="empty-state-icon"><i class="bi bi-graph-up-arrow"></i></div><h3>No weight records yet</h3><p>Add your first record to begin tracking progress.</p></div>{% endif %}</div>{% endblock %}
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Progress{% endblock %}
+{% block dashboard_heading %}Progress{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/progress.css' %}?v=2">
+{% endblock %}
+{% block dashboard_content %}
+<div class="fitness-progress">
+    <header class="progress-page-heading">
+        <div><h1>Progress</h1><p>Your fitness journey, visualised</p></div>
+        <nav class="progress-periods" aria-label="Progress period">
+            <a href="?period=weekly" {% if period == 'weekly' %}class="active" aria-current="page"{% endif %}>Weekly</a>
+            <a href="?period=monthly" {% if period == 'monthly' %}class="active" aria-current="page"{% endif %}>Monthly</a>
+            <a href="?period=all" {% if period == 'all' %}class="active" aria-current="page"{% endif %}>All Time</a>
+        </nav>
+    </header>
+
+    <div class="progress-stat-grid">
+        <a class="progress-panel progress-stat teal progress-link" href="{% url 'workouts:weight_add' %}">
+            <div class="progress-stat-label">Weight Change<span class="progress-icon"><img src="{% static 'img/progress/weight.svg' %}" alt=""></span></div>
+            <p class="progress-stat-value">{{ weight_change|floatformat:1|default:"—" }} <small>kg</small></p>
+            <p class="progress-caption">{% if weight_change != None %}This period{% else %}Add two weight records{% endif %}</p>
+        </a>
+        <a class="progress-panel progress-stat blue progress-link" href="{% url 'workouts:history' %}">
+            <div class="progress-stat-label">Workouts Done<span class="progress-icon"><img src="{% static 'img/progress/workouts.svg' %}" alt=""></span></div>
+            <p class="progress-stat-value">{{ workout_count }} <small>total</small></p><p class="progress-caption">This period</p>
+        </a>
+        <a class="progress-panel progress-stat amber progress-link" href="#calorieOverview">
+            <div class="progress-stat-label">Calories Burned<span class="progress-icon"><img src="{% static 'img/progress/calories.svg' %}" alt=""></span></div>
+            <p class="progress-stat-value">{{ estimated_calories|default_if_none:"—" }} <small>kcal</small></p><p class="progress-caption">Estimated from recorded minutes</p>
+        </a>
+        <a class="progress-panel progress-stat purple progress-link" href="{% url 'workouts:history' %}">
+            <div class="progress-stat-label">Avg. Session<span class="progress-icon"><img src="{% static 'img/progress/duration.svg' %}" alt=""></span></div>
+            <p class="progress-stat-value">{{ average_minutes|default_if_none:"—" }} <small>min</small></p><p class="progress-caption">Recorded durations only</p>
+        </a>
+    </div>
+
+    <section class="progress-panel">
+        <div class="progress-panel-heading">
+            <div><h2>Weight Progress</h2><p>Tracking body weight over time</p></div>
+            <div class="progress-weight-values">
+                <div><span>Current</span><strong>{{ current_weight|floatformat:1|default:"—" }} kg</strong></div>
+                <a href="{% url 'accounts:profile_edit' %}" class="teal"><span>Target</span><strong>{{ target_weight|floatformat:1|default:"—" }} kg</strong></a>
+                <div class="amber"><span>To Go</span><strong>{{ remaining_weight|floatformat:1|default:"—" }} kg</strong></div>
+            </div>
+        </div>
+        <div class="progress-goal-label"><span>Goal progress</span><span class="teal">{% if target_weight %}{{ goal_percent }}% complete{% else %}<a href="{% url 'accounts:profile_edit' %}">Set a target weight</a>{% endif %}</span></div>
+        <div class="progress-track" role="progressbar" aria-label="Weight goal progress" aria-valuenow="{{ goal_percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ goal_percent }}%"></span></div>
+        <div class="progress-goal-label progress-caption"><span>{{ initial_weight|floatformat:1|default:"—" }} kg (start)</span><span>{{ target_weight|floatformat:1|default:"—" }} kg (target)</span></div>
+        <div class="progress-chart"><canvas id="weightChart" aria-label="Recorded body weights over the selected period" role="img"></canvas></div>
+        {% if not chart_records %}<p class="progress-empty">No weight records in this period. <a href="{% url 'workouts:weight_add' %}">Add your first record</a>.</p>{% endif %}
+        <a class="progress-small-link progress-panel-primary" href="{% url 'workouts:weight_add' %}">+ Add Weight Record</a>
+    </section>
+
+    <section class="progress-panel" id="calorieOverview">
+        <h2>Calorie Overview (7 Days)</h2>
+        <div class="progress-chart"><canvas id="calorieChart" aria-label="Estimated calories burned in the last seven days" role="img"></canvas></div>
+        <div class="progress-chart-legend"><span class="amber"><img src="{% static 'img/progress/burned.svg' %}" alt=""> Burned (estimated)</span></div>
+        <p class="progress-caption mt-2">Estimates use 7 kcal per recorded workout minute. Workouts without a duration are not included.</p>
+        <details class="progress-data-details"><summary>View chart data</summary><table class="table table-sm"><thead><tr><th>Day</th><th>Estimated kcal burned</th></tr></thead><tbody>{% for day in calorie_chart %}<tr><td>{{ day.label }}</td><td>{{ day.value }}</td></tr>{% endfor %}</tbody></table></details>
+    </section>
+
+    <div class="progress-detail-grid">
+        <a class="progress-panel progress-link" href="{% url 'workouts:history' %}">
+            <h2>Workout Breakdown</h2>
+            {% for item in breakdown %}
+                <div class="progress-breakdown-row"><span>{{ item.name }} Sessions</span><strong>{{ item.count }} session{{ item.count|pluralize }}</strong></div>
+                <div class="progress-track small-track {{ item.colour }}"><span style="width: {{ item.percent }}%"></span></div>
+            {% endfor %}
+            <p class="progress-caption mt-3">Grouped by the workout plan’s goal.</p>
+        </a>
+        <section class="progress-panel">
+            <h2><a class="progress-panel-primary progress-title-link" href="{% url 'workouts:history' %}">Personal Records</a></h2>
+            {% for record in personal_records %}
+                <a class="progress-record-row" href="{% url 'workouts:history_detail' record.workout_session_id %}"><span>{{ record.exercise.name }}</span><strong class="teal">{{ record.weight_kg|floatformat:"-2" }} kg</strong><small>{{ record.workout_session.completed_at|date:"d M" }}</small></a>
+            {% empty %}<p class="progress-empty">Complete a workout with weights to see your records.</p>{% endfor %}
+        </section>
+    </div>
+
+    <section class="progress-panel">
+        <div class="progress-panel-heading"><h2>Progress Photos</h2><a class="btn btn-secondary-fitsync progress-photo-button progress-panel-primary" href="{% url 'workouts:weight_add' %}"><img src="{% static 'img/progress/photo.svg' %}" alt="">Add Photo</a></div>
+        <div class="progress-photo-grid">
+            {% for record in photos %}<a href="{% url 'workouts:weight_edit' record.id %}"><img src="{{ record.progress_photo.url }}" alt="Progress photo from {{ record.recorded_date|date:'d M Y' }}"><span>{{ record.recorded_date|date:"d M" }}</span></a>{% empty %}<p class="progress-empty">Add a photo with a weight record to track your changes.</p>{% endfor %}
+        </div>
+    </section>
+
+    <section class="progress-panel">
+        <details class="progress-data-details"><summary>Weight records · Edit or delete</summary>
+            <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Date</th><th>Weight</th><th>Notes</th><th>Actions</th></tr></thead><tbody>
+            {% for record in records %}<tr><td>{{ record.recorded_date|date:"d M Y" }}</td><td>{{ record.weight_kg }} kg</td><td>{{ record.note|default:"—" }}</td><td><a href="{% url 'workouts:weight_edit' record.id %}">Edit</a> · <a href="{% url 'workouts:weight_delete' record.id %}">Delete</a></td></tr>{% empty %}<tr><td colspan="4">No weight records in this period.</td></tr>{% endfor %}
+            </tbody></table></div>
+        </details>
+    </section>
+</div>
+{{ weight_chart|json_script:"weightChartData" }}
+{{ calorie_chart|json_script:"calorieChartData" }}
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/progress.js' %}" defer></script>{% endblock %}
