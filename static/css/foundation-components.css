@@ -1,0 +1,51 @@
+/* Rheva: reuse FitSync's original base.css tokens; no replacement design system. */
+html[data-theme] body :is(.workout-panel, .workout-card, .member-panel,
+    .progress-card, .progress-panel, .contact-detail-card, .contact-form-card,
+    .contact-social-card, .team-card, .featured-card) {
+    color: var(--text-color) !important;
+    background: var(--surface-color) !important;
+    border-color: var(--border-color) !important;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 12px 30px var(--shadow-color);
+}
+html[data-theme] body :is(.workout-page, .exercise-library-page, .team-page,
+    .contact-page, .member-dashboard) :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-family-body);
+    color: var(--text-color);
+}
+html[data-theme] body :is(.workout-page, .exercise-library-page,
+    .contact-page, .member-dashboard) :is(.form-control, .form-select) {
+    color: var(--text-color) !important;
+    background-color: var(--surface-soft) !important;
+    border-color: var(--border-color) !important;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family-body);
+}
+html[data-theme] body :is(.btn-primary-fitsync, .contact-submit) {
+    color: var(--on-primary) !important;
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    border-radius: var(--radius-md);
+}
+html[data-theme] body :is(.btn-primary-fitsync, .contact-submit):hover {
+    background: var(--primary-strong) !important;
+    border-color: var(--primary-strong) !important;
+}
+html[data-theme] body .btn-secondary-fitsync {
+    color: var(--text-color) !important;
+    background: var(--surface-soft) !important;
+    border-color: var(--border-color) !important;
+    border-radius: var(--radius-md);
+}
+html[data-theme] body :is(.btn-secondary-fitsync:hover, .workout-card:hover) {
+    border-color: var(--primary-color) !important;
+}
+html[data-theme] body :is(.workout-page, .contact-page, .team-page,
+    .member-dashboard) :is(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: var(--space-1);
+}
+.coach-plans-heading { gap: var(--space-3); margin-bottom: var(--space-5); }
+.coach-plans-toolbar { gap: var(--space-3); }
+/* Hero text over photography intentionally remains white in both modes. */
+.hero-title, .hero-subtitle { color: var(--on-image); }
