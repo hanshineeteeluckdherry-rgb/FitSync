@@ -1,4 +1,4 @@
-/* Authentication pages follow the approved FitSync Figma screens. */
+/* Login and registration */
 :root {
     --auth-navy: #07152d;
     --auth-navy-soft: #0c1c35;
@@ -779,10 +779,7 @@ html[data-theme="light"] .brand-sync {
     border-color: rgba(0, 223, 179, 0.55);
 }
 
-/*
-   The approved Figma screen is the dark version.
-   Light mode keeps the same layout and imagery; the page gradient becomes light.
-*/
+/* Light mode */
 html[data-theme="light"] .auth-body {
     background: linear-gradient(135deg, #ffffff 0%, #edf8fb 52%, #bdf3e5 100%);
 }

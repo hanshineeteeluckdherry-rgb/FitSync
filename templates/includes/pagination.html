@@ -1,0 +1,4 @@
+{% if page.has_other_pages %}<nav class="d-flex gap-3 align-items-center my-3" aria-label="Results pages">
+{% if page.has_previous %}<a class="btn btn-secondary-fitsync" href="?page={{ page.previous_page_number }}&amp;q={{ query|urlencode }}&amp;status={{ selected_status|urlencode }}">Previous</a>{% endif %}
+<span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+{% if page.has_next %}<a class="btn btn-secondary-fitsync" href="?page={{ page.next_page_number }}&amp;q={{ query|urlencode }}&amp;status={{ selected_status|urlencode }}">Next</a>{% endif %}</nav>{% endif %}

@@ -1,0 +1,123 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+
+{% block page_title %}Member Dashboard{% endblock %}
+{% block dashboard_heading %}Dashboard{% endblock %}
+{% block body_class %}dashboard-body member-dashboard-page{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/member-dashboard.css' %}?v=4">
+{% endblock %}
+
+{% block dashboard_content %}
+<section class="member-overview" aria-labelledby="memberWelcome">
+    <header class="member-welcome">
+        <p>{{ today|date:"l d F" }}</p>
+        <h1 id="memberWelcome">Welcome back, {{ request.user.first_name|default:"Member" }} <span aria-hidden="true">👋</span></h1>
+        <p>Coach: {% if coach_assignment %}{{ coach_assignment.coach.get_full_name|default:coach_assignment.coach.email }}{% else %}Not assigned{% endif %} · Goal: {{ profile.fitness_goal|default:"Not set" }}</p>
+    </header>
+
+    <div class="member-dashboard-grid">
+        <a class="member-action-card" href="{% url 'workouts:plans' %}">
+            <span class="member-action-icon action-teal"><img src="{% static 'img/member-dashboard/start-workout.svg' %}" alt=""></span>
+            <span>Start Workout</span>
+        </a>
+        <a class="member-action-card" href="{% url 'bookings:schedule' %}">
+            <span class="member-action-icon action-blue"><img src="{% static 'img/member-dashboard/book-class.svg' %}" alt=""></span>
+            <span>Book Class</span>
+        </a>
+        <a class="member-action-card" href="{% url 'workouts:progress' %}">
+            <span class="member-action-icon action-purple"><img src="{% static 'img/member-dashboard/view-progress.svg' %}" alt=""></span>
+            <span>View Progress</span>
+        </a>
+
+        <a class="member-metric-card member-card-link metric-teal" href="{% url 'workouts:progress' %}" aria-label="Current weight: view and update your progress">
+            <div class="member-card-heading"><span>Current Weight</span><span class="member-small-icon"><img src="{% static 'img/member-dashboard/current-weight.svg' %}" alt=""></span></div>
+            {% if latest_weight %}
+                <p class="member-metric-value">{{ latest_weight.weight_kg|floatformat:1 }} <small>kg</small></p>
+                <p class="member-card-note">Target: {% if profile.target_weight_kg %}{{ profile.target_weight_kg|floatformat:0 }} kg{% else %}Not set{% endif %}</p>
+            {% elif profile.current_weight_kg %}
+                <p class="member-metric-value">{{ profile.current_weight_kg|floatformat:1 }} <small>kg</small></p>
+                <p class="member-card-note">Target: {% if profile.target_weight_kg %}{{ profile.target_weight_kg|floatformat:0 }} kg{% else %}Not set{% endif %}</p>
+            {% else %}
+                <p class="member-metric-value">—</p><span class="member-inline-link">Add a weight record</span>
+            {% endif %}
+        </a>
+
+        <a class="member-metric-card member-card-link metric-blue" href="{% url 'workouts:history' %}" aria-label="Workouts done: view workout history">
+            <div class="member-card-heading"><span>Workouts Done</span><span class="member-small-icon"><img src="{% static 'img/member-dashboard/workouts-done.svg' %}" alt=""></span></div>
+            <p class="member-metric-value">{{ workouts_this_month }} <small>this month</small></p>
+            <p class="member-card-note">{{ workout_change }} compared with last month</p>
+        </a>
+
+        <a class="member-metric-card member-card-link metric-cyan" href="{% url 'workouts:water_intake' %}" aria-label="Water intake: update your daily total">
+            <div class="member-card-heading"><span>Water Intake</span><span class="member-small-icon"><img src="{% static 'img/member-dashboard/water-intake.svg' %}" alt=""></span></div>
+            <p class="member-metric-value">{{ today_water_litres|floatformat:2 }} <small>L</small></p>
+            <p class="member-card-note">Today · Update water intake</p>
+        </a>
+    </div>
+
+    <div class="member-dashboard-details">
+        <div class="member-detail-main">
+            <div class="member-detail-row">
+                <article class="member-panel upcoming-class-panel">
+                    <div class="member-panel-heading"><h2>Upcoming Class</h2><a href="{% url 'bookings:schedule' %}">All Classes</a></div>
+                    {% if upcoming_booking %}
+                        <h3>{{ upcoming_booking.session.service.name }}</h3>
+                        <p>{{ upcoming_booking.session.date|date:"D d M" }} at {{ upcoming_booking.session.start_time|time:"H:i" }} · {{ upcoming_booking.session.instructor.get_full_name|default:"FitSync Coach" }}</p>
+                        <div class="member-class-actions"><span>{{ upcoming_booking.session.remaining_spaces }} spots left</span><a href="{% url 'bookings:my_bookings' %}">Manage</a></div>
+                    {% else %}
+                        <h3>No class booked</h3><p>Choose a class that fits your schedule.</p>
+                        <div class="member-class-actions"><a href="{% url 'bookings:schedule' %}">Book a class</a></div>
+                    {% endif %}
+                </article>
+
+                <a class="member-panel member-card-link occupancy-panel" href="{% url 'attendance:occupancy' %}" aria-label="View live gym occupancy">
+                    <div class="member-panel-heading"><h2>Gym Occupancy</h2><span class="occupancy-state occupancy-{{ occupancy_status|lower }}"><i></i>{{ occupancy_status }}</span></div>
+                    <p class="occupancy-value">{{ current_occupancy }} <small>/ {{ max_capacity }} members</small></p>
+                    <div class="occupancy-track" role="progressbar" aria-label="Gym occupancy" aria-valuenow="{{ occupancy_percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ occupancy_percent }}%"></span></div>
+                    <p class="member-card-note">Live gym attendance</p>
+                </a>
+            </div>
+
+            <article class="member-panel recent-activity-panel">
+                <h2>Recent Activity</h2>
+                <div class="member-activity-list">
+                    {% for activity in recent_activity %}
+                        <a class="member-activity-item member-card-link" href="{% if activity.colour == 'teal' %}{% url 'workouts:history' %}{% elif activity.colour == 'blue' %}{% url 'bookings:my_bookings' %}{% else %}{% url 'workouts:progress' %}{% endif %}">
+                            <span class="member-activity-icon activity-{{ activity.colour }}"><img src="{% static activity.icon %}" alt=""></span>
+                            <div><p>{{ activity.title }}</p><small>{{ activity.time|timesince }} ago</small></div>
+                        </a>
+                    {% empty %}
+                        <div class="member-empty-activity"><p>No recent activity yet.</p><a href="{% url 'workouts:plans' %}">Start your first workout</a></div>
+                    {% endfor %}
+                </div>
+            </article>
+        </div>
+
+        <aside class="member-detail-side">
+            <a class="member-panel member-card-link member-profile-card" href="{% url 'accounts:profile' %}" aria-label="View and edit your profile">
+                <div class="member-profile-summary">
+                    {% if profile.avatar_url %}
+                        <img class="member-profile-photo" src="{{ profile.avatar_url }}" alt="">
+                    {% else %}
+                        <span class="member-profile-photo member-profile-initials">{{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}</span>
+                    {% endif %}
+                    <div><h2>{{ request.user.get_full_name|default:request.user.email }}</h2><span>{{ active_membership.package.name|default:"No active plan" }}</span></div>
+                </div>
+                <dl>
+                    <div><dt>Date Joined:</dt><dd>{{ request.user.date_joined|date:"d M Y" }}</dd></div>
+                    <div><dt>Coach:</dt><dd>{% if coach_assignment %}{{ coach_assignment.coach.get_full_name|default:coach_assignment.coach.email }}{% else %}Not assigned{% endif %}</dd></div>
+                </dl>
+            </a>
+
+            <a class="member-panel member-card-link member-qr-card" href="{% url 'attendance:my_qr_code' %}" aria-label="Open your gym entry QR code">
+                <h2>Gym Entry QR Code</h2>
+                {% if qr_image %}<img src="data:image/png;base64,{{ qr_image }}" alt="Gym entry QR code"><small>Show at reception to check in</small>{% else %}<i class="bi bi-qr-code" aria-hidden="true"></i><small>An active membership is required</small>{% endif %}
+                <span class="member-inline-link">Open QR code</span>
+            </a>
+        </aside>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}Public Team Profiles{% endblock %}
+{% block dashboard_heading %}Public Team Profiles{% endblock %}
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
+  <div class="page-heading mb-0"><h1>Public Team Profiles</h1><p>Manage Our Team content. Linked accounts keep their existing roles and passwords.</p></div>
+  <a class="btn btn-primary-fitsync align-self-start" href="{% url 'core:manage_team_add' %}">Add Profile</a>
+</div>
+<form method="get" class="card p-3 mb-4 d-flex flex-row gap-2 flex-wrap">
+  <label class="visually-hidden" for="teamSearch">Search team profiles</label><input class="form-control w-auto flex-grow-1" id="teamSearch" name="q" value="{{ query }}" placeholder="Name or job title">
+  <button class="btn btn-secondary-fitsync" type="submit">Search</button>
+</form>
+<div class="card table-responsive"><table class="table align-middle">
+  <thead><tr><th>Name</th><th>Department</th><th>Linked account</th><th>Visibility</th><th>Actions</th></tr></thead>
+  <tbody>{% for person in people %}<tr>
+    <td>{{ person.display_name }}{% if person.is_featured %} <span class="badge badge-fitsync">Featured</span>{% endif %}<br><small>{{ person.job_title }}</small></td>
+    <td>{{ person.get_department_display }}</td><td>{{ person.user.email|default:"No linked login" }}</td><td>{{ person.is_active|yesno:"Published,Hidden" }}</td>
+    <td><div class="d-flex gap-2 flex-wrap"><a class="btn btn-sm btn-secondary-fitsync" href="{% url 'core:manage_team_edit' person.id %}">Edit</a>
+    <form method="post" action="{% url 'core:manage_team_toggle' person.id %}">{% csrf_token %}<button class="btn btn-sm btn-secondary-fitsync" type="submit">{% if person.is_active %}Hide{% else %}Publish{% endif %}</button></form></div></td>
+  </tr>{% empty %}<tr><td colspan="5">No profiles found. Add a profile or run the public-content seed.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% include "includes/pagination.html" with page=people %}
+{% endblock %}

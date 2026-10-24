@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Bookings | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/bookings.css' %}">{% endblock %}
+{% block content %}
+<section class="booking-page">
+    <div class="container py-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
+            <div><p class="booking-eyebrow">Your fitness schedule</p><h1>My Bookings</h1></div>
+            <a class="btn btn-primary-fitsync" href="{% url 'bookings:schedule' %}">Book Another Session</a>
+        </div>
+
+        <h2 class="h3 mb-3">Upcoming Bookings</h2>
+        <div class="row g-4 mb-5">
+            {% for booking in upcoming_bookings %}
+                {% include "includes/booking_card.html" %}
+            {% empty %}
+                <div class="col-12"><div class="no-sessions"><h3>No upcoming bookings</h3><p>Browse the schedule to reserve a session.</p></div></div>
+            {% endfor %}
+        </div>
+
+        <h2 class="h3 mb-3">Previous Bookings</h2>
+        <div class="row g-4 mb-5">
+            {% for booking in previous_bookings %}
+                {% include "includes/booking_card.html" with previous_section=True %}
+            {% empty %}
+                <div class="col-12"><p class="text-body-secondary">No previous bookings.</p></div>
+            {% endfor %}
+        </div>
+
+        <h2 class="h3 mb-3">Cancelled Bookings</h2>
+        <div class="row g-4">
+            {% for booking in cancelled_bookings %}
+                {% include "includes/booking_card.html" %}
+            {% empty %}
+                <div class="col-12"><p class="text-body-secondary">No cancelled bookings.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

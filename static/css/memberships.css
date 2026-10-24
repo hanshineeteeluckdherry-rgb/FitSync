@@ -1348,7 +1348,7 @@ html[data-theme="light"] .demo-payment-note {
 }
 
 
-/* Final public membership theme toggle fix */
+/* Public membership theme */
 .figma-theme-toggle {
     -webkit-appearance: none;
     appearance: none;
@@ -1792,13 +1792,9 @@ html[data-theme] .figma-plan-student .figma-plan-features i {
 }
 
 
-/* =========================================================
-   PUBLIC MEMBERSHIP PAGE - USE THE SHARED FITSYNC NAVBAR
-   AND FOOTER FROM templates/base.html
-   ========================================================= */
+/* Public membership layout */
 
-/* The public membership page no longer creates its own navbar.
-   base.html includes the same navbar used by the Home page. */
+/* The navbar and footer are included by base.html. */
 .figma-membership-public-main {
     min-height: 982px;
     margin: 0;

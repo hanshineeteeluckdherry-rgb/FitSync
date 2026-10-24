@@ -31,12 +31,10 @@
         aria-expanded="false"
         aria-label="Open account menu"
     >
-        {% if user.member_profile.profile_picture %}
-            <img src="{{ user.member_profile.profile_picture.url }}" alt="" class="sidebar-user-avatar">
+        {% if user.member_profile.avatar_url %}
+            <img src="{{ user.member_profile.avatar_url }}" alt="" class="sidebar-user-avatar">
         {% elif user.coach_profile.photo_url %}
             <img src="{{ user.coach_profile.photo_url }}" alt="" class="sidebar-user-avatar">
-        {% elif user.email == "member@fitsync.com" %}
-            <img src="{% static 'img/member-dashboard/lionel.png' %}" alt="" class="sidebar-user-avatar">
         {% else %}
             <span class="sidebar-user-avatar sidebar-user-initials" aria-hidden="true">
                 {% if user.first_name or user.last_name %}{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}{% else %}{{ user.username|slice:":1"|upper }}{% endif %}
