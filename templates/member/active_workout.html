@@ -1,0 +1,69 @@
+{% extends "layouts/member_base.html" %}
+{% load static %}
+{% block page_title %}Active Workout{% endblock %}
+{% block dashboard_heading %}Workout{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/workouts.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/workout-sets.css' %}?v=5">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="workout-page">
+    <div class="page-heading">
+        <h1>{{ session.workout_plan.name }}</h1>
+        <p>Mark each set complete as you go, then finish the workout to save your results. Total duration is recorded automatically from start to finish, including rests.</p>
+    </div>
+    <form method="post" action="{% url 'workouts:finish_workout' session.id %}">
+        {% csrf_token %}
+        <div class="d-grid gap-3">
+            {% for entry in entries %}
+                <details class="workout-card workout-exercise-card" {% if forloop.first or request.method == 'POST' %}open{% endif %}>
+                    <summary class="workout-exercise-heading">
+                        <span class="workout-exercise-number">{{ forloop.counter }}</span>
+                        <span class="workout-exercise-name">{{ entry.exercise.name }}<small>{{ entry.exercise.get_category_display }}</small></span>
+                        <span class="workout-exercise-target"><strong>{{ entry.sets }}</strong> sets <strong>{{ entry.reps }}</strong> reps {% if entry.weight_kg %}<strong>{{ entry.weight_kg|floatformat:"-2" }}</strong> kg{% endif %}</span>
+                        <span class="workout-exercise-count" aria-label="Completed sets"><span data-set-count>0</span>/{{ entry.sets }}</span>
+                        <i class="bi bi-chevron-down workout-exercise-chevron" aria-hidden="true"></i>
+                    </summary>
+                    <fieldset class="workout-sets-grid">
+                        <legend class="visually-hidden">Sets for {{ entry.exercise.name }}</legend>
+                        {% for row in entry.set_rows %}
+                            <div class="workout-set-pill">
+                                <strong class="workout-set-number">Set {{ row.number }}</strong>
+                                {% for field in row.form %}
+                                    <div class="workout-set-field">
+                                        <label class="visually-hidden" for="{{ field.id_for_label }}">{{ field.label }} for {{ entry.exercise.name }}, set {{ row.number }}</label>
+                                        {{ field }}
+                                        <span class="workout-set-unit" aria-hidden="true">{% if field.name == 'reps' %}r{% else %}kg{% endif %}</span>
+                                        {% if row.completed %}{% for error in field.errors %}<p class="text-danger small mb-0">{{ error }}</p>{% endfor %}{% endif %}
+                                    </div>
+                                {% endfor %}
+                                <div class="workout-set-buttons">
+                                    <input class="btn-check" type="checkbox" name="completed_sets_{{ entry.id }}" value="{{ row.number }}" id="set_{{ entry.id }}_{{ row.number }}" autocomplete="off" {% if row.completed %}checked{% endif %}>
+                                    <label class="btn btn-secondary-fitsync workout-set-button" for="set_{{ entry.id }}_{{ row.number }}">
+                                        <i class="bi bi-check" aria-hidden="true"></i><span class="visually-hidden">Complete {{ entry.exercise.name }}, set {{ row.number }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </fieldset>
+                </details>
+            {% empty %}
+                <p>No exercises are available in this plan.</p>
+            {% endfor %}
+        </div>
+        <div class="workout-panel p-4 mt-3">
+            <label class="form-label" for="workoutNotes">Workout notes</label>
+            <textarea class="form-control" id="workoutNotes" rows="2" name="notes" placeholder="How did the workout feel?">{{ notes }}</textarea>
+            <p class="small text-muted mt-3">Tap a completed set again to undo it. Only marked sets will be saved when you finish.</p>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary-fitsync" type="submit"><i class="bi bi-check-circle me-1" aria-hidden="true"></i>Finish Workout</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/workout-sets.js' %}" defer></script>
+{% endblock %}

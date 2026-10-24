@@ -1,4 +1,4 @@
-/* Rheva: reuse FitSync's original base.css tokens; no replacement design system. */
+/* Shared components use the colours and spacing from base.css. */
 html[data-theme] body :is(.workout-panel, .workout-card, .member-panel,
     .progress-card, .progress-panel, .contact-detail-card, .contact-form-card,
     .contact-social-card, .team-card, .featured-card) {

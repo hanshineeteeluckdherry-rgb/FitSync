@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Our Team | FitSync{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ourteam.css' %}?v=rheva-1">{% endblock %}
+{% block content %}
+<div class="team-page">
+    <section class="team-header"><div class="container">
+        <span class="team-subtitle">The people behind FitSync</span><h1 class="team-title mb-3">Meet Our Team</h1>
+        <p class="team-description">Every result you achieve is backed by a team of certified professionals who are genuinely invested in your progress. We are more than coaches - we are your training partners.</p>
+    </div></section>
+    {% if featured_member %}
+    <section class="featured-member-section mb-3 px-3" id="featured-section"><div class="featured-card"><div class="row g-0">
+        <div class="col-lg-4 col-md-5"><div class="featured-img-wrapper">{% if featured_member.photo_url %}<img src="{{ featured_member.photo_url }}" alt="{{ featured_member.display_name }}">{% endif %}</div></div>
+        <div class="col-lg-8 col-md-7 d-flex align-items-center"><div class="featured-card-body p-4">
+            <span class="badge-founder mb-3"><i class="bi bi-person-fill me-1"></i> {{ featured_member.get_department_display }}</span>
+            <h2 class="featured-name mb-1">{{ featured_member.display_name }}</h2><p class="featured-role mb-3">{{ featured_member.job_title }}</p>
+            <p class="featured-bio mb-4">{{ featured_member.featured_bio|default:featured_member.bio }}</p>
+            <div class="specialty-tags d-flex flex-wrap gap-2 mb-4">{% for specialty in featured_member.specialty_list %}<span class="tag">{{ specialty }}</span>{% endfor %}</div>
+            <a href="{% url 'core:contact' %}" class="read-profile-link">Contact team <i class="bi bi-chevron-right ms-1"></i></a>
+        </div></div>
+    </div></div></section>
+    {% endif %}
+    <section class="team-grid-section pb-5"><div class="container">
+        <div class="filter-pills d-flex flex-wrap gap-2 mb-3" role="group" aria-label="Filter team by department">
+            <button type="button" class="btn filter-btn active" data-filter="all" aria-pressed="true">All</button>
+            {% for value, label in departments %}<button type="button" class="btn filter-btn" data-filter="{{ value }}" aria-pressed="false">{{ label }}</button>{% endfor %}
+        </div>
+        <div class="row g-4" id="team-grid">
+            {% for member in team_members %}<div class="col-lg-4 col-md-6 team-item" data-category="{{ member.department }}"><div class="team-card">
+                <div class="card-img-wrapper"><span class="badge-card {{ member.badge_class }}">{{ member.get_department_display }}</span>
+                    {% if member.photo_url %}<img src="{{ member.photo_url }}" alt="{{ member.display_name }}" class="card-photo"><img src="{{ member.photo_url }}" alt="" class="card-avatar">{% endif %}
+                </div>
+                <div class="card-body"><h2 class="h5 card-name">{{ member.display_name }}</h2><p class="card-role">{{ member.job_title }}</p><p class="card-bio">{{ member.bio }}</p>
+                    <div class="card-tags">{% for specialty in member.specialty_list %}<span>{{ specialty }}</span>{% endfor %}</div>
+                    <div class="card-footer-row"><span class="card-exp">{{ member.experience }}</span><a href="{% url 'core:contact' %}" class="view-profile-link">Contact team <i class="bi bi-chevron-right"></i></a></div>
+                </div>
+            </div></div>{% empty %}<p>Our team information will be available soon.</p>{% endfor %}
+        </div>
+    </div></section>
+    <section class="join-team-section pb-5"><div class="container"><div class="join-box text-center">
+        <h2 class="join-title mb-2">Want to Join Our Team?</h2><p class="join-description mb-4">We are always looking for passionate, qualified fitness professionals to grow the FitSync family.</p>
+        {% if gym.careers_email %}<a href="mailto:{{ gym.careers_email }}" class="join-email-btn"><i class="bi bi-envelope me-1"></i> {{ gym.careers_email }}</a>{% endif %}
+    </div></div></section>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/ourteam.js' %}" defer></script>{% endblock %}
