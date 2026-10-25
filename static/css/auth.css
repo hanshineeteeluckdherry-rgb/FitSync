@@ -880,3 +880,14 @@ html[data-theme="light"] .auth-theme-toggle {
         height: 58px;
     }
 }
+
+/* Readable error messages in light mode */
+html[data-theme="light"] .auth-error {
+    color: #b42335;
+    background: #fde8eb;
+    border-color: #f3b4bf;
+}
+
+html[data-theme="light"] .auth-field-error {
+    color: #c62839;
+}
