@@ -57,12 +57,10 @@
                     <div class="dropdown">
                         <button class="navbar-account-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="navbar-account-name">{{ request.user.get_full_name|default:request.user.username }}</span>
-                            {% if request.user.member_profile.profile_picture %}
-                                <img class="navbar-account-avatar" src="{{ request.user.member_profile.profile_picture.url }}" alt="">
+                            {% if request.user.member_profile.avatar_url %}
+                                <img class="navbar-account-avatar" src="{{ request.user.member_profile.avatar_url }}" alt="">
                             {% elif request.user.coach_profile.photo_url %}
                                 <img class="navbar-account-avatar" src="{{ request.user.coach_profile.photo_url }}" alt="">
-                            {% elif request.user.email == "member@fitsync.com" %}
-                                <img class="navbar-account-avatar" src="{% static 'img/member-dashboard/lionel.png' %}" alt="">
                             {% else %}
                                 <span class="navbar-account-avatar navbar-account-initials" aria-hidden="true">
                                     {% if request.user.first_name or request.user.last_name %}{{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}

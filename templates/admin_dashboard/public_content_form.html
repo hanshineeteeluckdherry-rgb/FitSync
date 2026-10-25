@@ -1,0 +1,13 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block dashboard_heading %}{{ title }}{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading"><h1>{{ title }}</h1><p>Edit public information without changing login accounts or permissions.</p></div>
+<div class="card p-4">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "includes/form_fields.html" %}
+    <div class="d-flex gap-2"><button type="submit" class="btn btn-primary-fitsync">Save</button><a class="btn btn-secondary-fitsync" href="{{ cancel_url }}">Cancel</a></div>
+  </form>
+</div>
+{% endblock %}

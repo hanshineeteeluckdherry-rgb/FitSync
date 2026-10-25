@@ -1,6 +1,6 @@
-/* FitSync Person 2 - Workout module */
+/* Workouts and progress — Hanshinee */
 
-/* Workout pages use the same dark navy + mint language as the approved visual. */
+/* Workout page styles */
 .dashboard-content:has(.workout-page),
 .dashboard-content:has(.exercise-library-page) {
     min-height: calc(100vh - var(--topbar-height));
@@ -885,11 +885,7 @@ html[data-theme="light"] .exercise-card-name {
     }
 }
 
-/* =========================================================
-   WORKOUT THEME FIX
-   Makes Workout Plans, Exercise Library and Create Plan
-   use the shared FitSync light/dark theme correctly.
-   ========================================================= */
+/* Shared workout theme */
 
 /* The workout module must use the same page gradient as FitSync. */
 .dashboard-stage:has(.workout-page),
@@ -903,7 +899,7 @@ html[data-theme="light"] .exercise-card-name {
     background: transparent !important;
 }
 
-/* The current layout has dashboard-scroll-content between topbar and page. */
+/* Dashboard heading */
 .dashboard-stage:has(.workout-page)>.dashboard-topbar,
 .dashboard-stage:has(.exercise-library-page)>.dashboard-topbar {
     color: var(--text-color) !important;
@@ -911,9 +907,7 @@ html[data-theme="light"] .exercise-card-name {
     border-bottom-color: var(--border-color) !important;
 }
 
-/* -------------------------
-   LIGHT MODE
-   ------------------------- */
+/* Light mode */
 html[data-theme="light"] .workout-page,
 html[data-theme="light"] .exercise-library-page,
 html[data-theme="light"] .workout-page h1,

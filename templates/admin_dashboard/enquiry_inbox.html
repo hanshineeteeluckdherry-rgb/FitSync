@@ -1,0 +1,14 @@
+{% extends "layouts/admin_base.html" %}
+{% block page_title %}Contact Enquiries{% endblock %}
+{% block dashboard_heading %}Contact Enquiries{% endblock %}
+{% block dashboard_content %}
+<div class="page-heading"><h1>Contact Enquiries</h1><p>Private messages submitted through the contact page.</p></div>
+<form method="get" class="card p-3 mb-4 d-flex flex-row gap-2 flex-wrap">
+  <label class="visually-hidden" for="enquirySearch">Search enquiries</label><input class="form-control w-auto flex-grow-1" id="enquirySearch" name="q" value="{{ query }}" placeholder="Name, email or message">
+  <label class="visually-hidden" for="enquiryStatus">Status</label><select class="form-select w-auto" id="enquiryStatus" name="status"><option value="">All statuses</option>{% for value,label in status_choices %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <button class="btn btn-secondary-fitsync" type="submit">Filter</button>
+</form>
+<div class="card table-responsive"><table class="table align-middle"><thead><tr><th>Received</th><th>From</th><th>Topic</th><th>Status</th><th></th></tr></thead>
+<tbody>{% for enquiry in enquiries %}<tr><td>{{ enquiry.created_at|date:"d M Y H:i" }}</td><td>{{ enquiry.full_name }}<br><small>{{ enquiry.email }}</small></td><td>{{ enquiry.topic }}</td><td>{{ enquiry.get_status_display }}</td><td><a class="btn btn-sm btn-secondary-fitsync" href="{% url 'core:manage_enquiry' enquiry.id %}">Open</a></td></tr>{% empty %}<tr><td colspan="5">No enquiries match this filter.</td></tr>{% endfor %}</tbody></table></div>
+{% include "includes/pagination.html" with page=enquiries %}
+{% endblock %}

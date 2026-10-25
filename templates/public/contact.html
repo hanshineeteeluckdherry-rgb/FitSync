@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact Us | FitSync{% endblock %}
+{% block body_class %}contact-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contact.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="contact-shell">
+    <section class="contact-hero" aria-labelledby="contactTitle">
+        <span class="contact-badge">
+            <img src="{% static 'img/contact/contact-badge.svg' %}" alt="">
+            Contact Us
+        </span>
+        <h1 id="contactTitle">We'd Love to <span>Hear From You</span></h1>
+        <p>Questions about membership, classes, or the platform? {{ gym.response_time }}</p>
+    </section>
+
+    <div class="contact-layout">
+        <section class="contact-details" aria-labelledby="contactDetailsTitle">
+            <h2 id="contactDetailsTitle">Get in Touch</h2>
+
+            <div class="contact-detail-card">
+                <span class="contact-detail-icon contact-icon-teal"><img src="{% static 'img/contact/location.svg' %}" alt=""></span>
+                <div><small>Address</small><p>{{ gym.address }}</p></div>
+            </div>
+
+            <div class="contact-detail-card">
+                <span class="contact-detail-icon contact-icon-blue"><img src="{% static 'img/contact/phone.svg' %}" alt=""></span>
+                <div><small>Phone</small><p><a href="tel:{{ gym.phone_link }}">{{ gym.phone }}</a></p></div>
+            </div>
+
+            <div class="contact-detail-card">
+                <span class="contact-detail-icon contact-icon-amber"><img src="{% static 'img/contact/email.svg' %}" alt=""></span>
+                <div><small>Email</small><p><a href="mailto:{{ gym.public_email }}">{{ gym.public_email }}</a></p></div>
+            </div>
+
+            <div class="contact-detail-card">
+                <span class="contact-detail-icon contact-icon-teal"><img src="{% static 'img/contact/clock.svg' %}" alt=""></span>
+                <div>
+                    <small>Opening Hours</small>
+                    <p>{{ gym.opening_hours|linebreaksbr }}</p>
+                </div>
+            </div>
+
+            <div class="contact-social-card">
+                <small>Follow Us</small>
+                <div class="contact-social-links">
+                    {% if gym.instagram_url %}<a href="{{ gym.instagram_url }}" target="_blank" rel="noopener"><img src="{% static 'img/contact/instagram.svg' %}" alt="">{{ gym.social_handle }}</a>{% endif %}
+                    {% if gym.facebook_url %}<a href="{{ gym.facebook_url }}" target="_blank" rel="noopener"><img src="{% static 'img/contact/facebook.svg' %}" alt="">FitSync</a>{% endif %}
+                    <a href="mailto:{{ gym.public_email }}"><img src="{% static 'img/contact/share.svg' %}" alt="">{{ gym.social_handle }}</a>
+                </div>
+            </div>
+
+            {% if gym.map_image_url %}<div class="contact-map-card">
+                <img class="contact-map-image" src="{{ gym.map_image_url }}" alt="Location map: {{ gym.address }}">
+                <span><img src="{% static 'img/contact/map-pin.svg' %}" alt="">{{ gym.address }}</span>
+            </div>{% endif %}
+        </section>
+
+        <section class="contact-form-card" aria-labelledby="contactFormTitle">
+            <h2 id="contactFormTitle">Send a Message</h2>
+            <p class="contact-form-intro">{{ gym.response_time }}</p>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+                <div class="contact-form-row">
+                    <div class="contact-field">
+                        <label for="{{ form.full_name.id_for_label }}">Full Name <span>*</span></label>
+                        {{ form.full_name }}
+                        {% for error in form.full_name.errors %}<small class="contact-error">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="contact-field">
+                        <label for="{{ form.email.id_for_label }}">Email Address <span>*</span></label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}<small class="contact-error">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="contact-field">
+                    <label for="{{ form.topic.id_for_label }}">Topic</label>
+                    {{ form.topic }}
+                    {% for error in form.topic.errors %}<small class="contact-error">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="contact-field">
+                    <label for="{{ form.message.id_for_label }}">Message <span>*</span></label>
+                    {{ form.message }}
+                    <small class="contact-character-count"><span data-contact-count>0</span> characters</small>
+                    {% for error in form.message.errors %}<small class="contact-error">{{ error }}</small>{% endfor %}
+                </div>
+
+                <button class="contact-submit" type="submit">
+                    <img src="{% static 'img/contact/send.svg' %}" alt="">
+                    Send Message
+                </button>
+                <p class="contact-privacy">Your enquiry is stored so authorised staff can respond. Please do not include passwords, payment details or sensitive medical information.</p>
+            </form>
+        </section>
+    </div>
+
+    <section class="contact-next-links" aria-label="More FitSync pages">
+        <p>Looking for something specific?</p>
+        <div>
+            <a href="{% url 'memberships:public_packages' %}">View Memberships</a>
+            <a href="{% url 'bookings:schedule' %}">Class Schedule</a>
+            <a href="{% url 'ourteam:index' %}">Our Team</a>
+            <a href="{% url 'aboutus:index' %}">About FitSync</a>
+            {% if not request.user.is_authenticated %}<a href="{% url 'accounts:register' %}">Create Account</a>{% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block site_footer %}{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/contact.js' %}" defer></script>
+{% endblock %}

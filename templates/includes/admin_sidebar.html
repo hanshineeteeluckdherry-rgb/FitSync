@@ -113,4 +113,8 @@
         <span>Reports</span>
     </a>
 
+    <p class="sidebar-label mt-3">Public Content</p>
+    <a class="nav-link {% if active_sidebar == 'public_team' %}active{% endif %}" href="{% url 'core:manage_team' %}"><i class="bi bi-people"></i><span>Team Profiles</span></a>
+    <a class="nav-link {% if active_sidebar == 'public_settings' %}active{% endif %}" href="{% url 'core:manage_settings' %}"><i class="bi bi-geo-alt"></i><span>Contact Details</span></a>
+    <a class="nav-link {% if active_sidebar == 'contact_inbox' %}active{% endif %}" href="{% url 'core:manage_inbox' %}"><i class="bi bi-envelope"></i><span>Contact Enquiries</span></a>
 </nav>
