@@ -720,7 +720,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
 .error-state .state-icon {
     color: var(--danger-color);
     background: rgba(220, 53, 69, 0.10);
-    border-color: rgba(220, 53, 69, 0.20);
+    border-color: rgba(111, 29, 37, 0.695);
 }
 
 .modal-content,
