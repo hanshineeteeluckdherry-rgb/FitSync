@@ -30,6 +30,7 @@ body.home-page .fitsync-messages {
     background: #020403 url('../img/home-hero.png') center 32% / cover no-repeat;
 }
 
+
 .home-hero-shade {
     position: absolute;
     inset: 0;
@@ -50,23 +51,32 @@ body.home-page .fitsync-messages {
     z-index: 3;
 }
 
+html[data-theme="light"] .home-hero {
+    background-image: url('../img/light-hero.png') !important;
+}
+
 html[data-theme="light"] .home-hero-shade {
     background: linear-gradient(
         to top,
-        rgba(255, 255, 255, 0.50) 0%,
-        rgba(255, 255, 255, 0.25) 40%,
-        rgba(255, 255, 255, 0.05) 75%,
-        rgba(255, 255, 255, 0.00) 100%
+        rgba(0, 212, 170, 0.45) 0%,
+        rgba(0, 212, 170, 0.20) 50%,
+        rgba(0, 212, 170, 0.05) 100%
     );
 }
 
-html[data-theme="light"] .home-mini-stat strong {
-    color: #ffffff !important;
+html[data-theme="light"] .home-hero-title {
+    color: #000000 !important;
 }
 
-html[data-theme="light"] .home-mini-stat span {
-    color: #ffffff !important;
+html[data-theme="light"] .home-hero-text {
+    color: #000000 !important;
 }
+
+html[data-theme="light"] .home-mini-stat strong,
+html[data-theme="light"] .home-mini-stat span {
+    color: #000000 !important;
+}
+
 
 .home-hero-copy {
     position: relative;
