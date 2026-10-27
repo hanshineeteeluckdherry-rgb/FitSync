@@ -23,8 +23,21 @@
 /*  Light theme */
 html[data-theme="light"] {
     color-scheme: light;
-    --page-gradient: linear-gradient(to bottom, #ffffff, #04cfa6);
+    --bg-color: #f4f7fb;
+    --surface-color: #ffffff;
+    --text-color: #080d17;
+    --muted-color: #5b748f;
+    --border-color: #dbe5f0;
+    --navbar-color: #ffffff;
     --sidebar-color: #ffffff;
+    --footer-color: #ffffff;
+    --shadow-color: rgba(8, 13, 23, 0.08);
+    --page-gradient: linear-gradient(to bottom, #ffffff, #04cfa6);
+    --member-sidebar-background: #ffffff;
+    --member-sidebar-border: #dbe5f0;
+    --member-sidebar-text: #080d17;
+    --member-sidebar-muted: #5b748f;
+    --member-sidebar-accent: #00876c;
 }
 
 /*  Dark theme */
@@ -41,6 +54,11 @@ html[data-theme="dark"] {
     --footer-color: #0d1525;
     --shadow-color: rgba(0, 0, 0, 0.26);
     --page-gradient: linear-gradient(to bottom, #11213A, #04cfa6);
+    --member-sidebar-background: #0a0f1c;
+    --member-sidebar-border: #1c2d45;
+    --member-sidebar-text: #ffffff;
+    --member-sidebar-muted: #5b748f;
+    --member-sidebar-accent: #00d4aa;
 }
 
 /*  Typography */
@@ -397,11 +415,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
 }
 
 .member-dashboard-sidebar {
-    --member-sidebar-background: #0a0f1c;
-    --member-sidebar-border: #1c2d45;
-    --member-sidebar-muted: #5b748f;
-    --member-sidebar-accent: #00d4aa;
-    color: #ffffff !important;
+    color: var(--member-sidebar-text) !important;
     background: var(--member-sidebar-background) !important;
     border-color: var(--member-sidebar-border) !important;
 }
@@ -423,7 +437,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
 }
 
 .member-dashboard-sidebar .fitsync-brand-name {
-    color: #ffffff;
+    color: var(--member-sidebar-text) !important;
     font-size: 1.25rem;
     letter-spacing: -0.5px;
 }
@@ -495,7 +509,7 @@ html[data-theme="dark"] .navbar-toggler-icon {
 }
 
 .member-dashboard-sidebar .sidebar-user-name {
-    color: #ffffff;
+    color: var(--member-sidebar-text) !important;
 }
 
 .member-dashboard-sidebar .sidebar-user-role {
@@ -926,7 +940,7 @@ body.dashboard-body .dashboard-content {
 }
 
 body.dashboard-body .member-dashboard-sidebar {
-    color: #ffffff !important;
-    background: #0a0f1c !important;
-    border-right-color: #1c2d45 !important;
+    color: var(--member-sidebar-text) !important;
+    background: var(--member-sidebar-background) !important;
+    border-right-color: var(--member-sidebar-border) !important;
 }
