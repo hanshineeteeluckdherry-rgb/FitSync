@@ -13,14 +13,6 @@
         <a class="btn workout-back-button" href="{% if request.user.role == 'COACH' %}{% url 'workouts:coach_members' %}{% else %}{% url 'workouts:plans' %}{% endif %}"><i class="bi bi-arrow-left me-2"></i>Workout Plans</a>
     </div>
 
-    {% if request.user.role != 'COACH' %}
-    <div class="workout-tabs mb-4">
-        <a href="{% url 'workouts:plans' %}">Workout Plans</a>
-        <a class="active" href="{% url 'workouts:exercise_library' %}">Exercise Library</a>
-        <a href="{% url 'workouts:history' %}">History</a>
-    </div>
-    {% endif %}
-
     <form method="get" class="exercise-filters row g-2 mb-4">
         <div class="col-lg-7">
             <div class="input-group">

@@ -2211,6 +2211,14 @@ class WorkoutFeatureTests(TestCase):
             self.client.post(url, {"exercise_ids": [self.exercise.id]}).status_code, 403
         )
 
+    def test_member_library_has_back_button_without_workout_tabs(self):
+        self.client.force_login(self.member)
+        response = self.client.get(reverse("workouts:exercise_library"))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'class="workout-tabs')
+        self.assertContains(response, 'class="btn workout-back-button"')
+        self.assertContains(response, 'class="exercise-filters')
+
     def test_coach_library_and_exercise_detail_keep_coach_layout(self):
         self.client.force_login(self.coach)
         response = self.client.get(reverse("workouts:exercise_library"))
