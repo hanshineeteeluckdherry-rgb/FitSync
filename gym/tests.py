@@ -2211,6 +2211,19 @@ class WorkoutFeatureTests(TestCase):
             self.client.post(url, {"exercise_ids": [self.exercise.id]}).status_code, 403
         )
 
+    def test_history_library_link_is_a_header_button(self):
+        self.client.force_login(self.member)
+        response = self.client.get(reverse("workouts:history"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            f'class="btn btn-secondary-fitsync" href="{reverse("workouts:exercise_library")}"',
+        )
+        tabs = response.content.decode().split('class="workout-tabs"', 1)[1].split('</div>', 1)[0]
+        self.assertNotIn("Exercise Library", tabs)
+        self.assertIn("Workout Plans", tabs)
+        self.assertIn("History", tabs)
+
     def test_member_library_has_back_button_without_workout_tabs(self):
         self.client.force_login(self.member)
         response = self.client.get(reverse("workouts:exercise_library"))
